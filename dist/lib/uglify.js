@@ -9,14 +9,13 @@
   _ = require("lodash");
 
   module.exports = function(Projmate) {
-    var Uglify, _ref;
+    var Uglify;
     return Uglify = (function(_super) {
 
       __extends(Uglify, _super);
 
       function Uglify() {
-        _ref = Uglify.__super__.constructor.apply(this, arguments);
-        return _ref;
+        return Uglify.__super__.constructor.apply(this, arguments);
       }
 
       Uglify.prototype.extnames = ".js";
@@ -24,15 +23,14 @@
       Uglify.prototype.outExtname = ".js";
 
       Uglify.prototype.process = function(asset, options, cb) {
-        var ex, result;
+        var result;
         options = _.defaults(_.clone(options), {
           fromString: true
         });
         try {
           result = UglifyJS.minify(asset.text, options);
           return cb(null, result.code);
-        } catch (_error) {
-          ex = _error;
+        } catch (ex) {
           return cb(ex);
         }
       };

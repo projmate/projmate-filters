@@ -1,4 +1,3 @@
-##
 # Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
 #
 # See the file LICENSE for copying permission.
@@ -8,7 +7,6 @@ Fs = require("fs")
 
 module.exports = (Projmate) ->
 
-  ##
   # Adds a header to an asset.
   #
   class AddHeader extends Projmate.Filter

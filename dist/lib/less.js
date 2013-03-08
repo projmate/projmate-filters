@@ -11,14 +11,13 @@
   path = require("path");
 
   module.exports = function(Projmate) {
-    var Less, _ref;
+    var Less;
     return Less = (function(_super) {
 
       __extends(Less, _super);
 
       function Less() {
-        _ref = Less.__super__.constructor.apply(this, arguments);
-        return _ref;
+        return Less.__super__.constructor.apply(this, arguments);
       }
 
       Less.prototype.extnames = ".less";
@@ -26,7 +25,7 @@
       Less.prototype.outExtname = ".css";
 
       Less.prototype.process = function(asset, options, cb) {
-        var ex, parser;
+        var parser;
         options = _.defaults(options, {
           paths: [asset.dirname],
           compress: false
@@ -34,20 +33,18 @@
         try {
           parser = new less.Parser(options);
           return parser.parse(asset.text, function(err, tree) {
-            var css, ex;
+            var css;
             if (err) {
               return cb(err);
             }
             try {
               css = tree.toCSS(options);
               return cb(null, css);
-            } catch (_error) {
-              ex = _error;
+            } catch (ex) {
               return cb(ex);
             }
           });
-        } catch (_error) {
-          ex = _error;
+        } catch (ex) {
           return cb(ex);
         }
       };

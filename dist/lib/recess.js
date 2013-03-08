@@ -7,14 +7,13 @@
   recess = require("recess");
 
   module.exports = function(Projmate) {
-    var Coffee, _ref;
+    var Coffee;
     return Coffee = (function(_super) {
 
       __extends(Coffee, _super);
 
       function Coffee() {
-        _ref = Coffee.__super__.constructor.apply(this, arguments);
-        return _ref;
+        return Coffee.__super__.constructor.apply(this, arguments);
       }
 
       Coffee.prototype.extnames = [".css", ".less"];
@@ -22,7 +21,6 @@
       Coffee.prototype.outExtname = ".css";
 
       Coffee.prototype.process = function(asset, options, cb) {
-        var ex;
         try {
           return recess(asset.filename, options, function(err, result) {
             if (err) {
@@ -30,8 +28,7 @@
             }
             return cb(null, result.output);
           });
-        } catch (_error) {
-          ex = _error;
+        } catch (ex) {
           return cb(ex);
         }
       };

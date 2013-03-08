@@ -4,21 +4,20 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   module.exports = function(Projmate) {
-    var Cat, TaskProcessor, _ref;
+    var Cat, TaskProcessor;
     TaskProcessor = Projmate.TaskProcessor;
     return Cat = (function(_super) {
 
       __extends(Cat, _super);
 
       function Cat() {
-        _ref = Cat.__super__.constructor.apply(this, arguments);
-        return _ref;
+        return Cat.__super__.constructor.apply(this, arguments);
       }
 
       Cat.prototype.extnames = "*";
 
       Cat.prototype.process = function(task, options, cb) {
-        var asset, cwd, filename, first, join, script, _i, _len, _ref1;
+        var asset, cwd, filename, first, join, script, _i, _len, _ref;
         if (task.assets.length < 1) {
           return cb();
         }
@@ -26,9 +25,9 @@
         filename = options.filename;
         script = "";
         first = true;
-        _ref1 = task.assets;
-        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-          asset = _ref1[_i];
+        _ref = task.assets;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          asset = _ref[_i];
           if (join.length > 0 && !first) {
             script += join;
           }

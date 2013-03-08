@@ -1,4 +1,3 @@
-##
 # Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
 #
 # See the file LICENSE for copying permission.
@@ -10,7 +9,6 @@ module.exports = (Projmate) ->
   class Cat extends TaskProcessor
     extnames: "*"
 
-    ##
     # Concatenate all assets to a single asset.
     #
     # @param {Task} task
