@@ -13,14 +13,15 @@
   Util = require("util");
 
   module.exports = function(Projmate) {
-    var FileAsset, LoadFiles, TaskProcessor;
+    var FileAsset, LoadFiles, TaskProcessor, _ref;
     FileAsset = Projmate.FileAsset, TaskProcessor = Projmate.TaskProcessor;
     return LoadFiles = (function(_super) {
 
       __extends(LoadFiles, _super);
 
       function LoadFiles() {
-        return LoadFiles.__super__.constructor.apply(this, arguments);
+        _ref = LoadFiles.__super__.constructor.apply(this, arguments);
+        return _ref;
       }
 
       LoadFiles.prototype.extnames = "*";
