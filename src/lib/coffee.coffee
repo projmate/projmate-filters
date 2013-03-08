@@ -5,8 +5,10 @@
 #
 
 coffee  = require("coffee-script")
+_ = require ("lodash")
 
 module.exports = (Projmate) ->
+  {Filter, Utils} = Projmate
 
   ##
   # Compiles CoffeeScript to JavaScript.
@@ -15,12 +17,24 @@ module.exports = (Projmate) ->
     extnames: ".coffee"
     outExtname: ".js"
 
-    process: (asset, options, cb) ->
+    process: (asset, opts, cb) ->
+      options = _.clone(opts)
+
+      options.sourceMap = options.map if options.map?
+      if options.sourceMap
+        options.filename = asset.filename
+
       try
-        js = coffee.compile(asset.text, options)
+        result = coffee.compile(asset.text, options)
+        if result.v3SourceMap
+          js = result.js
+          sourceMap = result.v3SourceMap
+
+          # add new asset for map
+          asset.parent.create filename: Utils.changeExtname(asset.filename, ".map"), text: sourceMap
+        else
+          js = result
+
         cb null, js
       catch ex
         cb ex
-
-
-

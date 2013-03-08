@@ -5,7 +5,7 @@
 #
 
 module.exports = (Projmate) ->
-  {FileAsset, TaskProcessor} = Projmate
+  {TaskProcessor} = Projmate
 
   class Cat extends TaskProcessor
     extnames: "*"
@@ -35,6 +35,7 @@ module.exports = (Projmate) ->
 
       # File contents were concatenated, change assets to single asset
       cwd = task.assets[0].cwd
-      task.assets = [new FileAsset(filename: filename, cwd: cwd, text: script)]
+      task.assets.clear()
+      task.assets.create filename: filename, text: script
       cb()
 

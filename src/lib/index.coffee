@@ -1,13 +1,7 @@
-module.exports =
-  # Filters
-  addHeader: require("./addHeader")
-  coffee: require("./coffee")
-  functoid: require("./functoid")
-  less: require("./less")
-  writeFile: require("./writeFile")
+Fs = require("fs")
+Path = require("path")
 
-  # Task Processors (multi asset processors)
-  cat: require("./cat")
-  commonJsify: require("./commonJsify")
-  loadFiles: require("./loadFiles")
-
+for file in Fs.readdirSync(__dirname)
+  basename = Path.basename(file, Path.extname(file))
+  continue if basename == "index"
+  exports[basename] = require("./#{basename}")

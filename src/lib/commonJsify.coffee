@@ -11,7 +11,7 @@ Path = require("path")
 
 
 module.exports = (Projmate) ->
-  {FileAsset, TaskProcessor, Utils} = Projmate
+  {TaskProcessor, Utils} = Projmate
 
   ##
   # Reduces a task's assets into a single browser-side CommonJS-like module asset.
@@ -127,7 +127,7 @@ module.exports = (Projmate) ->
     # All assets were combined into a single asset. Update the task's asset property
     # to reflect a single asset using filename from `options.filename`.
     reduceAssets: (task, options, script) ->
-      cwd = task.assets[0].cwd
-      task.assets = [new FileAsset(filename: options.filename, cwd: cwd, text: script)]
+      task.assets.clear()
+      task.assets.create filename: options.filename, text: script
 
 
