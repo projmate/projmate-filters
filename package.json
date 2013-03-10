@@ -11,7 +11,7 @@
   "license": "MIT",
   "devDependencies": {
     "projmate-shell": "0.0.3",
-    "projmate-dev": "git://github.com/projmate/projmate-core.git#develop",
+    "projmate-core": "git://github.com/projmate/projmate-core.git#develop",
     "mocha": "~1.8.1",
     "chai": "~1.5.0"
   },
@@ -23,7 +23,10 @@
     "multi-glob": "~0.4.0",
     "underscore.string": "~2.3.1",
     "recess": "~1.1.6",
-    "uglify-js": "~2.2.5"
+    "uglify-js": "~2.2.5",
+    "dustjs-linkedin": "~1.2.1",
+    "consolidate": "~0.8.0",
+    "underscore": "~1.4.4"
   },
   "keywords": [
     "Projmate",

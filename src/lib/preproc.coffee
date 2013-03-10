@@ -6,11 +6,9 @@ pp  = require("../support/preprocess")
 _ = require ("lodash")
 
 module.exports = (Projmate) ->
-  {Filter, Utils} = Projmate
-
   # Preprocess the `asset` given definition in `options`.
   #
-  class PreProcess extends Filter
+  class PreProcessor extends Projmate.Filter
     extnames: "*"
 
     process: (asset, options, cb) ->

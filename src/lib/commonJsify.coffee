@@ -1,4 +1,3 @@
-##
 # Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
 #
 # See the file LICENSE for copying permission.
@@ -13,7 +12,6 @@ Path = require("path")
 module.exports = (Projmate) ->
   {TaskProcessor, Utils} = Projmate
 
-  ##
   # Reduces a task's assets into a single browser-side CommonJS-like module asset.
   #
   # Script is mostly [stitch](https://github.com/sstephenson/stitch.git) with

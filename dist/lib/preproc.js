@@ -9,20 +9,19 @@
   _ = require("lodash");
 
   module.exports = function(Projmate) {
-    var Filter, PreProcess, Utils, _ref;
-    Filter = Projmate.Filter, Utils = Projmate.Utils;
-    return PreProcess = (function(_super) {
+    var PreProcessor, _ref;
+    return PreProcessor = (function(_super) {
 
-      __extends(PreProcess, _super);
+      __extends(PreProcessor, _super);
 
-      function PreProcess() {
-        _ref = PreProcess.__super__.constructor.apply(this, arguments);
+      function PreProcessor() {
+        _ref = PreProcessor.__super__.constructor.apply(this, arguments);
         return _ref;
       }
 
-      PreProcess.prototype.extnames = "*";
+      PreProcessor.prototype.extnames = "*";
 
-      PreProcess.prototype.process = function(asset, options, cb) {
+      PreProcessor.prototype.process = function(asset, options, cb) {
         var ex, result;
         try {
           result = pp(asset.text, options);
@@ -33,9 +32,9 @@
         }
       };
 
-      return PreProcess;
+      return PreProcessor;
 
-    })(Filter);
+    })(Projmate.Filter);
   };
 
 }).call(this);

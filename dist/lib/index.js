@@ -16,4 +16,6 @@
     exports[basename] = require("./" + basename);
   }
 
+  exports['writeFile'] = require("./writeFiles");
+
 }).call(this);
