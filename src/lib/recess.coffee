@@ -1,4 +1,3 @@
-##
 # Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
 #
 # See the file LICENSE for copying permission.
@@ -8,7 +7,6 @@ recess  = require("recess")
 
 module.exports = (Projmate) ->
 
-  ##
   # Compiles and compresses less and css using Twitter's
   # [recess](https://github.com/twitter/recess)
   #

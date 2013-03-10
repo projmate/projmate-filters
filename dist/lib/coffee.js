@@ -54,7 +54,7 @@
 
       return Coffee;
 
-    })(Projmate.Filter);
+    })(Filter);
   };
 
 }).call(this);

@@ -1,4 +1,3 @@
-##
 # Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
 #
 # See the file LICENSE for copying permission.
@@ -10,7 +9,6 @@ path = require("path")
 
 module.exports = (Projmate) ->
 
-  ##
   # Compiles a less buffer.
   class Less extends Projmate.Filter
     extnames: ".less"

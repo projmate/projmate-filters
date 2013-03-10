@@ -10,7 +10,7 @@ module.exports = (Projmate) ->
 
   # Compiles CoffeeScript to JavaScript.
   #
-  class Coffee extends Projmate.Filter
+  class Coffee extends Filter
     extnames: ".coffee"
     outExtname: ".js"
 
