@@ -1,0 +1,50 @@
+{assert} = require("chai")
+
+factory = require("../lib/preproc")
+Projmate = require("projmate-core/dist")
+{FileAsset} = Projmate
+PreProcessor = factory(Projmate)
+
+textAsset = (text) ->
+  new FileAsset(filename: "notused.txt", text: text, parent: [])
+
+process = (asset, options, cb) ->
+  pp = new PreProcessor
+  pp.process asset, options, cb
+
+
+describe "preproc", ->
+  it "should return original text in absence of directives", (done) ->
+    asset = textAsset("foobar")
+    process asset, {}, (err, result) ->
+      assert.ifError err
+      assert.equal result, "foobar"
+      done()
+
+  it "should use defines", (done) ->
+    asset = textAsset("""
+      #ifdef FOO
+      bar
+      #else
+      bad
+      #endif
+      #define WIN
+      #ifdef WIN
+      windows
+      #endif
+    """)
+    process asset, FOO:1, (err, result) ->
+      assert.ifError err
+      assert.equal result, "bar\nwindows"
+      done()
+
+
+
+
+
+
+
+
+
+
+
