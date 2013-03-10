@@ -18,7 +18,7 @@ Filter          | Description
 *recess*        | Recess CSS tool
 *template*      | Consolidate template engines (defaults to underscore)
 *uglify*        | Javascript minifier, beautifier
-*writeFile*     | Writes files to file system.
+*writeFiles*    | Writes files to file system.
 
 
 ## Filter
