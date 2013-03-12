@@ -41,8 +41,8 @@ module.exports = (Projmate) ->
         if files.length > 0
           Async.eachSeries files, (file, cb) ->
 
-            # Nothing to read from directory
-            # TODO performance issues? Force user to add extensions
+            # Ignore directories
+            # TODO performance issues by stating each file?
             stat = Fs.statSync(file)
             return cb() if stat.isDirectory()
 
