@@ -13,8 +13,8 @@
   Util = require("util");
 
   module.exports = function(Projmate) {
-    var FileAsset, LoadFiles, TaskProcessor, _ref;
-    FileAsset = Projmate.FileAsset, TaskProcessor = Projmate.TaskProcessor;
+    var FileAsset, LoadFiles, PmUtils, TaskProcessor, _ref;
+    FileAsset = Projmate.FileAsset, TaskProcessor = Projmate.TaskProcessor, PmUtils = Projmate.Utils;
     return LoadFiles = (function(_super) {
 
       __extends(LoadFiles, _super);
@@ -52,6 +52,14 @@
           };
           if (files.length > 0) {
             return Async.eachSeries(files, function(file, cb) {
+              var stat;
+              stat = Fs.statSync(file);
+              if (stat.isDirectory()) {
+                return cb();
+              }
+              if (PmUtils.isFileBinary(file)) {
+                return cb();
+              }
               return Fs.readFile(file, "utf8", function(err, text) {
                 if (err) {
                   return cb(err);

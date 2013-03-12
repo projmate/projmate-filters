@@ -11,7 +11,7 @@ Util = require("util")
 
 
 module.exports = (Projmate) ->
-  {FileAsset, TaskProcessor} = Projmate
+  {FileAsset, TaskProcessor, Utils:PmUtils} = Projmate
 
   ##
   # Loads files based on a task's `_files` property.
@@ -40,6 +40,15 @@ module.exports = (Projmate) ->
 
         if files.length > 0
           Async.eachSeries files, (file, cb) ->
+
+            # Nothing to read from directory
+            # TODO performance issues? Force user to add extensions
+            stat = Fs.statSync(file)
+            return cb() if stat.isDirectory()
+
+            # ignore binary files for now!?
+            return cb() if PmUtils.isFileBinary(file)
+
             Fs.readFile file, "utf8", (err, text) ->
               return cb(err) if err
               assets.create filename: file, text: text
