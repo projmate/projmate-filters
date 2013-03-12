@@ -1,4 +1,3 @@
-##
 # Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
 #
 # See the file LICENSE for copying permission.
@@ -13,7 +12,6 @@ Util = require("util")
 module.exports = (Projmate) ->
   {FileAsset, TaskProcessor, Utils:PmUtils} = Projmate
 
-  ##
   # Loads files based on a task's `_files` property.
   #
   # This is usually invoked as the first filter of a pipeline.
@@ -21,7 +19,6 @@ module.exports = (Projmate) ->
   class LoadFiles extends TaskProcessor
     extnames: "*"
 
-    ##
     # Directly manipulates a task such as its assets property.
     #
     process: (task, options, cb) ->
