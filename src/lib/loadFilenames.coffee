@@ -38,7 +38,8 @@ module.exports = (Projmate) ->
 
         if files.length > 0
           for file in files
-            assets.create filename: file, text: ""
+            stat = Fs.statSync(file)
+            assets.create filename: file, text: "", stat: stat
 
           task.assets = assets
           cb()

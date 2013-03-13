@@ -7,6 +7,7 @@
 Async = require("async")
 Fs = require("fs")
 Util = require("util")
+_ = require("lodash")
 
 
 module.exports = (Projmate) ->
@@ -31,7 +32,12 @@ module.exports = (Projmate) ->
 
         assets = []
         assets.create = (opts) ->
-          assets.push new FileAsset(filename: opts.filename, text: opts.text, cwd: cwd, parent: assets)
+          assets.push new FileAsset
+            filename: opts.filename
+            text: opts.text,
+            cwd: cwd
+            parent: assets
+            stat: opts.stat
         assets.clear = (opts) ->
           assets.length = 0
 
@@ -44,11 +50,12 @@ module.exports = (Projmate) ->
             return cb() if stat.isDirectory()
 
             # ignore binary files for now!?
-            return cb() if PmUtils.isFileBinary(file)
+            if PmUtils.isFileBinary(file)
+              return cb()
 
             Fs.readFile file, "utf8", (err, text) ->
               return cb(err) if err
-              assets.create filename: file, text: text
+              assets.create filename: file, text: text, stat: stat
               cb()
           , (err) ->
             task.assets = assets

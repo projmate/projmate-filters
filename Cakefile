@@ -1,7 +1,4 @@
-# This is needed since Projmate may be unstable while developing and
-# would not be able to build itself, but it's good to stand on the shoulder
-# of giants.
-
+# Needed at times since Projmate may be unstable while developing.
 $ = require("projmate-shell")
 
 task "build", "Builds the project", ->
