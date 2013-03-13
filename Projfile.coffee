@@ -12,10 +12,10 @@ exports.project = (pm) ->
   $ = pm.shell()
 
   #  "src/**/*" => "dist/**/*"
-  toDist = filename: { replace: [/^src/, "dist"] }
+  toDist = filename: {replace: [/^src/, "dist"]}
 
   pm.registerTasks
-    source:
+    build:
       _desc: "Compiles source files"
       _files:
         include: [
@@ -25,6 +25,7 @@ exports.project = (pm) ->
       development: [
         f.coffee(bare: true)
         f.addHeader(text: copyright)
-        f.writeFiles($asset: toDist, force: true)
+        f.writeFiles($asset: toDist)
       ]
+
 

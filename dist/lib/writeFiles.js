@@ -24,6 +24,8 @@ module.exports = function(Projmate) {
 
   WriteFile.prototype.process = function(asset, options, cb) {
     var filename = asset.filename;
+    // TODO issues with reduced files, fix later
+    options.force = true;
     if (options.force || asset.newerThan(filename)) {
       asset.write(filename, cb);
     } else {
