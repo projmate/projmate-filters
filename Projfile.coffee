@@ -28,4 +28,12 @@ exports.project = (pm) ->
         f.writeFiles($asset: toDist)
       ]
 
+    tests:
+      _files:
+        load: false
+        include: [
+          "src/test/**/*Spec*"
+        ]
 
+      development: (cb) ->
+        $.run "mocha --compilers coffee:coffee-script src/test", cb

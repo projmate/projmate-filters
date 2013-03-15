@@ -1,6 +1,6 @@
 {
   "name": "projmate-filters",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Official Projmate Filters",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,8 @@
     "uglify-js": "~2.2.5",
     "dustjs-linkedin": "~1.2.1",
     "consolidate": "~0.8.0",
-    "underscore": "~1.4.4"
+    "underscore": "~1.4.4",
+    "cson": "~1.4.0"
   },
   "keywords": [
     "Projmate",
