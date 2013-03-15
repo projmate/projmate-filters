@@ -15,7 +15,7 @@ module.exports = (Projmate) ->
     outExtname: ".js"
 
     process: (asset, options, cb) ->
-      options = _.defaults(_.clone(options), fromString: true)
+      options = _.defaults(options, fromString: true)
       try
         result = UglifyJS.minify(asset.text, options)
         cb null, result.code

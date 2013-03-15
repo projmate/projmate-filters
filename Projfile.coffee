@@ -12,28 +12,32 @@ exports.project = (pm) ->
   $ = pm.shell()
 
   #  "src/**/*" => "dist/**/*"
-  toDist = filename: {replace: [/^src/, "dist"]}
+  toDist = _filename: {replace: [/^src/, "dist"]}
 
   pm.registerTasks
     build:
-      _desc: "Compiles source files"
-      _files:
-        include: [
-          "src/**/*"
-        ]
+      pre: "clean"
+      desc: "Compiles source files"
+      files: "src/**/*"
 
       development: [
         f.coffee(bare: true)
         f.addHeader(text: copyright)
-        f.writeFiles($asset: toDist)
+        f.writeFiles(toDist)
       ]
 
     tests:
-      _files:
+      files:
         load: false
-        include: [
-          "src/test/**/*Spec*"
-        ]
+        include: "src/test/**/*Spec*"
 
       development: (cb) ->
         $.run "mocha --compilers coffee:coffee-script src/test", cb
+
+    clean:
+      development: ->
+        $.rm_rf "dist"
+
+    dist:
+      pre: ["tests", "build"]
+

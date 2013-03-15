@@ -24,13 +24,12 @@ module.exports = function(Projmate) {
       return _ref;
     }
 
-    Coffee.prototype.extnames = ".coffee";
+    Coffee.prototype.extnames = [".coffee", ".litcoffee", ".coffee.md"];
 
     Coffee.prototype.outExtname = ".js";
 
-    Coffee.prototype.process = function(asset, opts, cb) {
-      var ex, js, options, result, sourceMap;
-      options = _.clone(opts);
+    Coffee.prototype.process = function(asset, options, cb) {
+      var ex, js, result, sourceMap;
       if (options.map != null) {
         options.sourceMap = options.map;
       }

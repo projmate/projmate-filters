@@ -28,6 +28,9 @@ module.exports = function(Projmate) {
     Template.prototype.process = function(asset, options, cb) {
       var engine, ex;
       engine = options.engine || "underscore";
+      if (options.requires) {
+        require(options.requires);
+      }
       if (!cons[engine].render) {
         return cb("Unknown template engine: " + options.engine);
       }

@@ -6,7 +6,6 @@
 
 var CSON = require('cson');
 
-
 module.exports = function(Projmate) {
 
   /**

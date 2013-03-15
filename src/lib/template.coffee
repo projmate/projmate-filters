@@ -14,6 +14,9 @@ module.exports = (Projmate) ->
 
     process: (asset, options, cb) ->
       engine = options.engine || "underscore"
+      if options.requires
+        require options.requires
+
       if !cons[engine].render
         return cb("Unknown template engine: #{options.engine}")
       try

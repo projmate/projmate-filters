@@ -4,11 +4,9 @@
  * See the file LICENSE for copying permission.
  */
 
-var Async, Fs, Util, glob,
+var Async, Fs, Util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-glob = require("multi-glob").glob;
 
 Async = require("async");
 
@@ -31,11 +29,12 @@ module.exports = function(Projmate) {
     LoadFilenames.prototype.extnames = "*";
 
     LoadFilenames.prototype.process = function(task, options, cb) {
-      var cwd, log, patterns;
+      var cwd, excludePatterns, log, patterns;
       log = this.log;
       cwd = process.cwd();
-      patterns = task.config._files.include;
-      return glob(patterns, {
+      patterns = task.config.files.include;
+      excludePatterns = task.config.files.exclude;
+      return PmUtils.glob(patterns, excludePatterns, {
         nosort: true
       }, function(err, files) {
         var assets, file, stat, _i, _len;

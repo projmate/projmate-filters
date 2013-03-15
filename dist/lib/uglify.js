@@ -29,7 +29,7 @@ module.exports = function(Projmate) {
 
     Uglify.prototype.process = function(asset, options, cb) {
       var ex, result;
-      options = _.defaults(_.clone(options), {
+      options = _.defaults(options, {
         fromString: true
       });
       try {

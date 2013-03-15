@@ -3,7 +3,6 @@
 # See the file LICENSE for copying permission.
 #
 
-{glob} = require("multi-glob")
 Async = require("async")
 Fs = require("fs")
 Util = require("util")
@@ -12,7 +11,7 @@ Util = require("util")
 module.exports = (Projmate) ->
   {FileAsset, TaskProcessor, Utils:PmUtils} = Projmate
 
-  # Loads files based on a task's `_files` property.
+  # Loads files based on a task's `files` property.
   #
   # This is usually invoked as the first filter of a pipeline.
   #
@@ -25,9 +24,10 @@ module.exports = (Projmate) ->
     process: (task, options, cb) ->
       log = @log
       cwd = process.cwd()
-      patterns = task.config._files.include
+      patterns = task.config.files.include
+      excludePatterns = task.config.files.exclude
 
-      glob patterns, {nosort: true}, (err, files) ->
+      PmUtils.glob patterns, excludePatterns, {nosort: true}, (err, files) ->
         return cb(err) if err
 
         assets = []
