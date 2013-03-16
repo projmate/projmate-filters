@@ -1,5 +1,6 @@
 {assert, Assertion} = require("chai")
 Assertion.includeStack = true
+Fs = require("fs")
 
 factory = require("../lib/extractMeta")
 Projmate = require("projmate-core/dist")
@@ -14,7 +15,7 @@ describe "extractMeta", ->
   it "should extract meta and assign to ._meta", (done) ->
       asset = textAsset """
         ---
-        foo: 1
+        foo: (1)
         bar: "baz"
         baz:  [1, 2, 3]
         ---
@@ -52,4 +53,24 @@ describe "extractMeta", ->
         two
         """
         done()
+
+
+  it "should extract meta from a file", (done) ->
+      asset = textAsset "Hello"
+      pp = new ExtractMeta
+      pp.process asset, {from: __dirname + "/res/test.json"}, (err, result) ->
+        assert.ifError err
+        assert.equal asset.__merge.foo, "bar"
+        assert.equal asset.text, "Hello"
+        done()
+
+  it "should extract meta from object", (done) ->
+      asset = textAsset "Hello"
+      pp = new ExtractMeta
+      pp.process asset, from: {bah: "baz"}, (err, result) ->
+        assert.ifError err
+        assert.equal asset.__merge.bah, "baz"
+        assert.equal asset.text, "Hello"
+        done()
+
 
