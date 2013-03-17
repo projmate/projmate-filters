@@ -3,22 +3,27 @@
 # See the file LICENSE for copying permission.
 #
 
-less = require("less")
 _ = require("lodash")
 path = require("path")
 
+
 module.exports = (Projmate) ->
+  {Parser} = require("less")
 
   # Compiles a less buffer.
   class Less extends Projmate.Filter
     extnames: ".less"
     outExtname: ".css"
+    defaults:
+      development: {dumpLineNumbers: "comments", compress: false}
+      production: {compress: true}
 
     process: (asset, options, cb) ->
-      options = _.defaults(options, paths: [asset.dirname], compress: false)
+      options.filename = asset.filename
+      options.paths = [asset.dirname]
 
       try
-        parser = new less.Parser(options)
+        parser = new Parser(options)
         parser.parse asset.text, (err, tree) ->
           return cb(err) if err
           try
