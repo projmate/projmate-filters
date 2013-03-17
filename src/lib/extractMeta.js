@@ -108,8 +108,6 @@ module.exports = function(Projmate) {
         text = result.text;
       } else if (typeof from === 'string') {
         meta = require(from);
-        console.log("from", from);
-        console.log("meta", meta);
       } else if (typeof from === 'object') {
         meta = from;
       }
