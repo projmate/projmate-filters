@@ -41,3 +41,22 @@ exports.project = (pm) ->
     dist:
       pre: ["tests", "build"]
 
+
+    updateJsBeautify:
+      desc: "Updates from https://github.com/einars/js-beautify"
+      development: ->
+        # or master
+        commit = "0088ff13552f269240016ac5cbfbaf88b8449c1b"
+        root = "https://raw.github.com/einars/js-beautify/#{commit}"
+        files = [
+          "beautify-css.js"
+          "beautify-html.js"
+          "beautify.js"
+        ]
+
+        $.mkdir_p "src/support/js-beautify"
+
+        for file in files
+          url = "#{root}/#{file}"
+          $.run "curl -o src/support/js-beautify/#{file} #{url}"
+
