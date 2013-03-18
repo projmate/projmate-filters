@@ -11,7 +11,7 @@
   "license": "MIT",
   "devDependencies": {
     "projmate-shell": "~0.0.6",
-    "projmate-core": "git://github.com/projmate/projmate-core.git#develop",
+    "projmate-core": "~0.0.8",
     "mocha": "~1.8.1",
     "chai": "~1.5.0"
   },
