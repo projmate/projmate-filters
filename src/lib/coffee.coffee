@@ -1,22 +1,22 @@
+##
 # Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
 #
 # See the file LICENSE for copying permission.
-#
+
 coffee  = require("coffee-script")
 _ = require ("lodash")
+
 
 module.exports = (Projmate) ->
   {Filter, Utils} = Projmate
 
   # Compiles CoffeeScript to JavaScript.
   #
-  class Coffee extends Projmate.Filter
-    extnames: ".coffee"
+  class Coffee extends Filter
+    extnames: [".coffee", ".litcoffee", ".coffee.md"]
     outExtname: ".js"
 
-    process: (asset, opts, cb) ->
-      options = _.clone(opts)
-
+    process: (asset, options, cb) ->
       options.sourceMap = options.map if options.map?
       if options.sourceMap
         options.filename = asset.filename

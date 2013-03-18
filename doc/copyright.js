@@ -4,5 +4,3 @@
  * See the file LICENSE for copying permission.
  */
 
-
-module.exports = require("./lib/index");

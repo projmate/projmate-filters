@@ -4,44 +4,39 @@
  * See the file LICENSE for copying permission.
  */
 
-var UglifyJS, _,
+var pp, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-UglifyJS = require("uglify-js");
+pp = require("../support/preprocess");
 
 _ = require("lodash");
 
 module.exports = function(Projmate) {
-  var Uglify, _ref;
-  return Uglify = (function(_super) {
+  var PreProcessor, _ref;
+  return PreProcessor = (function(_super) {
 
-    __extends(Uglify, _super);
+    __extends(PreProcessor, _super);
 
-    function Uglify() {
-      _ref = Uglify.__super__.constructor.apply(this, arguments);
+    function PreProcessor() {
+      _ref = PreProcessor.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
-    Uglify.prototype.extnames = ".js";
+    PreProcessor.prototype.extnames = "*";
 
-    Uglify.prototype.outExtname = ".js";
-
-    Uglify.prototype.process = function(asset, options, cb) {
+    PreProcessor.prototype.process = function(asset, options, cb) {
       var ex, result;
-      options = _.defaults(options, {
-        fromString: true
-      });
       try {
-        result = UglifyJS.minify(asset.text, options);
-        return cb(null, result.code);
+        result = pp(asset.text, options);
+        return cb(null, result.join("\n"));
       } catch (_error) {
         ex = _error;
         return cb(ex);
       }
     };
 
-    return Uglify;
+    return PreProcessor;
 
   })(Projmate.Filter);
 };

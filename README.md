@@ -5,16 +5,34 @@ Projmate supported filters.
 
 ## Filters
 
-Filter | Description
--------|-------------
-*addHeader* | Adds buffer header.
-*cat* | Concatenates one or more buffers.
-*coffee* | Compiles CoffeeScript.
-*commonJsify* | Creates browser-compatible CommonJS package. Based on stitch.
-*functoid* | Create ad-hoc filters.
-*less* | Compile less scripts.
-*loadFiles* | Loads files into buffers.
-*writeFile* | Writes files to file system.
+Filter          | Description
+----------------|-------------
+*addHeader*     | Adds buffer header.
+*cat*           | Concatenates one or more buffers.
+*coffee*        | Compiles CoffeeScript.
+*commonJsify*   | Creates browser-compatible CommonJS package. Based on stitch.
+*functoid*      | Create ad-hoc filters.
+*less*          | Compile less scripts.
+*loadFiles*     | Loads files into buffers.
+*preproc*       | Preprocessor
+*recess*        | Recess CSS tool
+*template*      | Consolidate template engines (defaults to underscore)
+*uglify*        | Javascript minifier, beautifier
+*writeFiles*    | Writes files to file system.
+
+
+## Filter
+
+A `FileAsset` is a file based asset. Assets, for now, are from the
+local file system but there is no reason an asset could not from the cloud
+via a URL, or a database.
+
+A `Filter` is reponsible for processing a single asset.
+
+A `TaskProcessor` processes one or more assets and directly set properties
+on a task. For example `commonJisfy`, `loadFiles` and `writeFiles` are
+task processors as they manipulate multiple assets. `loadFiles` also sets
+the initial assets for a task.
 
 
 ## Projmate filter v GruntJS plugin
@@ -35,7 +53,7 @@ module.exports = (Projmate) ->
         cb ex
 ```
 
-GruntJS plugin. Yikes, almost like sbt v Maven.
+GruntJS plugin
 
 
 ```javascript

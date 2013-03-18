@@ -4,7 +4,7 @@
  * See the file LICENSE for copying permission.
  */
 
-var Async, Fs, Util, _,
+var Async, Fs, Util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -14,23 +14,21 @@ Fs = require("fs");
 
 Util = require("util");
 
-_ = require("lodash");
-
 module.exports = function(Projmate) {
-  var FileAsset, LoadFiles, PmUtils, TaskProcessor, _ref;
+  var FileAsset, LoadFilenames, PmUtils, TaskProcessor, _ref;
   FileAsset = Projmate.FileAsset, TaskProcessor = Projmate.TaskProcessor, PmUtils = Projmate.Utils;
-  return LoadFiles = (function(_super) {
+  return LoadFilenames = (function(_super) {
 
-    __extends(LoadFiles, _super);
+    __extends(LoadFilenames, _super);
 
-    function LoadFiles() {
-      _ref = LoadFiles.__super__.constructor.apply(this, arguments);
+    function LoadFilenames() {
+      _ref = LoadFilenames.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
-    LoadFiles.prototype.extnames = "*";
+    LoadFilenames.prototype.extnames = "*";
 
-    LoadFiles.prototype.process = function(task, options, cb) {
+    LoadFilenames.prototype.process = function(task, options, cb) {
       var cwd, excludePatterns, log, patterns;
       log = this.log;
       cwd = process.cwd();
@@ -39,13 +37,9 @@ module.exports = function(Projmate) {
       return PmUtils.glob(patterns, excludePatterns, {
         nosort: true
       }, function(err, files) {
-        var assets;
+        var assets, file, stat, _i, _len;
         if (err) {
-          console.error("patterns: " + patterns + " " + excludePatterns);
           return cb(err);
-        }
-        if (!files || files.length === 0) {
-          return cb("No files match: " + patterns + " " + excludePatterns);
         }
         assets = [];
         assets.create = function(opts) {
@@ -53,45 +47,31 @@ module.exports = function(Projmate) {
             filename: opts.filename,
             text: opts.text,
             cwd: cwd,
-            parent: assets,
-            stat: opts.stat
+            parent: assets
           }));
         };
         assets.clear = function(opts) {
           return assets.length = 0;
         };
         if (files.length > 0) {
-          return Async.eachSeries(files, function(file, cb) {
-            var stat;
+          for (_i = 0, _len = files.length; _i < _len; _i++) {
+            file = files[_i];
             stat = Fs.statSync(file);
-            if (stat.isDirectory()) {
-              return cb();
-            }
-            if (PmUtils.isFileBinary(file)) {
-              return cb();
-            }
-            return Fs.readFile(file, "utf8", function(err, text) {
-              if (err) {
-                return cb(err);
-              }
-              assets.create({
-                filename: file,
-                text: text,
-                stat: stat
-              });
-              return cb();
+            assets.create({
+              filename: file,
+              text: "",
+              stat: stat
             });
-          }, function(err) {
-            task.assets = assets;
-            return cb();
-          });
+          }
+          task.assets = assets;
+          return cb();
         } else {
           return cb("No files found: " + Util.inspect(patterns));
         }
       });
     };
 
-    return LoadFiles;
+    return LoadFilenames;
 
   })(TaskProcessor);
 };
