@@ -41,6 +41,18 @@ exports.project = (pm) ->
     dist:
       pre: ["tests", "build"]
 
+    addHeaders:
+      desc: "Adds header to source files"
+      files: [
+        "src/lib/**/*.{coffee,js}"
+        "src/test/**/*.{coffee,js}"
+        "src/index.coffee"
+      ]
+      development: [
+        f.addHeader(filename: "doc/copyright.coffee", $if: {extname: ".coffee"})
+        f.addHeader(filename: "doc/copyright.js", $if: {extname: ".js"})
+        f.writeFile
+      ]
 
     updateJsBeautify:
       desc: "Updates from https://github.com/einars/js-beautify"

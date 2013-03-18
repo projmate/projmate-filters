@@ -1,3 +1,8 @@
+##
+# Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
+#
+# See the file LICENSE for copying permission.
+
 {assert, Assertion} = require("chai")
 Assertion.includeStack = true
 Fs = require("fs")
