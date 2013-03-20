@@ -6,7 +6,6 @@
 Async = require("async")
 Fs = require("fs")
 Util = require("util")
-When = require("when")
 _ = require("lodash")
 
 
@@ -23,8 +22,6 @@ module.exports = (Projmate) ->
     # Directly manipulates a task such as its assets property.
     #
     process: (task, options, cb) ->
-      deferred = When.defer()
-
       log = @log
       cwd = process.cwd()
       patterns = task.config.files.include
@@ -33,10 +30,10 @@ module.exports = (Projmate) ->
       PmUtils.glob patterns, excludePatterns, {nosort: true}, (err, files) ->
         if err
           console.error "patterns: #{patterns} #{excludePatterns}"
-          return deferred.reject(err)
+          return cb(err)
 
         if !files || files.length == 0
-          return deferred.reject("No files match: #{patterns} #{excludePatterns}")
+          return cb("No files match: #{patterns} #{excludePatterns}")
 
         assets = []
         assets.create = (opts) ->

@@ -4,7 +4,7 @@
  * See the file LICENSE for copying permission.
  */
 
-var Async, Fs, Util, When, _,
+var Async, Fs, Util, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -13,8 +13,6 @@ Async = require("async");
 Fs = require("fs");
 
 Util = require("util");
-
-When = require("when");
 
 _ = require("lodash");
 
@@ -33,9 +31,8 @@ module.exports = function(Projmate) {
     LoadFiles.prototype.extnames = "*";
 
     LoadFiles.prototype.process = function(task, options, cb) {
-      var cwd, deferred, excludePatterns, log, patterns;
+      var cwd, excludePatterns, log, patterns;
 
-      deferred = When.defer();
       log = this.log;
       cwd = process.cwd();
       patterns = task.config.files.include;
@@ -47,10 +44,10 @@ module.exports = function(Projmate) {
 
         if (err) {
           console.error("patterns: " + patterns + " " + excludePatterns);
-          return deferred.reject(err);
+          return cb(err);
         }
         if (!files || files.length === 0) {
-          return deferred.reject("No files match: " + patterns + " " + excludePatterns);
+          return cb("No files match: " + patterns + " " + excludePatterns);
         }
         assets = [];
         assets.create = function(opts) {
