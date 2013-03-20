@@ -14,9 +14,9 @@ path = require("path");
 
 module.exports = function(Projmate) {
   var Less, Parser, _ref;
+
   Parser = require("less").Parser;
   return Less = (function(_super) {
-
     __extends(Less, _super);
 
     function Less() {
@@ -40,12 +40,14 @@ module.exports = function(Projmate) {
 
     Less.prototype.process = function(asset, options, cb) {
       var ex, parser;
+
       options.filename = asset.filename;
       options.paths = [asset.dirname];
       try {
         parser = new Parser(options);
         return parser.parse(asset.text, function(err, tree) {
           var css, ex;
+
           if (err) {
             return cb(err);
           }

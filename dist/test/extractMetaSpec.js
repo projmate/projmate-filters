@@ -31,6 +31,7 @@ textAsset = function(text) {
 describe("extractMeta", function() {
   it("should extract meta and assign to ._meta", function(done) {
     var asset, pp;
+
     asset = textAsset("---\nfoo: (1)\nbar: \"baz\"\nbaz:  [1, 2, 3]\n---\none\ntwo");
     pp = new ExtractMeta;
     return pp.process(asset, {
@@ -45,6 +46,7 @@ describe("extractMeta", function() {
   });
   it("should extract meta and assign to .__merge", function(done) {
     var asset, pp;
+
     asset = textAsset("---\nfoo: 1\nbar: \"baz\"\nbaz:  [1, 2, 3]\n---\none\ntwo");
     pp = new ExtractMeta;
     return pp.process(asset, {}, function(err, result) {
@@ -57,6 +59,7 @@ describe("extractMeta", function() {
   });
   it("should extract meta from a file", function(done) {
     var asset, pp;
+
     asset = textAsset("Hello");
     pp = new ExtractMeta;
     return pp.process(asset, {
@@ -70,6 +73,7 @@ describe("extractMeta", function() {
   });
   return it("should extract meta from object", function(done) {
     var asset, pp;
+
     asset = textAsset("Hello");
     pp = new ExtractMeta;
     return pp.process(asset, {

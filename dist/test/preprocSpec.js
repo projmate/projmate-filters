@@ -26,6 +26,7 @@ textAsset = function(text) {
 
 process = function(asset, options, cb) {
   var pp;
+
   pp = new PreProcessor;
   return pp.process(asset, options, cb);
 };
@@ -33,6 +34,7 @@ process = function(asset, options, cb) {
 describe("preproc", function() {
   it("should return original text in absence of directives", function(done) {
     var asset;
+
     asset = textAsset("foobar");
     return process(asset, {}, function(err, result) {
       assert.ifError(err);
@@ -42,6 +44,7 @@ describe("preproc", function() {
   });
   return it("should use defines", function(done) {
     var asset;
+
     asset = textAsset("#ifdef FOO\nbar\n#else\nbad\n#endif\n#define WIN\n#ifdef WIN\nwindows\n#endif");
     return process(asset, {
       FOO: 1

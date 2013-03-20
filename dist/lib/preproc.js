@@ -14,8 +14,8 @@ _ = require("lodash");
 
 module.exports = function(Projmate) {
   var PreProcessor, _ref;
-  return PreProcessor = (function(_super) {
 
+  return PreProcessor = (function(_super) {
     __extends(PreProcessor, _super);
 
     function PreProcessor() {
@@ -27,6 +27,7 @@ module.exports = function(Projmate) {
 
     PreProcessor.prototype.process = function(asset, options, cb) {
       var ex, result;
+
       try {
         result = pp(asset.text, options);
         return cb(null, result.join("\n"));

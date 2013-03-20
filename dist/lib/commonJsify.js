@@ -18,9 +18,9 @@ Path = require("path");
 
 module.exports = function(Projmate) {
   var CommonJsify, TaskProcessor, Utils;
+
   TaskProcessor = Projmate.TaskProcessor, Utils = Projmate.Utils;
   return CommonJsify = (function(_super) {
-
     __extends(CommonJsify, _super);
 
     CommonJsify.prototype.extnames = "*";
@@ -31,6 +31,7 @@ module.exports = function(Projmate) {
 
     CommonJsify.prototype.process = function(task, options, cb) {
       var assets, baseDir, basename, dirname, extname, identifier, index, packageName, path, result, text, _i, _len, _ref;
+
       identifier = options.identifier || "require";
       assets = task.assets;
       packageName = options.packageName || "app";

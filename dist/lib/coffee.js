@@ -14,9 +14,9 @@ _ = require("lodash");
 
 module.exports = function(Projmate) {
   var Coffee, Filter, Utils, _ref;
+
   Filter = Projmate.Filter, Utils = Projmate.Utils;
   return Coffee = (function(_super) {
-
     __extends(Coffee, _super);
 
     function Coffee() {
@@ -30,6 +30,7 @@ module.exports = function(Projmate) {
 
     Coffee.prototype.process = function(asset, options, cb) {
       var ex, js, result, sourceMap;
+
       if (options.map != null) {
         options.sourceMap = options.map;
       }

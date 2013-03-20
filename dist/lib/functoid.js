@@ -9,8 +9,8 @@ var __hasProp = {}.hasOwnProperty,
 
 module.exports = function(Projmate) {
   var Functoid, _ref;
-  return Functoid = (function(_super) {
 
+  return Functoid = (function(_super) {
     __extends(Functoid, _super);
 
     function Functoid() {
@@ -22,6 +22,7 @@ module.exports = function(Projmate) {
 
     Functoid.prototype.process = function(asset, options, cb) {
       var ex, fn, result;
+
       fn = options.process;
       if (typeof fn !== "function") {
         return cb("Options.process is required and must be a function(asset, options[, cb])");

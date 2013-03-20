@@ -14,8 +14,8 @@ _ = require("lodash");
 
 module.exports = function(Projmate) {
   var Uglify, _ref;
-  return Uglify = (function(_super) {
 
+  return Uglify = (function(_super) {
     __extends(Uglify, _super);
 
     function Uglify() {
@@ -29,6 +29,7 @@ module.exports = function(Projmate) {
 
     Uglify.prototype.process = function(asset, options, cb) {
       var ex, result;
+
       options = _.defaults(options, {
         fromString: true
       });

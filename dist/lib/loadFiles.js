@@ -4,7 +4,7 @@
  * See the file LICENSE for copying permission.
  */
 
-var Async, Fs, Util, _,
+var Async, Fs, Util, When, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -14,13 +14,15 @@ Fs = require("fs");
 
 Util = require("util");
 
+When = require("when");
+
 _ = require("lodash");
 
 module.exports = function(Projmate) {
   var FileAsset, LoadFiles, PmUtils, TaskProcessor, _ref;
+
   FileAsset = Projmate.FileAsset, TaskProcessor = Projmate.TaskProcessor, PmUtils = Projmate.Utils;
   return LoadFiles = (function(_super) {
-
     __extends(LoadFiles, _super);
 
     function LoadFiles() {
@@ -31,7 +33,9 @@ module.exports = function(Projmate) {
     LoadFiles.prototype.extnames = "*";
 
     LoadFiles.prototype.process = function(task, options, cb) {
-      var cwd, excludePatterns, log, patterns;
+      var cwd, deferred, excludePatterns, log, patterns;
+
+      deferred = When.defer();
       log = this.log;
       cwd = process.cwd();
       patterns = task.config.files.include;
@@ -40,12 +44,13 @@ module.exports = function(Projmate) {
         nosort: true
       }, function(err, files) {
         var assets;
+
         if (err) {
           console.error("patterns: " + patterns + " " + excludePatterns);
-          return cb(err);
+          return deferred.reject(err);
         }
         if (!files || files.length === 0) {
-          return cb("No files match: " + patterns + " " + excludePatterns);
+          return deferred.reject("No files match: " + patterns + " " + excludePatterns);
         }
         assets = [];
         assets.create = function(opts) {
@@ -63,6 +68,7 @@ module.exports = function(Projmate) {
         if (files.length > 0) {
           return Async.eachSeries(files, function(file, cb) {
             var stat;
+
             stat = Fs.statSync(file);
             if (stat.isDirectory()) {
               return cb();

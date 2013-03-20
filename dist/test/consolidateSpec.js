@@ -30,6 +30,7 @@ describe("template", function() {
   return describe("underscore", function() {
     return it("should render as the default with no engine specified", function(done) {
       var asset, pp;
+
       asset = textAsset("<div><%=name%></div>");
       pp = new Template;
       return pp.process(asset, {
