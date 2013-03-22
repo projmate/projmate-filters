@@ -18,31 +18,28 @@
       Cat.prototype.extnames = "*";
 
       Cat.prototype.process = function(task, options, cb) {
-        var asset, cwd, filename, first, join, script, _i, _len, _ref1;
+        var filename, first, join, script;
 
-        if (task.assets.length < 1) {
+        if (task.assets.isEmpty()) {
           return cb();
         }
         join = options.join || "";
         filename = options.filename;
         script = "";
         first = true;
-        _ref1 = task.assets;
-        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-          asset = _ref1[_i];
+        task.assets.each(function(asset) {
           if (join.length > 0 && !first) {
             script += join;
           }
           script += asset.text;
           first = false;
-        }
-        cwd = task.assets[0].cwd;
+          return true;
+        });
         task.assets.clear();
-        task.assets.create({
+        return cb(null, task.assets.create({
           filename: filename,
           text: script
-        });
-        return cb();
+        }));
       };
 
       return Cat;

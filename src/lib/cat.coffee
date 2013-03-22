@@ -18,22 +18,21 @@ module.exports = (Projmate) ->
     # }
     #
     process: (task, options, cb) ->
-      return cb() if task.assets.length < 1
+      return cb() if task.assets.isEmpty()
 
       join = options.join || ""
       filename = options.filename
 
       script = ""
       first = true
-      for asset in task.assets
+      task.assets.each (asset) ->
         if join.length > 0 and not first
           script += join
         script += asset.text
         first = false
+        true # each() iterator needs this to continue
 
       # File contents were concatenated, change assets to single asset
-      cwd = task.assets[0].cwd
       task.assets.clear()
-      task.assets.create filename: filename, text: script
-      cb()
+      cb null, task.assets.create(filename: filename, text: script)
 

@@ -18,13 +18,13 @@ module.exports = (Projmate) ->
   # added support for modules.
   #
   class CommonJsify extends TaskProcessor
-    extnames: "*"
+    extnames: ".js"
     constructor: ->
       super
 
     process: (task, options, cb) ->
       identifier = options.identifier || "require"
-      assets = task.assets
+      assets = task.assets.array()
       packageName = options.packageName || "app"
       baseDir = Utils.unixPath(options.baseDir)
 
@@ -101,7 +101,9 @@ module.exports = (Projmate) ->
       """
 
       index = 0
-      for {dirname, basename, extname, text} in assets
+      for asset  in assets
+        {dirname, basename, extname, text} = asset
+        continue if extname == ".map"
         # path is used as the key since it is not on the filesystem
         path = Utils.unixPath(Path.join(dirname, Path.basename(basename, extname)))
         # make relative to baseDir
@@ -112,6 +114,9 @@ module.exports = (Projmate) ->
         result += if index++ is 0 then "" else ", "
         result += JSON.stringify(path)
         result += ": function(exports, require, module, __filename, __dirname) {#{text}\n}"
+
+        # track this asset for deletion since it does not need to be written out
+        asset.markDelete = true
 
       result += """
         }, '#{packageName}');\n
@@ -125,7 +130,9 @@ module.exports = (Projmate) ->
     # All assets were combined into a single asset. Update the task's asset property
     # to reflect a single asset using filename from `options.filename`.
     reduceAssets: (task, options, script) ->
-      task.assets.clear()
+
+      # keep everything but JavaScript files which were merged above and written below
+      task.assets.removeAssets (asset) -> asset.markDelete
       task.assets.create filename: options.filename, text: script
 
 

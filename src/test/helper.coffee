@@ -2,7 +2,7 @@
 Assertion.includeStackTrace = true
 
 Projmate = require("projmate-core/dist")
-{createAssets} = require("projmate-core/dist/lib/run/assets")
+Assets = require("projmate-core/dist/lib/run/assets")
 
 module.exports =
   assert: assert
@@ -25,5 +25,7 @@ module.exports =
       filter.process asset, options, cb
 
   textAsset: (text) ->
-    assets = createAssets()
+    assets = new Assets
     assets.create filename: "notused.txt", text: text
+
+  Assets: Assets

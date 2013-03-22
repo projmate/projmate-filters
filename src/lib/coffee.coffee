@@ -17,10 +17,10 @@ module.exports = (Projmate) ->
   class Coffee extends Filter
     extnames: [".coffee", ".litcoffee", ".coffee.md"]
     outExtname: ".js"
-    defaults:
-      # source maps are a good thing in development
-      development: {sourceMap: true}
-      production: {sourceMap: false}
+    # defaults:
+    #   # source maps are a good thing in development
+    #   development: {sourceMap: true}
+    #   production: {sourceMap: false}
 
     process: (asset, options, cb) ->
       if options.sourceMap

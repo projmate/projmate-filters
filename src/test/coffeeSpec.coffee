@@ -15,13 +15,13 @@ describe "Coffee", ->
   it "should create sourcemaps", (done) ->
     asset = textAsset("a=1")
     assets = asset.parent
-    assert.equal asset.parent.length, 1
+    assert.equal asset.parent.size(), 1
 
-    coffee.process asset, {bare: true, sourceMap: true}, (err, result) ->
+    coffee.process asset, {bare: true, sourceMap: true, $inspect: true}, (err, result) ->
       assert.ifError err
       # should have a javascript asset and map asset
-      assert.equal assets.length, 2
+      assert.equal assets.size(), 2
       assert.isTrue result.indexOf("sourceMappingURL=notused.map") > 0
-      assert.isTrue assets[1].text.indexOf('"mappings"') > 0
-      assert.equal assets[1].extname, ".map"
+      assert.isTrue assets.at(1).text.indexOf('"mappings"') > 0
+      assert.equal assets.at(1).extname, ".map"
       done()
