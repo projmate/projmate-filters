@@ -5,6 +5,8 @@
 
 coffee  = require("coffee-script")
 _ = require ("lodash")
+{defer} = require("when")
+Path = require("path")
 
 
 module.exports = (Projmate) ->
@@ -15,11 +17,18 @@ module.exports = (Projmate) ->
   class Coffee extends Filter
     extnames: [".coffee", ".litcoffee", ".coffee.md"]
     outExtname: ".js"
+    defaults:
+      # source maps are a good thing in development
+      development: {sourceMap: true}
+      production: {sourceMap: false}
 
     process: (asset, options, cb) ->
-      options.sourceMap = options.map if options.map?
       if options.sourceMap
         options.filename = asset.filename
+        # the coffee file in sourcemap
+        options.sourceFiles = [asset.basename]
+        # the generate js file
+        options.generatedFile = Utils.changeExtname(asset.basename, ".js")
 
       try
         result = coffee.compile(asset.text, options)
@@ -27,8 +36,27 @@ module.exports = (Projmate) ->
           js = result.js
           sourceMap = result.v3SourceMap
 
+          # Add sourcemap line
+          # Webstorm 6 doesn't like this style and you generated map and js files must be in same directory
+          # js += """
+          # /*
+          # //@ sourceMappingURL=#{Utils.changeExtname(asset.filename, '.map')}
+          # */
+          # """
+
+          js += """\n
+          //@ sourceMappingURL=#{Utils.changeExtname(asset.basename, '.map')}
+          """
+
           # add new asset for map
-          asset.parent.create filename: Utils.changeExtname(asset.filename, ".map"), text: sourceMap
+          mapAsset = asset.parent.create(filename: Utils.changeExtname(asset.filename, ".map"), text: sourceMap)
+
+          # The filename for source mapping is unknown until the time of writing. Replace it with
+          # relative path.
+          mapAsset.whenWriting ->
+            relPath = Path.relative(Path.dirname(asset.filename), asset.originalFilename)
+            mapAsset.text = mapAsset.text.replace(Path.basename(asset.originalFilename), relPath)
+
         else
           js = result
 

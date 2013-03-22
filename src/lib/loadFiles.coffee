@@ -12,6 +12,7 @@ _ = require("lodash")
 module.exports = (Projmate) ->
   {FileAsset, TaskProcessor, Utils:PmUtils} = Projmate
 
+  ##
   # Loads files based on a task's `files` property.
   #
   # This is usually invoked as the first filter of a pipeline.
@@ -26,6 +27,7 @@ module.exports = (Projmate) ->
       cwd = process.cwd()
       patterns = task.config.files.include
       excludePatterns = task.config.files.exclude
+      {assets} = task
 
       PmUtils.glob patterns, excludePatterns, {nosort: true}, (err, files) ->
         if err
@@ -35,19 +37,10 @@ module.exports = (Projmate) ->
         if !files || files.length == 0
           return cb("No files match: #{patterns} #{excludePatterns}")
 
-        assets = []
-        assets.create = (opts) ->
-          assets.push new FileAsset
-            filename: opts.filename
-            text: opts.text,
-            cwd: cwd
-            parent: assets
-            stat: opts.stat
-        assets.clear = (opts) ->
-          assets.length = 0
-
         if files.length > 0
           Async.eachSeries files, (file, cb) ->
+            if file.indexOf("./") == 0 || file.indexOf(".\\") == 0
+              file = file.slice(2)
 
             # Ignore directories
             # TODO performance issues by stating each file?
@@ -60,11 +53,9 @@ module.exports = (Projmate) ->
 
             Fs.readFile file, "utf8", (err, text) ->
               return cb(err) if err
-              assets.create filename: file, text: text, stat: stat
+              assets.create filename: file, text: text, stat: stat, cwd: cwd
               cb()
-          , (err) ->
-            task.assets = assets
-            cb()
+          , cb # async eachSeries
         else
           cb "No files found: " + Util.inspect(patterns)
 

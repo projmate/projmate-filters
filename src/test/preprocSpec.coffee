@@ -3,12 +3,9 @@
 #
 # See the file LICENSE for copying permission.
 
-{assert} = require("chai")
+{assert, ctorFactory, FileAsset} = require("./helper")
 
-factory = require("../lib/preproc")
-Projmate = require("projmate-core/dist")
-{FileAsset} = Projmate
-PreProcessor = factory(Projmate)
+PreProcessor = ctorFactory("../lib/preproc")
 
 textAsset = (text) ->
   new FileAsset(filename: "notused.txt", text: text, parent: [])

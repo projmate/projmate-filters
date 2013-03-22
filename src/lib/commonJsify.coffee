@@ -111,7 +111,7 @@ module.exports = (Projmate) ->
 
         result += if index++ is 0 then "" else ", "
         result += JSON.stringify(path)
-        result += ": function(exports, require, module, __filename, __dirname) {#{text}}"
+        result += ": function(exports, require, module, __filename, __dirname) {#{text}\n}"
 
       result += """
         }, '#{packageName}');\n

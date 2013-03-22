@@ -26,22 +26,15 @@ module.exports = (Projmate) ->
       cwd = process.cwd()
       patterns = task.config.files.include
       excludePatterns = task.config.files.exclude
+      {assets} = task
 
       PmUtils.glob patterns, excludePatterns, {nosort: true}, (err, files) ->
         return cb(err) if err
 
-        assets = []
-        assets.create = (opts) ->
-          assets.push new FileAsset(filename: opts.filename, text: opts.text, cwd: cwd, parent: assets)
-        assets.clear = (opts) ->
-          assets.length = 0
-
         if files.length > 0
           for file in files
             stat = Fs.statSync(file)
-            assets.create filename: file, text: "", stat: stat
-
-          task.assets = assets
+            assets.create filename: file, text: "", stat: stat, cwd: cwd
           cb()
         else
           cb "No files found: " + Util.inspect(patterns)

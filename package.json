@@ -26,7 +26,8 @@
     "uglify-js": "~2.2.5",
     "consolidate": "~0.8.0",
     "dustjs-linkedin": "~1.2.1",
-    "js-beautify": "~0.3.5"
+    "js-beautify": "~0.3.5",
+    "when": "~2.0.0"
   },
   "keywords": [
     "Projmate",
