@@ -9,8 +9,17 @@ fs    = require('fs')
 Path = require("path")
 
 
+# Gets the number of lines in `s`
+#
+numberOfLines = (s) ->
+  matches = s.match(/(\r|\n)/g)
+  # last line doesn't have a \n
+  matches.length + 1
+
+
 module.exports = (Projmate) ->
   {TaskProcessor, Utils} = Projmate
+  SourceMap = require("../support/sourceMap")
 
   # Reduces a task's assets into a single browser-side CommonJS-like module asset.
   #
@@ -104,6 +113,9 @@ module.exports = (Projmate) ->
       for asset  in assets
         {dirname, basename, extname, text} = asset
         continue if extname == ".map"
+
+
+
         # path is used as the key since it is not on the filesystem
         path = Utils.unixPath(Path.join(dirname, Path.basename(basename, extname)))
         # make relative to baseDir
@@ -113,26 +125,87 @@ module.exports = (Projmate) ->
 
         result += if index++ is 0 then "" else ", "
         result += JSON.stringify(path)
-        result += ": function(exports, require, module, __filename, __dirname) {#{text}\n}"
+        result += ": function(exports, require, module, __filename, __dirname) {\n"
 
-        # track this asset for deletion since it does not need to be written out
-        asset.markDelete = true
+        # track where this asset was inserted to adjust the source maps (if any later)
+        asset.sourceMapOffset = numberOfLines(result) - 1
+        text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "")
+
+        result += "#{text}\n}"
 
       result += """
         }, '#{packageName}');\n
       """
 
-      @reduceAssets task, options, result
+      @mapAssets task, options, result
       cb null
-
 
     ##
     # All assets were combined into a single asset. Update the task's asset property
     # to reflect a single asset using filename from `options.filename`.
-    reduceAssets: (task, options, script) ->
+    mapAssets: (task, options, script) ->
+
+      # Remap all indiviual source maps into a single source map using the
+      # offsets collected above
+      generator = SourceMap.createGenerator(options.filename)
+      for asset in task.assets.array()
+        if asset.sourceMapOffset?
+          mapFilename = Utils.changeExtname(asset.filename, ".map")
+          console.log "Searching for map #{mapFilename}"
+          mapAsset = task.assets.detect (map) -> map.filename == mapFilename
+          if mapAsset
+            console.log "map found"
+            json = mapAsset.text
+            mapAsset.markDelete = true
+          else
+            console.log "map not found, creating"
+            unmappedGenerator = SourceMap.createGenerator(asset.filename)
+            unmappedGenerator.setSourceContent(asset.basename, asset.text)
+            json = unmappedGenerator.toJSON()
+
+          SourceMap.rebase generator, json, asset.sourceMapOffset
 
       # keep everything but JavaScript files which were merged above and written below
       task.assets.removeAssets (asset) -> asset.markDelete
-      task.assets.create filename: options.filename, text: script
+
+
+
+      script += """
+      /*
+      //@ sourceMappingURL=#{Utils.changeExtname(Path.basename(options.filename), ".map")}
+      */
+      """
+      # create the CommonJS module
+      asset = task.assets.create
+        filename: options.filename
+        text: script
+
+      console.log "=== Module: #{asset.filename}"
+
+      # create the sourcemap
+      asset = task.assets.create
+        filename: Utils.changeExtname(options.filename, ".map")
+        text: generator.toJSON()
+
+      asset.whenWriting ->
+        # TODO this needs to come from the asset created above, but
+        # the name is not know. For now make it .js.
+        asset.text.file = Utils.changeExtname(asset.basename, ".js")
+        asset.text = JSON.stringify(asset.text)
+
+        # relPath = Path.relative(Path.dirname(asset.filename), asset.originalFilename)
+        # mapAsset.text = mapAsset.text.replace(Path.basename(asset.originalFilename), relPath)
+
+      console.log "=== Mapfile: #{asset.filename}"
+
+
+
+
+
+
+
+
+
+
 
 
