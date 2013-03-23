@@ -23,13 +23,13 @@ SourceMap = {
     content = Fs.readFileSync(file, "utf8");
     return new SourceMapConsumer(content);
   },
-  rebase: function(generator, map, offsetLine) {
+  rebase: function(generator, map, source, offsetLine) {
     var consumer;
 
     consumer = new SourceMapConsumer(map);
     return consumer.eachMapping(function(item) {
       return generator.addMapping({
-        source: item.source,
+        source: source,
         generated: {
           line: item.generatedLine + offsetLine,
           column: item.generatedColumn

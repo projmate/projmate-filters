@@ -6,7 +6,7 @@
 _     = require("lodash")
 async = require('async')
 fs    = require('fs')
-Path = require("path")
+Path = require('path')
 
 
 # Gets the number of lines in `s`
@@ -166,6 +166,7 @@ module.exports = (Projmate) ->
         # Remap all individual source maps into a single source map using the
         # offsets collected above
         generator = SourceMap.createGenerator(options.filename)
+
         for asset in task.assets.array()
           if asset.sourceMapOffset?
             mapFilename = Utils.changeExtname(asset.filename, ".map")
@@ -178,7 +179,10 @@ module.exports = (Projmate) ->
               unmappedGenerator.setSourceContent(asset.basename, asset.text)
               json = unmappedGenerator.toJSON()
 
-            SourceMap.rebase generator, json, asset.sourceMapOffset
+            source = Utils.lchomp(asset.originalFilename, options.baseDir)
+            source = Utils.lchomp(source, "/")
+
+            SourceMap.rebase generator, json, source, asset.sourceMapOffset
 
         # create the sourcemap asset
         mapAsset = task.assets.create
@@ -187,11 +191,11 @@ module.exports = (Projmate) ->
 
         # wait until the asset is beign written to change the file
         mapAsset.whenWriting ->
+          sourceRoot = Path.relative(mapAsset.dirname, options.baseDir)
+          mapAsset.text.sourceRoot = sourceRoot
           mapAsset.text.file = Utils.changeExtname(mapAsset.basename, ".js")
           mapAsset.text = JSON.stringify(mapAsset.text)
 
-          # relPath = Path.relative(Path.dirname(asset.filename), asset.originalFilename)
-          # mapAsset.text = mapAsset.text.replace(Path.basename(asset.originalFilename), relPath)
 
       # keep everything but JavaScript files which were merged above and written below
       task.assets.removeAssets (asset) -> asset.markDelete

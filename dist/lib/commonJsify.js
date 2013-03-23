@@ -14,7 +14,7 @@ async = require('async');
 
 fs = require('fs');
 
-Path = require("path");
+Path = require('path');
 
 numberOfLines = function(s) {
   var matches;
@@ -84,7 +84,7 @@ module.exports = function(Projmate) {
     };
 
     CommonJsify.prototype.mapAssets = function(task, options, script) {
-      var asset, generator, json, mapAsset, mapFilename, unmappedGenerator, _i, _len, _ref;
+      var asset, generator, json, mapAsset, mapFilename, source, unmappedGenerator, _i, _len, _ref;
 
       if (options.sourceMap) {
         script += "/*\n//@ sourceMappingURL=" + (Utils.changeExtname(Path.basename(options.filename), ".map")) + "\n*/";
@@ -105,7 +105,9 @@ module.exports = function(Projmate) {
               unmappedGenerator.setSourceContent(asset.basename, asset.text);
               json = unmappedGenerator.toJSON();
             }
-            SourceMap.rebase(generator, json, asset.sourceMapOffset);
+            source = Utils.lchomp(asset.originalFilename, options.baseDir);
+            source = Utils.lchomp(source, "/");
+            SourceMap.rebase(generator, json, source, asset.sourceMapOffset);
           }
         }
         mapAsset = task.assets.create({
@@ -113,6 +115,10 @@ module.exports = function(Projmate) {
           text: generator.toJSON()
         });
         mapAsset.whenWriting(function() {
+          var sourceRoot;
+
+          sourceRoot = Path.relative(mapAsset.dirname, options.baseDir);
+          mapAsset.text.sourceRoot = sourceRoot;
           mapAsset.text.file = Utils.changeExtname(mapAsset.basename, ".js");
           return mapAsset.text = JSON.stringify(mapAsset.text);
         });
