@@ -30,16 +30,26 @@
       CommonJsify.prototype.extnames = ".js";
 
       function CommonJsify() {
+        this.extnames = ".js";
+        this.defaults = {
+          development: {
+            sourceMap: true
+          },
+          production: {
+            sourceMap: false
+          }
+        };
         CommonJsify.__super__.constructor.apply(this, arguments);
       }
 
       CommonJsify.prototype.process = function(task, options, cb) {
-        var asset, assets, baseDir, basename, dirname, extname, identifier, index, packageName, path, result, text, _i, _len;
+        var asset, assets, baseDir, basename, dirname, extname, identifier, index, packageName, path, result, sourceMap, text, _i, _len;
 
         identifier = options.identifier || "require";
         assets = task.assets.array();
         packageName = options.packageName || "app";
         baseDir = Utils.unixPath(options.baseDir);
+        sourceMap = options.sourceMap;
         if (!baseDir) {
           return cb("`options.baseDir` is required.");
         }
@@ -61,6 +71,7 @@
           result += ": function(exports, require, module, __filename, __dirname) {\n";
           asset.sourceMapOffset = numberOfLines(result) - 1;
           text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "");
+          asset.markDelete = true;
           result += "" + text + "\n}";
         }
         result += "}, '" + packageName + "');\n";
@@ -71,47 +82,44 @@
       CommonJsify.prototype.mapAssets = function(task, options, script) {
         var asset, generator, json, mapAsset, mapFilename, unmappedGenerator, _i, _len, _ref;
 
-        generator = SourceMap.createGenerator(options.filename);
-        _ref = task.assets.array();
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          asset = _ref[_i];
-          if (asset.sourceMapOffset != null) {
-            mapFilename = Utils.changeExtname(asset.filename, ".map");
-            console.log("Searching for map " + mapFilename);
-            mapAsset = task.assets.detect(function(map) {
-              return map.filename === mapFilename;
-            });
-            if (mapAsset) {
-              console.log("map found");
-              json = mapAsset.text;
-              mapAsset.markDelete = true;
-            } else {
-              console.log("map not found, creating");
-              unmappedGenerator = SourceMap.createGenerator(asset.filename);
-              unmappedGenerator.setSourceContent(asset.basename, asset.text);
-              json = unmappedGenerator.toJSON();
+        if (options.sourceMap) {
+          script += "/*\n//@ sourceMappingURL=" + (Utils.changeExtname(Path.basename(options.filename), ".map")) + "\n*/";
+          generator = SourceMap.createGenerator(options.filename);
+          _ref = task.assets.array();
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            asset = _ref[_i];
+            if (asset.sourceMapOffset != null) {
+              mapFilename = Utils.changeExtname(asset.filename, ".map");
+              mapAsset = task.assets.detect(function(map) {
+                return map.filename === mapFilename;
+              });
+              if (mapAsset) {
+                json = mapAsset.text;
+                mapAsset.markDelete = true;
+              } else {
+                unmappedGenerator = SourceMap.createGenerator(asset.filename);
+                unmappedGenerator.setSourceContent(asset.basename, asset.text);
+                json = unmappedGenerator.toJSON();
+              }
+              SourceMap.rebase(generator, json, asset.sourceMapOffset);
             }
-            SourceMap.rebase(generator, json, asset.sourceMapOffset);
           }
+          mapAsset = task.assets.create({
+            filename: Utils.changeExtname(options.filename, ".map"),
+            text: generator.toJSON()
+          });
+          mapAsset.whenWriting(function() {
+            mapAsset.text.file = Utils.changeExtname(mapAsset.basename, ".js");
+            return mapAsset.text = JSON.stringify(mapAsset.text);
+          });
         }
         task.assets.removeAssets(function(asset) {
           return asset.markDelete;
         });
-        script += "/*\n//@ sourceMappingURL=" + (Utils.changeExtname(Path.basename(options.filename), ".map")) + "\n*/";
-        asset = task.assets.create({
+        return asset = task.assets.create({
           filename: options.filename,
           text: script
         });
-        console.log("=== Module: " + asset.filename);
-        asset = task.assets.create({
-          filename: Utils.changeExtname(options.filename, ".map"),
-          text: generator.toJSON()
-        });
-        asset.whenWriting(function() {
-          asset.text.file = Utils.changeExtname(asset.basename, ".js");
-          return asset.text = JSON.stringify(asset.text);
-        });
-        return console.log("=== Mapfile: " + asset.filename);
       };
 
       return CommonJsify;

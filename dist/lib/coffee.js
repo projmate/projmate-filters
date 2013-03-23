@@ -28,6 +28,15 @@
 
       Coffee.prototype.outExtname = ".js";
 
+      Coffee.prototype.defaults = {
+        development: {
+          sourceMap: true
+        },
+        production: {
+          sourceMap: false
+        }
+      };
+
       Coffee.prototype.process = function(asset, options, cb) {
         var ex, js, mapAsset, result, sourceMap;
 
