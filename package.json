@@ -10,8 +10,8 @@
   "author": "Mario Gutierrez <mario@projmate.com> (http://projmate.com)",
   "license": "MIT",
   "devDependencies": {
-    "projmate-shell": "~0.0.6",
-    "projmate-core": "~0.0.8",
+    "projmate-shell": "git://github.com/projmate/projmate-shell#develop",
+    "projmate-core": "git://github.com/projmate/projmate-core#develop",
     "mocha": "~1.8.1",
     "chai": "~1.5.0",
     "coffee-script": "~1.6.2",

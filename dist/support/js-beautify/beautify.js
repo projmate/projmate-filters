@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
+ *
+ * See the file LICENSE for copying permission.
+ */
+
 /*jslint onevar: false, plusplus: false */
 /*jshint curly:true, eqeqeq:true, laxbreak:true, noempty:false */
 /*

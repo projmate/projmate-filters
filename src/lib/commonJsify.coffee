@@ -201,15 +201,3 @@ module.exports = (Projmate) ->
         filename: options.filename
         text: script
 
-
-
-
-
-
-
-
-
-
-
-
-
