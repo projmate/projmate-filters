@@ -136,3 +136,6 @@ module.exports = function(Projmate) {
 
   })(TaskProcessor);
 };
+/*
+//@ sourceMappingURL=src/lib/commonJsify.map
+*/

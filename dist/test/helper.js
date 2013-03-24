@@ -49,3 +49,6 @@ module.exports = {
   },
   Assets: Assets
 };
+/*
+//@ sourceMappingURL=src/test/helper.map
+*/

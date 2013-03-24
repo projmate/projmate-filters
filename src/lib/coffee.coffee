@@ -37,15 +37,11 @@ module.exports = (Projmate) ->
           sourceMap = result.v3SourceMap
 
           # Add sourcemap line
-          # Webstorm 6 doesn't like this style and you generated map and js files must be in same directory
-          # js += """
-          # /*
-          # //@ sourceMappingURL=#{Utils.changeExtname(asset.filename, '.map')}
-          # */
-          # """
-
-          js += """\n
-          //@ sourceMappingURL=#{Utils.changeExtname(asset.basename, '.map')}
+          js += """
+          \n
+          /*
+          //@ sourceMappingURL=#{Utils.changeExtname(asset.filename, '.map')}
+          */
           """
 
           # add new asset for map
@@ -63,3 +59,4 @@ module.exports = (Projmate) ->
         cb null, js
       catch ex
         cb ex
+

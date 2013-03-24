@@ -46,3 +46,6 @@ describe("Cat", function() {
     });
   });
 });
+/*
+//@ sourceMappingURL=src/test/catSpec.map
+*/

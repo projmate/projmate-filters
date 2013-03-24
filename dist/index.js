@@ -5,3 +5,6 @@
  */
 
 module.exports = require("./lib/index");
+/*
+//@ sourceMappingURL=src/index.map
+*/
