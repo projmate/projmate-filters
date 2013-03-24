@@ -47,5 +47,5 @@ module.exports = function(Projmate) {
 
 
 /*
-//@ sourceMappingURL=src/lib/functoid.map
+//@ sourceMappingURL=functoid.map
 */

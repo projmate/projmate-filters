@@ -52,5 +52,5 @@ describe("preproc", function() {
 
 
 /*
-//@ sourceMappingURL=src/test/preprocSpec.map
+//@ sourceMappingURL=preprocSpec.map
 */

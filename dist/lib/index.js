@@ -24,5 +24,5 @@ exports['writeFile'] = require("./writeFiles");
 
 
 /*
-//@ sourceMappingURL=src/lib/index.map
+//@ sourceMappingURL=index.map
 */

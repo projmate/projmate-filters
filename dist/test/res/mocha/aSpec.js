@@ -20,5 +20,5 @@ describe("aSpec", function() {
 
 
 /*
-//@ sourceMappingURL=src/test/res/mocha/aSpec.map
+//@ sourceMappingURL=aSpec.map
 */

@@ -46,5 +46,5 @@ describe("template", function() {
 
 
 /*
-//@ sourceMappingURL=src/test/consolidateSpec.map
+//@ sourceMappingURL=consolidateSpec.map
 */

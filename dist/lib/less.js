@@ -72,5 +72,5 @@ module.exports = function(Projmate) {
 
 
 /*
-//@ sourceMappingURL=src/lib/less.map
+//@ sourceMappingURL=less.map
 */

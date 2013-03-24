@@ -46,5 +46,5 @@ describe("Coffee", function() {
 
 
 /*
-//@ sourceMappingURL=src/test/coffeeSpec.map
+//@ sourceMappingURL=coffeeSpec.map
 */

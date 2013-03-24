@@ -44,5 +44,5 @@ module.exports = function(Projmate) {
 
 
 /*
-//@ sourceMappingURL=src/lib/preproc.map
+//@ sourceMappingURL=preproc.map
 */

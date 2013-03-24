@@ -40,7 +40,7 @@ module.exports = (Projmate) ->
           js += """
           \n
           /*
-          //@ sourceMappingURL=#{Utils.changeExtname(asset.filename, '.map')}
+          //@ sourceMappingURL=#{Utils.changeExtname(asset.basename, '.map')}
           */
           """
 

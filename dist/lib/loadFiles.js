@@ -88,5 +88,5 @@ module.exports = function(Projmate) {
 
 
 /*
-//@ sourceMappingURL=src/lib/loadFiles.map
+//@ sourceMappingURL=loadFiles.map
 */

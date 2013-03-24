@@ -91,5 +91,5 @@ describe("extractMeta", function() {
 
 
 /*
-//@ sourceMappingURL=src/test/extractMetaSpec.map
+//@ sourceMappingURL=extractMetaSpec.map
 */

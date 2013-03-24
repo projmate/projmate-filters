@@ -49,5 +49,5 @@ module.exports = function(Projmate) {
 
 
 /*
-//@ sourceMappingURL=src/lib/uglify.map
+//@ sourceMappingURL=uglify.map
 */

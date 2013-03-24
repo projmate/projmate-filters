@@ -45,5 +45,5 @@ describe("Mocha", function() {
 
 
 /*
-//@ sourceMappingURL=src/test/mochaSpec.map
+//@ sourceMappingURL=mochaSpec.map
 */

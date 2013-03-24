@@ -62,5 +62,5 @@ module.exports = SourceMap;
 
 
 /*
-//@ sourceMappingURL=src/support/sourceMap.map
+//@ sourceMappingURL=sourceMap.map
 */

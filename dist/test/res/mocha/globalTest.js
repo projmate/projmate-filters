@@ -21,5 +21,5 @@ describe("bTest", function() {
 
 
 /*
-//@ sourceMappingURL=src/test/res/mocha/globalTest.map
+//@ sourceMappingURL=globalTest.map
 */

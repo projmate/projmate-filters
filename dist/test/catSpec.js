@@ -49,5 +49,5 @@ describe("Cat", function() {
 
 
 /*
-//@ sourceMappingURL=src/test/catSpec.map
+//@ sourceMappingURL=catSpec.map
 */

@@ -54,7 +54,7 @@ module.exports = function(Projmate) {
         if (result.v3SourceMap) {
           js = result.js;
           sourceMap = result.v3SourceMap;
-          js += "\n\n/*\n//@ sourceMappingURL=" + (Utils.changeExtname(asset.filename, '.map')) + "\n*/";
+          js += "\n\n/*\n//@ sourceMappingURL=" + (Utils.changeExtname(asset.basename, '.map')) + "\n*/";
           mapAsset = asset.parent.create({
             filename: Utils.changeExtname(asset.filename, ".map"),
             text: sourceMap
@@ -82,5 +82,5 @@ module.exports = function(Projmate) {
 
 
 /*
-//@ sourceMappingURL=src/lib/coffee.map
+//@ sourceMappingURL=coffee.map
 */

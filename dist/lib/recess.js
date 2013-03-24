@@ -48,5 +48,5 @@ module.exports = function(Projmate) {
 
 
 /*
-//@ sourceMappingURL=src/lib/recess.map
+//@ sourceMappingURL=recess.map
 */

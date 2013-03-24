@@ -63,5 +63,5 @@ module.exports = function(Projmate) {
 
 
 /*
-//@ sourceMappingURL=src/lib/addHeader.map
+//@ sourceMappingURL=addHeader.map
 */

@@ -53,5 +53,5 @@ module.exports = function(Projmate) {
 
 
 /*
-//@ sourceMappingURL=src/lib/cat.map
+//@ sourceMappingURL=cat.map
 */

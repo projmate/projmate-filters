@@ -73,5 +73,5 @@ module.exports = {
 
 
 /*
-//@ sourceMappingURL=src/test/helper.map
+//@ sourceMappingURL=helper.map
 */

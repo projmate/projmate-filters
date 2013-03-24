@@ -139,5 +139,5 @@ module.exports = function(Projmate) {
 
 
 /*
-//@ sourceMappingURL=src/lib/commonJsify.map
+//@ sourceMappingURL=commonJsify.map
 */
