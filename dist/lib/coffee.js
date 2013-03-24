@@ -79,6 +79,8 @@ module.exports = function(Projmate) {
 
   })(Filter);
 };
+
+
 /*
 //@ sourceMappingURL=src/lib/coffee.map
 */

@@ -43,6 +43,8 @@ describe("template", function() {
     });
   });
 });
+
+
 /*
 //@ sourceMappingURL=src/test/consolidateSpec.map
 */
