@@ -4,17 +4,13 @@
  * See the file LICENSE for copying permission.
  */
 
-var Path, async, fs, numberOfLines, _,
+var Path, UglifyJS, numberOfLines,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-_ = require("lodash");
+Path = require("path");
 
-async = require('async');
-
-fs = require('fs');
-
-Path = require('path');
+UglifyJS = require("uglify-js");
 
 numberOfLines = function(s) {
   var matches;
@@ -24,9 +20,10 @@ numberOfLines = function(s) {
 };
 
 module.exports = function(Projmate) {
-  var CommonJsify, SourceMap, TaskProcessor, Utils;
+  var CommonJsify, SourceMap, TaskProcessor, Utils, changeExtname;
 
   TaskProcessor = Projmate.TaskProcessor, Utils = Projmate.Utils;
+  changeExtname = Utils.changeExtname;
   SourceMap = require("../support/sourceMap");
   return CommonJsify = (function(_super) {
     __extends(CommonJsify, _super);
@@ -47,13 +44,14 @@ module.exports = function(Projmate) {
     }
 
     CommonJsify.prototype.process = function(task, options, cb) {
-      var asset, assets, baseDir, basename, dirname, extname, identifier, index, packageName, path, result, sourceMap, text, _i, _len;
+      var asset, assets, baseDir, basename, dirname, err, extname, identifier, index, packageName, path, result, sourceMap, text, ugly, webstormHack, _i, _len;
 
       identifier = options.identifier || "require";
       assets = task.assets.array();
       packageName = options.packageName || "app";
       baseDir = Utils.unixPath(options.baseDir);
       sourceMap = options.sourceMap;
+      webstormHack = options.webstormHack;
       if (!baseDir) {
         return cb("`options.baseDir` is required.");
       }
@@ -74,7 +72,27 @@ module.exports = function(Projmate) {
         result += JSON.stringify(path);
         result += ": function(exports, require, module, __filename, __dirname) {\n";
         asset.sourceMapOffset = numberOfLines(result) - 1;
-        text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "");
+        if (options.sourceMap && asset.originalFilename.match(/\.js$/)) {
+          try {
+            ugly = UglifyJS.minify(asset.text, {
+              fromString: true,
+              compress: false,
+              mangle: false,
+              outSourceMap: changeExtname(asset.basename, ".map")
+            });
+            asset.parent.create({
+              filename: changeExtname(asset.filename, ".map"),
+              text: ugly.map
+            });
+            text = ugly.code;
+          } catch (_error) {
+            err = _error;
+            this.log.error("" + asset.filename);
+            return cb(err);
+          }
+        } else {
+          text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "");
+        }
         asset.markDelete = true;
         result += "" + text + "\n}";
       }
@@ -84,34 +102,30 @@ module.exports = function(Projmate) {
     };
 
     CommonJsify.prototype.mapAssets = function(task, options, script) {
-      var asset, generator, json, mapAsset, mapFilename, source, unmappedGenerator, _i, _len, _ref;
+      var asset, generator, json, mapAsset, mapFilename, source, _i, _len, _ref;
 
       if (options.sourceMap) {
-        script += "/*\n//@ sourceMappingURL=" + (Utils.changeExtname(Path.basename(options.filename), ".map")) + "\n*/";
+        script += "/*\n//@ sourceMappingURL=" + (changeExtname(Path.basename(options.filename), ".map")) + "\n*/";
         generator = SourceMap.createGenerator(options.filename);
         _ref = task.assets.array();
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           asset = _ref[_i];
           if (asset.sourceMapOffset != null) {
-            mapFilename = Utils.changeExtname(asset.filename, ".map");
+            mapFilename = changeExtname(asset.filename, ".map");
             mapAsset = task.assets.detect(function(map) {
               return map.filename === mapFilename;
             });
             if (mapAsset) {
               json = mapAsset.text;
               mapAsset.markDelete = true;
-            } else {
-              unmappedGenerator = SourceMap.createGenerator(asset.filename);
-              unmappedGenerator.setSourceContent(asset.basename, asset.text);
-              json = unmappedGenerator.toJSON();
+              source = Utils.lchomp(asset.originalFilename, options.baseDir);
+              source = Utils.lchomp(source, "/");
+              SourceMap.rebase(generator, json, source, asset.sourceMapOffset);
             }
-            source = Utils.lchomp(asset.originalFilename, options.baseDir);
-            source = Utils.lchomp(source, "/");
-            SourceMap.rebase(generator, json, source, asset.sourceMapOffset);
           }
         }
         mapAsset = task.assets.create({
-          filename: Utils.changeExtname(options.filename, ".map"),
+          filename: changeExtname(options.filename, ".map"),
           text: generator.toJSON()
         });
         mapAsset.whenWriting(function() {
@@ -119,7 +133,7 @@ module.exports = function(Projmate) {
 
           sourceRoot = Path.relative(mapAsset.dirname, options.baseDir);
           mapAsset.text.sourceRoot = sourceRoot;
-          mapAsset.text.file = Utils.changeExtname(mapAsset.basename, ".js");
+          mapAsset.text.file = changeExtname(mapAsset.basename, ".js");
           return mapAsset.text = JSON.stringify(mapAsset.text);
         });
       }

@@ -20,7 +20,11 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   exports[basename] = require("./" + basename);
 }
 
-exports['writeFile'] = require("./writeFiles");
+exports["writeFile"] = require("./writeFiles");
+
+exports["commonJs"] = require("./commonJsify");
+
+exports["fn"] = require("./functoid");
 
 
 /*

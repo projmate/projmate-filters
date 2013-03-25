@@ -3,10 +3,8 @@
 #
 # See the file LICENSE for copying permission.
 
-_     = require("lodash")
-async = require('async')
-fs    = require('fs')
-Path = require('path')
+Path = require("path")
+UglifyJS = require("uglify-js")
 
 
 # Gets the number of lines in `s`
@@ -19,6 +17,7 @@ numberOfLines = (s) ->
 
 module.exports = (Projmate) ->
   {TaskProcessor, Utils} = Projmate
+  {changeExtname} = Utils
   SourceMap = require("../support/sourceMap")
 
   # Reduces a task's assets into a single browser-side CommonJS-like module asset.
@@ -34,7 +33,6 @@ module.exports = (Projmate) ->
       @defaults =
         development: {sourceMap: true}
         production: {sourceMap: false}
-
       super
 
     process: (task, options, cb) ->
@@ -43,6 +41,7 @@ module.exports = (Projmate) ->
       packageName = options.packageName || "app"
       baseDir = Utils.unixPath(options.baseDir)
       sourceMap = options.sourceMap
+      webstormHack = options.webstormHack
 
       return cb("`options.baseDir` is required.") unless baseDir
 
@@ -134,7 +133,24 @@ module.exports = (Projmate) ->
 
         # track where this asset was inserted to adjust the source maps (if any later)
         asset.sourceMapOffset = numberOfLines(result) - 1
-        text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "")
+
+        if options.sourceMap and asset.originalFilename.match(/\.js$/)
+          try
+            # create map file for JS files
+            ugly = UglifyJS.minify asset.text,
+              fromString: true
+              compress: false
+              mangle: false
+              outSourceMap: changeExtname(asset.basename, ".map")
+            # create generated map file
+            asset.parent.create filename: changeExtname(asset.filename, ".map"), text:  ugly.map
+            text = ugly.code
+          catch err
+            @log.error "#{asset.filename}"
+            return cb(err)
+        else
+          text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "")
+
 
         # asset is merged into a combined asset so mark it for delete and it
         # will get swept in @mapAsset
@@ -159,7 +175,7 @@ module.exports = (Projmate) ->
         # The combined script needs this line for browsers and IDEs
         script += """
         /*
-        //@ sourceMappingURL=#{Utils.changeExtname(Path.basename(options.filename), ".map")}
+        //@ sourceMappingURL=#{changeExtname(Path.basename(options.filename), ".map")}
         */
         """
 
@@ -169,31 +185,27 @@ module.exports = (Projmate) ->
 
         for asset in task.assets.array()
           if asset.sourceMapOffset?
-            mapFilename = Utils.changeExtname(asset.filename, ".map")
+            mapFilename = changeExtname(asset.filename, ".map")
             mapAsset = task.assets.detect (map) -> map.filename == mapFilename
             if mapAsset
               json = mapAsset.text
               mapAsset.markDelete = true
-            else
-              unmappedGenerator = SourceMap.createGenerator(asset.filename)
-              unmappedGenerator.setSourceContent(asset.basename, asset.text)
-              json = unmappedGenerator.toJSON()
 
-            source = Utils.lchomp(asset.originalFilename, options.baseDir)
-            source = Utils.lchomp(source, "/")
+              source = Utils.lchomp(asset.originalFilename, options.baseDir)
+              source = Utils.lchomp(source, "/")
 
-            SourceMap.rebase generator, json, source, asset.sourceMapOffset
+              SourceMap.rebase generator, json, source, asset.sourceMapOffset
 
         # create the sourcemap asset
         mapAsset = task.assets.create
-          filename: Utils.changeExtname(options.filename, ".map")
+          filename: changeExtname(options.filename, ".map")
           text: generator.toJSON()
 
-        # wait until the asset is beign written to change the file
+        # wait until the asset is about to be written to change the file
         mapAsset.whenWriting ->
           sourceRoot = Path.relative(mapAsset.dirname, options.baseDir)
           mapAsset.text.sourceRoot = sourceRoot
-          mapAsset.text.file = Utils.changeExtname(mapAsset.basename, ".js")
+          mapAsset.text.file = changeExtname(mapAsset.basename, ".js")
           mapAsset.text = JSON.stringify(mapAsset.text)
 
 
