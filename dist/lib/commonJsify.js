@@ -131,7 +131,7 @@ module.exports = function(Projmate) {
         mapAsset.whenWriting(function() {
           var sourceRoot;
 
-          sourceRoot = Path.relative(mapAsset.dirname, options.baseDir);
+          sourceRoot = Utils.unixPath(Path.relative(mapAsset.dirname, options.baseDir));
           mapAsset.text.sourceRoot = sourceRoot;
           mapAsset.text.file = changeExtname(mapAsset.basename, ".js");
           return mapAsset.text = JSON.stringify(mapAsset.text);

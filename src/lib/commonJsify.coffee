@@ -203,7 +203,7 @@ module.exports = (Projmate) ->
 
         # wait until the asset is about to be written to change the file
         mapAsset.whenWriting ->
-          sourceRoot = Path.relative(mapAsset.dirname, options.baseDir)
+          sourceRoot = Utils.unixPath(Path.relative(mapAsset.dirname, options.baseDir))
           mapAsset.text.sourceRoot = sourceRoot
           mapAsset.text.file = changeExtname(mapAsset.basename, ".js")
           mapAsset.text = JSON.stringify(mapAsset.text)
