@@ -42,6 +42,7 @@ module.exports = (Projmate) ->
       baseDir = Utils.unixPath(options.baseDir)
       sourceMap = options.sourceMap
       webstormHack = options.webstormHack
+      sourceRoot = options.sourceRoot
 
       return cb("`options.baseDir` is required.") unless baseDir
 
