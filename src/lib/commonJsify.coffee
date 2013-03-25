@@ -41,8 +41,6 @@ module.exports = (Projmate) ->
       packageName = options.packageName || "app"
       baseDir = Utils.unixPath(options.baseDir)
       sourceMap = options.sourceMap
-      webstormHack = options.webstormHack
-      sourceRoot = options.sourceRoot
 
       return cb("`options.baseDir` is required.") unless baseDir
 
@@ -170,6 +168,7 @@ module.exports = (Projmate) ->
     # All assets were combined into a single asset. Update the task's asset property
     # to reflect a single asset using filename from `options.filename`.
     mapAssets: (task, options, script) ->
+      sourceRoot = options.sourceRoot
 
       if options.sourceMap
 

@@ -44,15 +44,13 @@ module.exports = function(Projmate) {
     }
 
     CommonJsify.prototype.process = function(task, options, cb) {
-      var asset, assets, baseDir, basename, dirname, err, extname, identifier, index, packageName, path, result, sourceMap, sourceRoot, text, ugly, webstormHack, _i, _len;
+      var asset, assets, baseDir, basename, dirname, err, extname, identifier, index, packageName, path, result, sourceMap, text, ugly, _i, _len;
 
       identifier = options.identifier || "require";
       assets = task.assets.array();
       packageName = options.packageName || "app";
       baseDir = Utils.unixPath(options.baseDir);
       sourceMap = options.sourceMap;
-      webstormHack = options.webstormHack;
-      sourceRoot = options.sourceRoot;
       if (!baseDir) {
         return cb("`options.baseDir` is required.");
       }
@@ -103,8 +101,9 @@ module.exports = function(Projmate) {
     };
 
     CommonJsify.prototype.mapAssets = function(task, options, script) {
-      var asset, generator, json, mapAsset, mapFilename, source, _i, _len, _ref;
+      var asset, generator, json, mapAsset, mapFilename, source, sourceRoot, _i, _len, _ref;
 
+      sourceRoot = options.sourceRoot;
       if (options.sourceMap) {
         script += "/*\n//@ sourceMappingURL=" + (changeExtname(Path.basename(options.filename), ".map")) + "\n*/";
         generator = SourceMap.createGenerator(options.filename);
@@ -130,8 +129,6 @@ module.exports = function(Projmate) {
           text: generator.toJSON()
         });
         mapAsset.whenWriting(function() {
-          var sourceRoot;
-
           if (!sourceRoot) {
             sourceRoot = Utils.unixPath(Path.relative(mapAsset.dirname, options.baseDir));
           }
