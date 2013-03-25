@@ -35,13 +35,13 @@ module.exports = function(Projmate) {
 
     domain: {
       type: "String",
-      default: "0.0.0.0",
+      default: "local.projmate.com",
       description: "The domain to use."
     }
   };
 
   LiveReload.prototype.process = function(asset, options, cb) {
-    var domain = options.domain || "0.0.0.0";
+    var domain = options.domain || "local.projmate.com";
     var port = options.port || 1080;
     cb(null,
       asset.text.replace("</head>", "<script src=\"http://"+domain+":"+port+"/livereload.js\"></script></head>")
