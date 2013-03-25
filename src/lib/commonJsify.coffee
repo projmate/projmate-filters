@@ -149,8 +149,8 @@ module.exports = (Projmate) ->
             @log.error "#{asset.filename}"
             return cb(err)
         else
+          # don't need the original mapping line
           text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "")
-
 
         # asset is merged into a combined asset so mark it for delete and it
         # will get swept in @mapAsset
@@ -201,9 +201,13 @@ module.exports = (Projmate) ->
           filename: changeExtname(options.filename, ".map")
           text: generator.toJSON()
 
-        # wait until the asset is about to be written to change the file
+        # write paths are not known until the WriteFile filter is about to write
         mapAsset.whenWriting ->
-          sourceRoot = Utils.unixPath(Path.relative(mapAsset.dirname, options.baseDir))
+          # SourceRoot should be overriden in the case relative paths traverse
+          # into directories not served by the server. For example, static files
+          # may be served from public/ but relative paths may resolve to src/.
+          unless sourceRoot
+            sourceRoot = Utils.unixPath(Path.relative(mapAsset.dirname, options.baseDir))
           mapAsset.text.sourceRoot = sourceRoot
           mapAsset.text.file = changeExtname(mapAsset.basename, ".js")
           mapAsset.text = JSON.stringify(mapAsset.text)
