@@ -4,14 +4,14 @@
  * See the file LICENSE for copying permission.
  */
 
-var Filter, assert, liveReload, textAsset, _ref;
+var Filter, assert, handlebars, textAsset, _ref;
 
 _ref = require("./helper"), assert = _ref.assert, textAsset = _ref.textAsset, Filter = _ref.Filter;
 
-liveReload = Filter("../lib/liveReload");
+handlebars = Filter("../lib/liveReload");
 
-describe("liveReload", function() {
-  return it("should add header", function(done) {
+describe("handlebars", function() {
+  return it("compile a template", function(done) {
     var asset;
 
     asset = textAsset("<html><head></head><body></body></html>");
@@ -32,5 +32,5 @@ describe("liveReload", function() {
 
 
 /*
-//@ sourceMappingURL=liveReloadSpec.map
+//@ sourceMappingURL=handlebars.map
 */

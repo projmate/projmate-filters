@@ -11,7 +11,8 @@
   "license": "MIT",
   "devDependencies": {
     "projmate-core": "git://github.com/projmate/projmate-core#develop",
-    "chai": "~1.5.0"
+    "chai": "~1.5.0",
+    "handlebars": "~1.0.10"
   },
   "dependencies": {
     "projmate-shell": "git://github.com/projmate/projmate-shell#develop",
@@ -28,7 +29,6 @@
     "when": "~2.0.0",
     "source-map": "~0.1.16",
     "underscore": "~1.4.4"
-
   },
   "keywords": [
     "Projmate",

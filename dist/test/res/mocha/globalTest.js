@@ -8,7 +8,7 @@ var addFileInt;
 
 addFileInt = require("../../helper").addFileInt;
 
-describe("bTest", function() {
+describe("globalTest", function() {
   global.foo = "bar";
   it("should write to file", function() {
     return addFileInt(__dirname + "/result", 1);

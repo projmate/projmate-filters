@@ -1,10 +1,10 @@
 {assert, textAsset, Filter} = require("./helper")
 
-liveReload = Filter("../lib/liveReload")
+handlebars = Filter("../lib/liveReload")
 
-describe "liveReload", ->
+describe "handlebars", ->
 
-  it "should add header", (done) ->
+  it "compile a template", (done) ->
     asset = textAsset("<html><head></head><body></body></html>")
     liveReload.process asset, {domain: 'localhost', port: 1337}, (err, result) ->
       start = result.indexOf("<html><head>")

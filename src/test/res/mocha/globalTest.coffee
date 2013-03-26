@@ -1,6 +1,6 @@
 {addFileInt} = require("../../helper")
 
-describe "bTest", ->
+describe "globalTest", ->
   global.foo = "bar"
   it "should write to file", ->
     addFileInt __dirname+"/result", 1
