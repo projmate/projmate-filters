@@ -122,17 +122,15 @@ function cacheLayout(layoutFile, useCache, cb) {
  */
 var partialsCache = {};
 function cachePartials(text) {
-  console.log("tcaching partialsesting", text);
   var partialsRE = /{{\>\s+(.+)}}/g;  // why is this is not capturing
   var matches = text.match(partialsRE);
   if (!matches) return;
-  console.log("matches.l", matches, matches.length);
 
   for (var i = 0, L = matches.length; i < L; i++) {
     var file = matches[i];
+    // extract betwee '{{< ' and '}}'
     file = file.slice(4, file.length - 2);
 
-    console.log("PARTIAL", file);
     if (partialsCache[file]) continue;
 
     var filename = file;
