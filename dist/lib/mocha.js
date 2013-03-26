@@ -20,9 +20,12 @@ module.exports = function(Projmate) {
     var mocha = new MochaClass(options);
     task.assets.each(function(asset) {
       mocha.addFile(asset.filename);
-    })
-    mocha.run(cb);
-  }
+    });
+    mocha.run(function(result) {
+      if (result === 0) result = null;
+      cb(result);
+    });
+  };
 
   /**
    * This processor loads files on its own.
@@ -32,7 +35,7 @@ module.exports = function(Projmate) {
   /**
    * For UI.
    */
-  Mocha.options = {
+  Mocha.meta = {
     globals: {
       desc: "Allow these global variables",
       type: "[String]"

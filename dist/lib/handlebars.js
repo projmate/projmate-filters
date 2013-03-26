@@ -11,10 +11,8 @@ var Path,
 Path = require("path");
 
 module.exports = function(Projmate) {
-  var Handlebars, hbs, _;
+  var Handlebars;
 
-  _ = require("lodash");
-  hbs = require("../support/express-hbs/hbs");
   return Handlebars = (function(_super) {
     __extends(Handlebars, _super);
 
@@ -25,11 +23,13 @@ module.exports = function(Projmate) {
     }
 
     Handlebars.prototype.process = function(asset, options, cb) {
-      var config;
+      var config, hbs, _;
 
       if (!options.root) {
         return cb("options.root is required");
       }
+      _ = require("lodash");
+      hbs = require("../support/express-hbs/hbs");
       _.defaults(options, {
         extname: ".hbs"
       });

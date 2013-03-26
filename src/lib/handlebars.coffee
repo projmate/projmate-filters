@@ -6,8 +6,6 @@
 Path = require("path")
 
 module.exports = (Projmate) ->
-  _ = require("lodash")
-  hbs = require("../support/express-hbs/hbs")
 
   # Compiles many types of Handlebarss to HTML using consolidate.
   #
@@ -19,6 +17,9 @@ module.exports = (Projmate) ->
 
     process: (asset, options, cb) ->
       return cb("options.root is required") unless options.root
+
+      _ = require("lodash")
+      hbs = require("../support/express-hbs/hbs")
       _.defaults options, extname: ".hbs"
 
       unless @render
