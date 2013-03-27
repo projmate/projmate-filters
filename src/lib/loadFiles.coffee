@@ -31,7 +31,7 @@ module.exports = (Projmate) ->
 
       PmUtils.glob patterns, excludePatterns, {nosort: true}, (err, files) ->
         if err
-          console.error "patterns: #{patterns} #{excludePatterns}"
+          log.error "patterns: #{patterns} #{excludePatterns}"
           return cb(err)
 
         if !files || files.length == 0
@@ -49,6 +49,7 @@ module.exports = (Projmate) ->
 
             # ignore binary files for now!?
             if PmUtils.isFileBinary(file)
+              log.debug "Ignoring binary file: #{file}"
               return cb()
 
             Fs.readFile file, "utf8", (err, text) ->

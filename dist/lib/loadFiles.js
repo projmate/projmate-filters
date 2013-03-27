@@ -42,7 +42,7 @@ module.exports = function(Projmate) {
         nosort: true
       }, function(err, files) {
         if (err) {
-          console.error("patterns: " + patterns + " " + excludePatterns);
+          log.error("patterns: " + patterns + " " + excludePatterns);
           return cb(err);
         }
         if (!files || files.length === 0) {
@@ -60,6 +60,7 @@ module.exports = function(Projmate) {
               return cb();
             }
             if (PmUtils.isFileBinary(file)) {
+              log.debug("Ignoring binary file: " + file);
               return cb();
             }
             return Fs.readFile(file, "utf8", function(err, text) {

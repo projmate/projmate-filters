@@ -61,8 +61,8 @@ function extractFromModule(filename) {
   return typeof mod === 'function' ? mod() : mod;
 }
 
-module.exports = function(Projmate) {
 
+module.exports = function(Projmate) {
 
   /**
    * Extracts meta from a text file and assets it to `asset.meta`.
@@ -121,8 +121,6 @@ module.exports = function(Projmate) {
       }
       cb();
     } catch (ex) {
-      console.log("ex", ex);
-
       return cb(ex);
     }
   };

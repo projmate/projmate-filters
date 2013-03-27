@@ -47,7 +47,7 @@ var layoutPattern = /\{\{\!\<\s+([A-Za-z0-9\._\-\/]+)\s*\}\}/;
 
 
 /**
- * Defines a block into which content is inserted via `contentFor`.
+ * Defines a block into which content is inserted via `content`.
  *
  * @example
  *  In layout.hbs
@@ -67,11 +67,11 @@ function block(name) {
  *
  * @example
  *
- * {{#contentFor "pageStylesheets"}}
+ * {{#content "pageStylesheets"}}
  * <link rel="stylesheet" href='{{{URL "css/style.css"}}}' />
- * {{/contentFor}}
+ * {{/content}}
  */
-function contentFor(name, context) {
+function content(name, context) {
     var block = blocks[name];
     if (!block) {
         block = blocks[name] = [];
@@ -163,7 +163,7 @@ exports.init = function(options) {
 
   if (_options.handlebars) exports.handlebars = _options.handlebars;
 
-  exports.handlebars.registerHelper('contentFor', contentFor);
+  exports.handlebars.registerHelper('content', content);
   exports.handlebars.registerHelper('block', block);
 
   return _render;

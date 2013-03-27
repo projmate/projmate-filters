@@ -18,7 +18,6 @@ module.exports = (Projmate) ->
       try
         recess asset.filename, options, (err, result) ->
           return cb(err) if (err)
-          #console.log "result", result
           cb null, result.output
       catch ex
         cb ex
