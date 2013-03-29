@@ -8,6 +8,33 @@ _ = require ("lodash")
 {defer} = require("when")
 Path = require("path")
 
+# Repeat a string `n` times.
+exports.repeat = repeat = (str, n) ->
+  # Use clever algorithm to have O(log(n)) string concatenation operations.
+  res = ''
+  while n > 0
+    res += str if n & 1
+    n >>>= 1
+    str += str
+  res
+
+prettyErrorMessage = (error, fileName, code) ->
+  return error.stack or "#{error}" unless error.location
+
+  {first_line, first_column, last_line, last_column} = error.location
+  codeLine = code.split('\n')[first_line]
+  start    = first_column
+  # Show only the first line on multi-line errors.
+  end      = if first_line is last_line then last_column + 1 else codeLine.length
+  marker   = repeat(' ', start) + repeat('^', end - start)
+
+  message = """
+  \n
+  #{fileName}:#{first_line + 1}:#{first_column + 1}: error: #{error.message}
+  #{codeLine}
+  #{marker}
+  """
+
 
 module.exports = (Projmate) ->
   {Filter, Utils} = Projmate
@@ -57,6 +84,6 @@ module.exports = (Projmate) ->
           js = result
 
         cb null, js
-      catch ex
-        cb ex
+      catch err
+        cb prettyErrorMessage(err, asset.filename, asset.text)
 

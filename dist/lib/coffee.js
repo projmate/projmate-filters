@@ -4,7 +4,7 @@
  * See the file LICENSE for copying permission.
  */
 
-var Path, coffee, defer, _,
+var Path, coffee, defer, prettyErrorMessage, repeat, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -15,6 +15,34 @@ _ = require("lodash");
 defer = require("when").defer;
 
 Path = require("path");
+
+exports.repeat = repeat = function(str, n) {
+  var res;
+
+  res = '';
+  while (n > 0) {
+    if (n & 1) {
+      res += str;
+    }
+    n >>>= 1;
+    str += str;
+  }
+  return res;
+};
+
+prettyErrorMessage = function(error, fileName, code) {
+  var codeLine, end, first_column, first_line, last_column, last_line, marker, message, start, _ref;
+
+  if (!error.location) {
+    return error.stack || ("" + error);
+  }
+  _ref = error.location, first_line = _ref.first_line, first_column = _ref.first_column, last_line = _ref.last_line, last_column = _ref.last_column;
+  codeLine = code.split('\n')[first_line];
+  start = first_column;
+  end = first_line === last_line ? last_column + 1 : codeLine.length;
+  marker = repeat(' ', start) + repeat('^', end - start);
+  return message = "\n\n" + fileName + ":" + (first_line + 1) + ":" + (first_column + 1) + ": error: " + error.message + "\n" + codeLine + "\n" + marker;
+};
 
 module.exports = function(Projmate) {
   var Coffee, Filter, Utils, _ref;
@@ -42,7 +70,7 @@ module.exports = function(Projmate) {
     };
 
     Coffee.prototype.process = function(asset, options, cb) {
-      var ex, js, mapAsset, result, sourceMap;
+      var err, js, mapAsset, result, sourceMap;
 
       if (options.sourceMap) {
         options.filename = asset.filename;
@@ -70,8 +98,8 @@ module.exports = function(Projmate) {
         }
         return cb(null, js);
       } catch (_error) {
-        ex = _error;
-        return cb(ex);
+        err = _error;
+        return cb(prettyErrorMessage(err, asset.filename, asset.text));
       }
     };
 

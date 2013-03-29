@@ -233,7 +233,7 @@ var _render = function(filename, text, options, cb) {
       var layout = matches[1];
 
       // cacheLayout expects absolute path
-      layout = path.resolve(path.join(layoutsDir?layoutsDir:path.dirname(filename), layout));
+      layout = path.resolve(path.join(layoutsDir ? layoutsDir : path.dirname(filename), layout));
       cacheLayout(layout, options.cache, cb);
     }
     else {
