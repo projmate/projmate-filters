@@ -147,7 +147,11 @@ function cachePartials(text) {
     }
 
     var source = fs.readFileSync(filePath, 'utf8');
-    partialsCache[file] = source;
+
+    if (_options.cache) {
+      partialsCache[file] = source;
+    }
+
     exports.handlebars.registerPartial(file, source);
   }
 }

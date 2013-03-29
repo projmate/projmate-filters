@@ -24,7 +24,9 @@ module.exports = (Projmate) ->
 
       unless @render
         config = _.clone(options)
+        config.cache = false
         @render = hbs.init(config)
 
       @render asset.filename, asset.text, options, cb
+
 

@@ -35,6 +35,7 @@ module.exports = function(Projmate) {
       });
       if (!this.render) {
         config = _.clone(options);
+        config.cache = false;
         this.render = hbs.init(config);
       }
       return this.render(asset.filename, asset.text, options, cb);

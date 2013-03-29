@@ -141,7 +141,11 @@ function cachePartials(text) {
     }
 
     var source = fs.readFileSync(filePath, 'utf8');
-    partialsCache[file] = source;
+
+    if (_options.cache) {
+      partialsCache[file] = source;
+    }
+
     exports.handlebars.registerPartial(file, source);
   }
 }
@@ -223,7 +227,7 @@ var _render = function(filename, text, options, cb) {
       var layout = matches[1];
 
       // cacheLayout expects absolute path
-      layout = path.resolve(path.join(layoutsDir?layoutsDir:path.dirname(filename), layout));
+      layout = path.resolve(path.join(layoutsDir ? layoutsDir : path.dirname(filename), layout));
       cacheLayout(layout, options.cache, cb);
     }
     else {
