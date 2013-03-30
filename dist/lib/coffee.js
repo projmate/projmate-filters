@@ -62,7 +62,7 @@ module.exports = function(Projmate) {
 
     Coffee.prototype.defaults = {
       development: {
-        sourceMap: true
+        sourceMap: false
       },
       production: {
         sourceMap: false
@@ -107,8 +107,3 @@ module.exports = function(Projmate) {
 
   })(Filter);
 };
-
-
-/*
-//@ sourceMappingURL=coffee.map
-*/

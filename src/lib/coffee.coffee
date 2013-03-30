@@ -45,8 +45,8 @@ module.exports = (Projmate) ->
     extnames: [".coffee", ".litcoffee", ".coffee.md"]
     outExtname: ".js"
     defaults:
-      # source maps are a good thing in development
-      development: {sourceMap: true}
+      # source maps are a good thing in development but not yet fully tested
+      development: {sourceMap: false}
       production: {sourceMap: false}
 
     process: (asset, options, cb) ->
@@ -63,6 +63,7 @@ module.exports = (Projmate) ->
           js = result.js
           sourceMap = result.v3SourceMap
 
+          # supposedly fix for IE, kill it already
           # Add sourcemap line
           js += """
           \n
@@ -70,6 +71,11 @@ module.exports = (Projmate) ->
           //@ sourceMappingURL=#{Utils.changeExtname(asset.basename, '.map')}
           */
           """
+
+          # js += """
+          #   \n
+          #   //@ sourceMappingURL=#{Utils.changeExtname(asset.basename, '.map')}
+          #   """
 
           # add new asset for map
           mapAsset = asset.parent.create(filename: Utils.changeExtname(asset.filename, ".map"), text: sourceMap)

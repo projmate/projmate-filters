@@ -88,8 +88,3 @@ describe("extractMeta", function() {
     });
   });
 });
-
-
-/*
-//@ sourceMappingURL=extractMetaSpec.map
-*/

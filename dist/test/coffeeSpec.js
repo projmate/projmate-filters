@@ -43,8 +43,3 @@ describe("Coffee", function() {
     });
   });
 });
-
-
-/*
-//@ sourceMappingURL=coffeeSpec.map
-*/

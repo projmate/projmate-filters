@@ -44,8 +44,3 @@ module.exports = function(Projmate) {
 
   })(Projmate.Filter);
 };
-
-
-/*
-//@ sourceMappingURL=functoid.map
-*/

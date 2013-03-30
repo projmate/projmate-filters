@@ -50,8 +50,3 @@ module.exports = function(Projmate) {
 
   })(TaskProcessor);
 };
-
-
-/*
-//@ sourceMappingURL=cat.map
-*/

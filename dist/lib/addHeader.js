@@ -60,8 +60,3 @@ module.exports = function(Projmate) {
 
   })(Projmate.Filter);
 };
-
-
-/*
-//@ sourceMappingURL=addHeader.map
-*/

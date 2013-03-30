@@ -18,8 +18,3 @@ describe("globalTest", function() {
     return done();
   });
 });
-
-
-/*
-//@ sourceMappingURL=globalTest.map
-*/

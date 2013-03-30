@@ -24,7 +24,7 @@ module.exports = function(Projmate) {
   /**
    * This processor loads files on its own.
    */
-  Mocha.__pragma = { disableLoadFiles: true };
+  Mocha.__pragma = { disableLoadFiles: true};
 
   /**
    * For UI.

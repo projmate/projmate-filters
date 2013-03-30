@@ -17,8 +17,3 @@ describe("aSpec", function() {
     return done();
   });
 });
-
-
-/*
-//@ sourceMappingURL=aSpec.map
-*/

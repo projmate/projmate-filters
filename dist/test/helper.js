@@ -70,8 +70,3 @@ module.exports = {
   },
   $: require("projmate-shell")
 };
-
-
-/*
-//@ sourceMappingURL=helper.map
-*/

@@ -29,8 +29,3 @@ describe("handlebars", function() {
     });
   });
 });
-
-
-/*
-//@ sourceMappingURL=handlebars.map
-*/

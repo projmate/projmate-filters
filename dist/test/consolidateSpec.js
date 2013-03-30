@@ -43,8 +43,3 @@ describe("template", function() {
     });
   });
 });
-
-
-/*
-//@ sourceMappingURL=consolidateSpec.map
-*/

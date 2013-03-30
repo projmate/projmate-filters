@@ -1,6 +1,7 @@
 {$, assert, readFileInt, Assets, Filter} = require("./helper")
 
 mocha = Filter("../lib/mocha")
+Fs = require('fs')
 
 describe "Mocha", ->
 
@@ -15,7 +16,9 @@ describe "Mocha", ->
       assert.ifError err
       filename = "#{__dirname}/res/mocha/result"
       total = readFileInt(filename)
-      $.rm filename
+      console.log 'deleting ', filename
+      Fs.unlinkSync filename
+
       assert.equal total, 6
       delete global.foo
       done()

@@ -29,8 +29,3 @@ describe("liveReload", function() {
     });
   });
 });
-
-
-/*
-//@ sourceMappingURL=liveReloadSpec.map
-*/

@@ -66,8 +66,3 @@ module.exports = function(Projmate) {
 
   })(TaskProcessor);
 };
-
-
-/*
-//@ sourceMappingURL=loadFilenames.map
-*/

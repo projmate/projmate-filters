@@ -4,11 +4,13 @@
  * See the file LICENSE for copying permission.
  */
 
-var $, Assets, Filter, assert, mocha, readFileInt, _ref;
+var $, Assets, Filter, Fs, assert, mocha, readFileInt, _ref;
 
 _ref = require("./helper"), $ = _ref.$, assert = _ref.assert, readFileInt = _ref.readFileInt, Assets = _ref.Assets, Filter = _ref.Filter;
 
 mocha = Filter("../lib/mocha");
+
+Fs = require('fs');
 
 describe("Mocha", function() {
   return it("should run tests", function(done) {
@@ -35,15 +37,11 @@ describe("Mocha", function() {
       assert.ifError(err);
       filename = "" + __dirname + "/res/mocha/result";
       total = readFileInt(filename);
-      $.rm(filename);
+      console.log('deleting ', filename);
+      Fs.unlinkSync(filename);
       assert.equal(total, 6);
       delete global.foo;
       return done();
     });
   });
 });
-
-
-/*
-//@ sourceMappingURL=mochaSpec.map
-*/

@@ -17,6 +17,9 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   if (basename === "index") {
     continue;
   }
+  if (Fs.statSync("" + __dirname + "/" + file).isDirectory()) {
+    continue;
+  }
   exports[basename] = require("./" + basename);
 }
 
@@ -25,8 +28,3 @@ exports["writeFile"] = require("./writeFiles");
 exports["commonJs"] = require("./commonJsify");
 
 exports["fn"] = require("./functoid");
-
-
-/*
-//@ sourceMappingURL=index.map
-*/

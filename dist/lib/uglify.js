@@ -46,8 +46,3 @@ module.exports = function(Projmate) {
 
   })(Projmate.Filter);
 };
-
-
-/*
-//@ sourceMappingURL=uglify.map
-*/

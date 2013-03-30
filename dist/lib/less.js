@@ -69,8 +69,3 @@ module.exports = function(Projmate) {
 
   })(Projmate.Filter);
 };
-
-
-/*
-//@ sourceMappingURL=less.map
-*/

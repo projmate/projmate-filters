@@ -150,8 +150,3 @@ module.exports = function(Projmate) {
 
   })(TaskProcessor);
 };
-
-
-/*
-//@ sourceMappingURL=commonJsify.map
-*/
