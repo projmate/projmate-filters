@@ -34,7 +34,7 @@ module.exports = function(Projmate) {
       this.extnames = ".js";
       this.defaults = {
         development: {
-          sourceMap: true
+          sourceMap: false
         },
         production: {
           sourceMap: false
@@ -48,11 +48,14 @@ module.exports = function(Projmate) {
 
       identifier = options.identifier || "require";
       assets = task.assets.array();
-      packageName = options.packageName || "app";
-      baseDir = Utils.unixPath(options.baseDir);
+      packageName = options.packageName || options.name || "app";
+      baseDir = Utils.unixPath(options.baseDir || options.root);
       sourceMap = options.sourceMap;
       if (!baseDir) {
-        return cb("`options.baseDir` is required.");
+        return cb("`options.root` is required.");
+      }
+      if (!options.filename) {
+        return cb("options.filename is required.");
       }
       result = "(function() {\n  if (!this." + identifier + ") {\n    var modules = {}, packages = {}, cache = {},\n\n    require = function(name, root) {\n      var path = expand(root, name), module = cache[path], fn;\n      if (module) {\n        return module;\n      } else if (fn = modules[path] || modules[path = expand(path, './index')]) {\n        module = {id: name, exports: {}};\n        try {\n          cache[path] = module.exports;\n\n          //=> fn(exports, require, module, __filename, __dirname)\n          fn(module.exports, function(name) {\n            return require(name, dirname(path));\n          }, module, path, dirname(path));\n\n          return cache[path] = module.exports;\n        } catch (err) {\n          delete cache[path];\n          throw err;\n        }\n      } else {\n        throw 'module \\'' + name + '\\' not found';\n      }\n    },\n\n    expand = function(root, name) {\n      var results = [], parts, part;\n      if (/^\\.\\.?(\\/|$)/.test(name)) {\n        parts = [root, name].join('/').split('/');\n      } else {\n        parts = name.split('/');\n      }\n      for (var i = 0, length = parts.length; i < length; i++) {\n        part = parts[i];\n        if (part == '..') {\n          results.pop();\n        } else if (part != '.' && part != '') {\n          results.push(part);\n        }\n      }\n      return results.join('/');\n    },\n\n    dirname = function(path) {\n      return path.split('/').slice(0, -1).join('/');\n    };\n\n    this." + identifier + " = function(name) {\n      return require(name, '');\n    }\n    this." + identifier + ".define = function(bundle, package) {\n      if (!package) {\n        package = \"stitch\";\n      }\n      if (packages[package]) {\n        throw \"Stitch - Package already defined '\"+package+\"'\";\n      }\n\n      for (var key in bundle)\n        modules[package+\"/\"+key] = bundle[key];\n    };\n  }\n  return this." + identifier + ".define;\n}).call(this)({";
       index = 0;

@@ -16,5 +16,6 @@ for file in Fs.readdirSync(__dirname)
 # Aliases
 exports["writeFile"] = require("./writeFiles")
 exports["commonJs"] = require("./commonJsify")
+exports["cjs"] = require("./commonJsify")
 exports["fn"] = require("./functoid")
 

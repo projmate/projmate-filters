@@ -31,18 +31,19 @@ module.exports = (Projmate) ->
     constructor: ->
       @extnames = ".js"
       @defaults =
-        development: {sourceMap: true}
+        development: {sourceMap: false}
         production: {sourceMap: false}
       super
 
     process: (task, options, cb) ->
       identifier = options.identifier || "require"
       assets = task.assets.array()
-      packageName = options.packageName || "app"
-      baseDir = Utils.unixPath(options.baseDir)
+      packageName = options.packageName || options.name || "app"
+      baseDir = Utils.unixPath(options.baseDir || options.root)
       sourceMap = options.sourceMap
 
-      return cb("`options.baseDir` is required.") unless baseDir
+      return cb("`options.root` is required.") unless baseDir
+      return cb("options.filename is required.") unless options.filename
 
       result = """
         (function() {
