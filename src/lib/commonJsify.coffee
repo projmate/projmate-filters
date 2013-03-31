@@ -169,9 +169,8 @@ module.exports = (Projmate) ->
     # All assets were combined into a single asset. Update the task's asset property
     # to reflect a single asset using filename from `options.filename`.
     mapAssets: (task, options, script) ->
-      sourceRoot = options.sourceRoot
-
       if options.sourceMap
+        sourceRoot = options.sourceRoot
 
         # The combined script needs this line for browsers and IDEs
         script += """
@@ -200,7 +199,8 @@ module.exports = (Projmate) ->
         # create the sourcemap asset
         mapAsset = task.assets.create
           filename: changeExtname(options.filename, ".map")
-          text: generator.toJSON()
+          text: ''
+          __map: generator.toJSON()
 
         # write paths are not known until the WriteFile filter is about to write
         mapAsset.whenWriting ->
@@ -209,10 +209,10 @@ module.exports = (Projmate) ->
           # may be served from public/ but relative paths may resolve to src/.
           unless sourceRoot
             sourceRoot = Utils.unixPath(Path.relative(mapAsset.dirname, options.baseDir))
-          mapAsset.text.sourceRoot = sourceRoot
-          mapAsset.text.file = changeExtname(mapAsset.basename, ".js")
-          mapAsset.text = JSON.stringify(mapAsset.text)
-
+          mapAsset.__map.sourceRoot = sourceRoot
+          mapAsset.__map.file = changeExtname(mapAsset.basename, ".js")
+          mapAsset.text = JSON.stringify(mapAsset.__map)
+          delete mapAsset.__map
 
       # keep everything but JavaScript files which were merged above and written below
       task.assets.removeAssets (asset) -> asset.markDelete

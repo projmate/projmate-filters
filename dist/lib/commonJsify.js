@@ -106,8 +106,8 @@ module.exports = function(Projmate) {
     CommonJsify.prototype.mapAssets = function(task, options, script) {
       var asset, generator, json, mapAsset, mapFilename, source, sourceRoot, _i, _len, _ref;
 
-      sourceRoot = options.sourceRoot;
       if (options.sourceMap) {
+        sourceRoot = options.sourceRoot;
         script += "/*\n//@ sourceMappingURL=" + (changeExtname(Path.basename(options.filename), ".map")) + "\n*/";
         generator = SourceMap.createGenerator(options.filename);
         _ref = task.assets.array();
@@ -129,15 +129,17 @@ module.exports = function(Projmate) {
         }
         mapAsset = task.assets.create({
           filename: changeExtname(options.filename, ".map"),
-          text: generator.toJSON()
+          text: '',
+          __map: generator.toJSON()
         });
         mapAsset.whenWriting(function() {
           if (!sourceRoot) {
             sourceRoot = Utils.unixPath(Path.relative(mapAsset.dirname, options.baseDir));
           }
-          mapAsset.text.sourceRoot = sourceRoot;
-          mapAsset.text.file = changeExtname(mapAsset.basename, ".js");
-          return mapAsset.text = JSON.stringify(mapAsset.text);
+          mapAsset.__map.sourceRoot = sourceRoot;
+          mapAsset.__map.file = changeExtname(mapAsset.basename, ".js");
+          mapAsset.text = JSON.stringify(mapAsset.__map);
+          return delete mapAsset.__map;
         });
       }
       task.assets.removeAssets(function(asset) {
