@@ -5,7 +5,6 @@
 
 coffee  = require("coffee-script")
 _ = require ("lodash")
-{defer} = require("when")
 Path = require("path")
 
 # Repeat a string `n` times.

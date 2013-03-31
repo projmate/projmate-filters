@@ -11,23 +11,21 @@
   "license": "MIT",
   "devDependencies": {
     "projmate-core": "git://github.com/projmate/projmate-core#develop",
-    "chai": "~1.5.0",
-    "handlebars": "~1.0.10"
+    "chai": "~1.5.0"
   },
   "dependencies": {
-    "projmate-shell": "git://github.com/projmate/projmate-shell#develop",
     "async": "~0.2.5",
     "coffee-script": "~1.6.2",
+    "consolidate": "~0.8.0",
+    "dustjs-linkedin": "~1.2.1",
+    "handlebars": "~1.0.10",
     "less": "~1.3.3",
     "lodash": "~1.0.1",
     "mocha": "~1.8.1",
+    "projmate-shell": "git://github.com/projmate/projmate-shell#develop",
     "recess": "~1.1.6",
-    "uglify-js": "~2.2.5",
-    "consolidate": "~0.8.0",
-    "dustjs-linkedin": "~1.2.1",
-    "js-beautify": "~0.3.5",
-    "when": "~2.0.0",
     "source-map": "~0.1.16",
+    "uglify-js": "~2.2.5",
     "underscore": "~1.4.4"
   },
   "keywords": [

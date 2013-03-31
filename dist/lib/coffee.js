@@ -4,15 +4,13 @@
  * See the file LICENSE for copying permission.
  */
 
-var Path, coffee, defer, prettyErrorMessage, repeat, _,
+var Path, coffee, prettyErrorMessage, repeat, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 coffee = require("coffee-script");
 
 _ = require("lodash");
-
-defer = require("when").defer;
 
 Path = require("path");
 

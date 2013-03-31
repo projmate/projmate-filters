@@ -37,8 +37,7 @@ describe("Mocha", function() {
       assert.ifError(err);
       filename = "" + __dirname + "/res/mocha/result";
       total = readFileInt(filename);
-      console.log('deleting ', filename);
-      Fs.unlinkSync(filename);
+      $.rm(filename);
       assert.equal(total, 6);
       delete global.foo;
       return done();
