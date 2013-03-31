@@ -240,7 +240,14 @@ var _render = function(filename, text, options, cb) {
    * Renders `template` with an optional `layoutTemplate` using data in `locals`.
    */
   function render(template, locals, layoutTemplate, cb) {
-    var res = template(locals);
+    try  {
+      var res = template(locals);
+    } catch (ex) {
+      return cb(ex);
+    }
+
+
+
     async.done(function(values) {
       Object.keys(values).forEach(function(id) {
         res = res.replace(id, values[id]);
@@ -248,10 +255,16 @@ var _render = function(filename, text, options, cb) {
 
       if (!layoutTemplate) return cb(null, res);
 
+
       // layout declare a {{{body}}} placeholder into which a page is inserted
       locals.body = res;
 
-      var layoutResult = layoutTemplate(locals);
+      try {
+        var layoutResult = layoutTemplate(locals);
+      } catch(ex) {
+        return cb(ex);
+      }
+
       async.done(function(values) {
         Object.keys(values).forEach(function(id) {
           layoutResult = layoutResult.replace(id, values[id]);
