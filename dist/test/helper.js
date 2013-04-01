@@ -4,7 +4,7 @@
  * See the file LICENSE for copying permission.
  */
 
-var Assertion, Assets, Fs, Projmate, assert, _ref;
+var Assertion, Assets, EventEmitter, Fs, Helper, Projmate, assert, _ref;
 
 _ref = require("chai"), assert = _ref.assert, Assertion = _ref.Assertion;
 
@@ -16,7 +16,9 @@ Projmate = require("projmate-core/dist");
 
 Assets = require("projmate-core/dist/lib/run/assets");
 
-module.exports = {
+EventEmitter = require('events').EventEmitter;
+
+module.exports = Helper = {
   assert: assert,
   Projmate: Projmate,
   ctorFactory: function(path) {
@@ -50,23 +52,6 @@ module.exports = {
     });
   },
   Assets: Assets,
-  readFileInt: function(path) {
-    var n, text;
-
-    text = Fs.existsSync(path) ? Fs.readFileSync(path, "utf8") : "";
-    n = parseInt(text);
-    if (isNaN(n)) {
-      return 0;
-    } else {
-      return n;
-    }
-  },
-  addFileInt: function(path, value) {
-    var total;
-
-    total = module.exports.readFileInt(path);
-    total += value;
-    return Fs.writeFileSync(path, total);
-  },
+  eventBus: new EventEmitter,
   $: require("projmate-shell")
 };

@@ -4,14 +4,14 @@
  * See the file LICENSE for copying permission.
  */
 
-var addFileInt = require("../../helper").addFileInt;
+var eventBus = require("../../helper").eventBus;
 
 describe("aTest", function() {
   it("should write to file", function() {
-    addFileInt(__dirname+"/result", 1);
+    eventBus.emit('mochaping', "b1");
   });
   it("should write to file 2", function(done) {
-    addFileInt(__dirname+"/result", 1);
+    eventBus.emit('mochaping', "b2");
     done();
   });
 });

@@ -1,8 +1,9 @@
-{addFileInt} = require("../../helper")
+{eventBus} = require("../../helper")
 
 describe "aSpec", ->
   it "should write to file", ->
-    addFileInt __dirname+"/result", 1
+    eventBus.emit 'mochaping', "a1"
+
   it "should write to file 2", (done) ->
-    addFileInt __dirname+"/result", 1
+    eventBus.emit 'mochaping', "a2"
     done()

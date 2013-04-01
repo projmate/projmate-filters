@@ -4,9 +4,9 @@
  * See the file LICENSE for copying permission.
  */
 
-var $, Assets, Filter, Fs, assert, mocha, readFileInt, _ref;
+var $, Assets, Filter, Fs, assert, eventBus, mocha, readFileInt, _ref;
 
-_ref = require("./helper"), $ = _ref.$, assert = _ref.assert, readFileInt = _ref.readFileInt, Assets = _ref.Assets, Filter = _ref.Filter;
+_ref = require("./helper"), $ = _ref.$, assert = _ref.assert, readFileInt = _ref.readFileInt, Assets = _ref.Assets, Filter = _ref.Filter, eventBus = _ref.eventBus;
 
 mocha = Filter("../lib/mocha");
 
@@ -14,31 +14,29 @@ Fs = require('fs');
 
 describe("Mocha", function() {
   return it("should run tests", function(done) {
-    var assets, task;
+    var assets, output, task;
 
     assets = new Assets;
-    assets.create({
-      filename: "" + __dirname + "/res/mocha/aTest.js"
-    });
     assets.create({
       filename: "" + __dirname + "/res/mocha/aSpec.coffee"
     });
     assets.create({
-      filename: "" + __dirname + "/res/mocha/globalTest.coffee"
+      filename: "" + __dirname + "/res/mocha/bTest.js"
+    });
+    output = [];
+    eventBus.on('mochaping', function(val) {
+      return output.push(val);
     });
     task = {
       assets: assets
     };
     return mocha.process(task, {
-      globals: "foo,bar"
+      globals: ['foo']
     }, function(err) {
-      var filename, total;
-
       assert.ifError(err);
-      filename = "" + __dirname + "/res/mocha/result";
-      total = readFileInt(filename);
-      $.rm(filename);
-      assert.equal(total, 6);
+      assert.equal(output.length, 4);
+      assert.isTrue(output.indexOf('a1') > -1);
+      assert.isTrue(output.indexOf('b2') > -1);
       delete global.foo;
       return done();
     });

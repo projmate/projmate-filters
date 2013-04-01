@@ -4,17 +4,17 @@
  * See the file LICENSE for copying permission.
  */
 
-var addFileInt;
+var eventBus;
 
-addFileInt = require("../../helper").addFileInt;
+eventBus = require("../../helper").eventBus;
 
 describe("globalTest", function() {
   global.foo = "bar";
   it("should write to file", function() {
-    return addFileInt(__dirname + "/result", 1);
+    return eventBus.emit('mochaping', "c1");
   });
   return it("should write to file 2", function(done) {
-    addFileInt(__dirname + "/result", 1);
+    eventBus.emit('mochaping', "c2");
     return done();
   });
 });

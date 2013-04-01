@@ -27,7 +27,7 @@ exports.project = (pm) ->
 
   tests:
     files:
-      include: "src/test/**/*Spec*"
+      include: "src/test/*Spec.{coffee,js}"
 
     dev: [f.mocha]
 
