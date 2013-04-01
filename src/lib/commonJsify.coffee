@@ -39,15 +39,16 @@ module.exports = (Projmate) ->
       identifier = options.identifier || "require"
       assets = task.assets.array()
       packageName = options.packageName || options.name || "app"
-      baseDir = Utils.unixPath(options.baseDir || options.root)
+      options.root = Utils.unixPath(options.root || options.baseDir)
       sourceMap = options.sourceMap
 
-      return cb("`options.root` is required.") unless baseDir
+      return cb("`options.root` is required.") unless options.root
       return cb("options.filename is required.") unless options.filename
 
       result = """
         (function() {
           if (!this.#{identifier}) {
+            console.log('defining REQUIRE');
             var modules = {}, packages = {}, cache = {},
 
             require = function(name, root) {
@@ -107,10 +108,24 @@ module.exports = (Projmate) ->
                 throw "Stitch - Package already defined '"+package+"'";
               }
 
+
+              console.log('Adding keys for package ' + package);
+
               for (var key in bundle)
                 modules[package+"/"+key] = bundle[key];
+
+              console.log('packages', packages);
+              console.log('modules', modules);
+            };
+
+            this.#{identifier}.modules = function() {
+              return modules;
+            };
+            this.#{identifier}.packages = function() {
+              return packages;
             };
           }
+
           return this.#{identifier}.define;
         }).call(this)({
       """
@@ -122,10 +137,11 @@ module.exports = (Projmate) ->
 
         # path is used as the key since it is not on the filesystem
         path = Utils.unixPath(Path.join(dirname, Path.basename(basename, extname)))
-        # make relative to baseDir
-        if options.baseDir
-          baseDir = Utils.rensure(options.baseDir, '/')
-          path = Utils.lchomp(path, baseDir)
+
+        # make relative to root
+        if options.root
+          root = Utils.rensure(options.root, '/')
+          path = Utils.lchomp(path, root)
 
         result += if index++ is 0 then "" else ", "
         result += JSON.stringify(path)
@@ -191,7 +207,7 @@ module.exports = (Projmate) ->
               json = mapAsset.text
               mapAsset.markDelete = true
 
-              source = Utils.lchomp(asset.originalFilename, options.baseDir)
+              source = Utils.lchomp(asset.originalFilename, options.root)
               source = Utils.lchomp(source, "/")
 
               SourceMap.rebase generator, json, source, asset.sourceMapOffset
@@ -208,7 +224,7 @@ module.exports = (Projmate) ->
           # into directories not served by the server. For example, static files
           # may be served from public/ but relative paths may resolve to src/.
           unless sourceRoot
-            sourceRoot = Utils.unixPath(Path.relative(mapAsset.dirname, options.baseDir))
+            sourceRoot = Utils.unixPath(Path.relative(mapAsset.dirname, options.root))
           mapAsset.__map.sourceRoot = sourceRoot
           mapAsset.__map.file = changeExtname(mapAsset.basename, ".js")
           mapAsset.text = JSON.stringify(mapAsset.__map)
