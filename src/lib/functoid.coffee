@@ -11,13 +11,13 @@ module.exports = (Projmate) ->
   #
   # replaceVersion = f.functoid process: (asset, options) ->
   #   asset.text = asset.text.replace /VERSION/g, "1.0.1"
-  class Functoid extends Projmate.Filter
+  class Tap extends Projmate.Filter
     extnames: "*"
 
     process: (asset, options, cb) ->
-      fn = options.process
+      fn = options.command
 
-      return cb("Options.process is required and must be a function(asset, options[, cb])") unless typeof fn == "function"
+      return cb("Options.command is required and must be a function(asset, options[, cb])") unless typeof fn == "function"
 
       if fn.length == 2
         try

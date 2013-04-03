@@ -29,4 +29,4 @@ exports["commonJs"] = require("./commonJsify");
 
 exports["cjs"] = require("./commonJsify");
 
-exports["fn"] = require("./functoid");
+exports["tap"] = require("./functoid");
