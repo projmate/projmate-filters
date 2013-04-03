@@ -4,13 +4,15 @@
  * See the file LICENSE for copying permission.
  */
 
-var Assertion, Assets, EventEmitter, Fs, Helper, Projmate, assert, _ref;
+var Assertion, Assets, EventEmitter, Fs, Helper, Projmate, assert, _, _ref;
 
 _ref = require("chai"), assert = _ref.assert, Assertion = _ref.Assertion;
 
 Assertion.includeStackTrace = true;
 
 Fs = require("fs");
+
+_ = require('lodash');
 
 Projmate = require("projmate-core/dist");
 
@@ -42,14 +44,18 @@ module.exports = Helper = {
       }
     };
   },
-  textAsset: function(text) {
+  textAsset: function(textOrOptions) {
     var assets;
 
     assets = new Assets;
-    return assets.create({
-      filename: "notused.txt",
-      text: text
-    });
+    if (_.isString(textOrOptions)) {
+      return assets.create({
+        filename: "notused.txt",
+        text: textOrOptions
+      });
+    } else {
+      return assets.create(textOrOptions);
+    }
   },
   Assets: Assets,
   eventBus: new EventEmitter,

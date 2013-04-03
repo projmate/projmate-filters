@@ -95,9 +95,11 @@ module.exports = function(Projmate) {
    * If options.as is 'property' then asset._meta = meta.
    */
   ExtractMeta.prototype.process = function(asset, options, cb) {
+    options.as || (options.as = 'merge');
+    options.from || (options.from = 'asset');
     var text = asset.text;
-    var mode = options.as ? options.as : 'merge';
-    var from = options.from ? options.from : 'asset';
+    var mode = options.as;
+    var from = options.from;
     var meta, result;
 
     try {

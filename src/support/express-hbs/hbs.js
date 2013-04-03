@@ -134,7 +134,7 @@ function cachePartials(text) {
     var filePath = path.resolve(path.join(_options.root, filename));
     var stats = fs.statSync(filePath);
     if (!stats.isFile()) {
-      console.log("partial not found: ", file);
+      log.error("partial not found: ", file);
       // silently ignore missing templates
       partialsCache[file] = "";
       continue;

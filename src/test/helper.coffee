@@ -1,6 +1,7 @@
 {assert, Assertion} = require("chai")
 Assertion.includeStackTrace = true
 Fs = require("fs")
+_ = require('lodash')
 
 Projmate = require("projmate-core/dist")
 Assets = require("projmate-core/dist/lib/run/assets")
@@ -26,9 +27,15 @@ module.exports = Helper =
       filter = new FilterClass
       filter.process asset, options, cb
 
-  textAsset: (text) ->
+  textAsset: (textOrOptions) ->
     assets = new Assets
-    assets.create filename: "notused.txt", text: text
+    if _.isString(textOrOptions)
+      assets.create filename: "notused.txt", text: textOrOptions
+    else
+      assets.create textOrOptions
+
+
+
 
   Assets: Assets
 

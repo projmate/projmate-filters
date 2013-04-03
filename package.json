@@ -26,7 +26,8 @@
     "recess": "~1.1.6",
     "source-map": "~0.1.16",
     "uglify-js": "~2.2.5",
-    "underscore": "~1.4.4"
+    "underscore": "~1.4.4",
+    "jade": "~0.28.2"
   },
   "keywords": [
     "Projmate",

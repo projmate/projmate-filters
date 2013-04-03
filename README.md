@@ -12,6 +12,7 @@ Filter          | Description
 *coffee*        | Compiles CoffeeScript.
 *commonJsify*   | Creates browser-compatible CommonJS package. Based on stitch.
 *functoid*      | Create ad-hoc filters.
+*jst*           | JavaScript Templates
 *less*          | Compile less scripts.
 *loadFiles*     | Loads files into buffers.
 *preproc*       | Preprocessor
@@ -20,6 +21,44 @@ Filter          | Description
 *uglify*        | Javascript minifier, beautifier
 *writeFiles*    | Writes files to file system.
 
+
+### JST
+
+Special directives are:
+
+*   Define a custom signature, must be first line at column 0
+
+        <!--function()-->
+
+*   Code
+
+        <% var a = 'foo'; %>
+
+*   Escaped output
+
+        <%= user.name %>
+
+*   Raw output
+
+        <%- 'as-is <>' %>
+
+*   Print from code
+
+        print('insert into output')
+
+Example using a custom function signature
+
+```html
+<!--function(users)-->
+<ul>
+    <% users.forEach(function(user) { %>
+        <li>
+            <% print(user.location) %>
+            <%= user.name %>
+        </li>
+    <% } %>
+</ul>
+```
 
 ## Filter
 

@@ -44,7 +44,7 @@ describe("extractMeta", function() {
       return done();
     });
   });
-  it("should extract meta and assign to .__merge", function(done) {
+  it("should extract meta and assign to .__merge (merges with options)", function(done) {
     var asset, pp;
 
     asset = textAsset("---\nfoo: 1\nbar: \"baz\"\nbaz:  [1, 2, 3]\n---\none\ntwo");

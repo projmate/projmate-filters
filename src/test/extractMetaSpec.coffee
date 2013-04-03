@@ -38,7 +38,7 @@ describe "extractMeta", ->
         """
         done()
 
-  it "should extract meta and assign to .__merge", (done) ->
+  it "should extract meta and assign to .__merge (merges with options)", (done) ->
       asset = textAsset """
         ---
         foo: 1

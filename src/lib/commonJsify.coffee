@@ -48,7 +48,6 @@ module.exports = (Projmate) ->
       result = """
         (function() {
           if (!this.#{identifier}) {
-            console.log('defining REQUIRE');
             var modules = {}, packages = {}, cache = {},
 
             require = function(name, root) {
@@ -108,14 +107,8 @@ module.exports = (Projmate) ->
                 throw "Stitch - Package already defined '"+package+"'";
               }
 
-
-              console.log('Adding keys for package ' + package);
-
               for (var key in bundle)
                 modules[package+"/"+key] = bundle[key];
-
-              console.log('packages', packages);
-              console.log('modules', modules);
             };
 
             this.#{identifier}.modules = function() {
