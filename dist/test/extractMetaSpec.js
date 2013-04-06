@@ -29,17 +29,18 @@ textAsset = function(text) {
 };
 
 describe("extractMeta", function() {
-  it("should extract meta and assign to ._meta", function(done) {
+  it("should extract meta and assign to .__meta", function(done) {
     var asset, pp;
 
     asset = textAsset("---\nfoo: (1)\nbar: \"baz\"\nbaz:  [1, 2, 3]\n---\none\ntwo");
     pp = new ExtractMeta;
     return pp.process(asset, {
-      as: "property"
+      as: "moo"
     }, function(err, result) {
       assert.ifError(err);
-      assert.equal(asset._meta.foo, 1);
-      assert.equal(asset._meta.baz[2], 3);
+      assert.equal(asset.__meta.name, 'moo');
+      assert.equal(asset.__meta.meta.foo, 1);
+      assert.equal(asset.__meta.meta.baz[2], 3);
       assert.equal(asset.text, "one\ntwo");
       return done();
     });
@@ -54,20 +55,6 @@ describe("extractMeta", function() {
       assert.equal(asset.__merge.foo, 1);
       assert.equal(asset.__merge.baz[2], 3);
       assert.equal(asset.text, "one\ntwo");
-      return done();
-    });
-  });
-  it("should extract meta from a file", function(done) {
-    var asset, pp;
-
-    asset = textAsset("Hello");
-    pp = new ExtractMeta;
-    return pp.process(asset, {
-      from: __dirname + "/res/test.json"
-    }, function(err, result) {
-      assert.ifError(err);
-      assert.equal(asset.__merge.foo, "bar");
-      assert.equal(asset.text, "Hello");
       return done();
     });
   });

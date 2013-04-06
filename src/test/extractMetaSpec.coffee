@@ -17,7 +17,7 @@ textAsset = (text) ->
 
 
 describe "extractMeta", ->
-  it "should extract meta and assign to ._meta", (done) ->
+  it "should extract meta and assign to .__meta", (done) ->
       asset = textAsset """
         ---
         foo: (1)
@@ -28,10 +28,11 @@ describe "extractMeta", ->
         two
         """
       pp = new ExtractMeta
-      pp.process asset, {as: "property"}, (err, result) ->
+      pp.process asset, {as: "moo"}, (err, result) ->
         assert.ifError err
-        assert.equal asset._meta.foo, 1
-        assert.equal asset._meta.baz[2], 3
+        assert.equal asset.__meta.name, 'moo'
+        assert.equal asset.__meta.meta.foo, 1
+        assert.equal asset.__meta.meta.baz[2], 3
         assert.equal asset.text, """
         one
         two
@@ -59,15 +60,6 @@ describe "extractMeta", ->
         """
         done()
 
-
-  it "should extract meta from a file", (done) ->
-      asset = textAsset "Hello"
-      pp = new ExtractMeta
-      pp.process asset, {from: __dirname + "/res/test.json"}, (err, result) ->
-        assert.ifError err
-        assert.equal asset.__merge.foo, "bar"
-        assert.equal asset.text, "Hello"
-        done()
 
   it "should extract meta from object", (done) ->
       asset = textAsset "Hello"

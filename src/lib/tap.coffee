@@ -7,13 +7,14 @@ _ = require('lodash')
 
 module.exports = (Projmate) ->
 
-  # Facilitates creating ad-hoc filters.
+  # Difference between tap and Functoid is that doesn't return a value so
+  # it does not change asset as a result of sync function.
   #
   # @example
   #
   # replaceVersion = f.functoid process: (asset, options) ->
   #   asset.text = asset.text.replace /VERSION/g, "1.0.1"
-  class Functoid extends Projmate.Filter
+  class Tap extends Projmate.Filter
     extnames: "*"
 
     process: (asset, options, cb) ->
@@ -25,8 +26,8 @@ module.exports = (Projmate) ->
         if fn.length == 3
           fn asset, options, cb
         else
-          result = fn(asset, options)
-          cb null, result
+          fn asset, options
+          cb()
       catch ex
         cb ex
 

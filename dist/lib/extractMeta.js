@@ -4,6 +4,9 @@
  * See the file LICENSE for copying permission.
  */
 
+
+var _ = require('lodash');
+
 function parseCSON(source) {
   // TODO run in sandbox
   var CoffeeScript = require('coffee-script');
@@ -56,12 +59,6 @@ function extractFromString(text) {
 }
 
 
-function extractFromModule(filename) {
-  var mod = require(filename);
-  return typeof mod === 'function' ? mod() : mod;
-}
-
-
 module.exports = function(Projmate) {
 
   /**
@@ -83,40 +80,41 @@ module.exports = function(Projmate) {
 
 
   /**
-   * Extracts meta.
+   * Extracts meta from a string or uses an object.
    *
    * @param {Object} options = {
-   *  {String} as: 'merge' | 'property'
+   *  {Object} from The source. If undefined then the `asset.text` is used.
+   *  {String} as The name `options` property to assign.
    * }
    *
-   * If options.as is 'merge' then meta is merged into each
-   * filter's options argument. This is the default.
+   * If options.as is not defined then meta is merged into `options`
+   * argument for each filter's `process` in the pipeline.
    *
-   * If options.as is 'property' then asset._meta = meta.
+   * If options.as is defined then it becomes the name of of the property
+   * in `options`. For example extractMeta as: 'foo'
    */
   ExtractMeta.prototype.process = function(asset, options, cb) {
-    options.as || (options.as = 'merge');
-    options.from || (options.from = 'asset');
+    options.from || (options.from = asset.text);
     var text = asset.text;
     var mode = options.as;
     var from = options.from;
     var meta, result;
 
     try {
-      if (from === 'asset') {
-        result = extractFromString(text);
+      if (_.isString(from)) {
+        result = extractFromString(from);
         if (result.err) return cb(result.err);
         meta = result.meta;
         text = result.text;
-      } else if (typeof from === 'string') {
-        meta = require(from);
-      } else if (typeof from === 'object') {
+        asset.text = text;
+      } else if (_.isObject(from)) {
         meta = from;
+      } else {
+        return cb('`options.from` is must be a string or function');
       }
 
-      asset.text = text;
-      if (mode === 'property') {
-        asset._meta = meta;
+      if (options.as) {
+        asset.__meta = { name: options.as, meta: meta };
       } else {
         // task's pipeline looks for this hidden property
         asset.__merge = meta;

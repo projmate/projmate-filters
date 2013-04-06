@@ -28,5 +28,3 @@ exports["writeFile"] = require("./writeFiles");
 exports["commonJs"] = require("./commonJsify");
 
 exports["cjs"] = require("./commonJsify");
-
-exports["tap"] = require("./functoid");

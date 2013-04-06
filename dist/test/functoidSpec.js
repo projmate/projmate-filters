@@ -11,7 +11,7 @@ _ref = require("./helper"), assert = _ref.assert, textAsset = _ref.textAsset, Fi
 filter = Filter("../lib/functoid");
 
 describe("Functoid", function() {
-  return it("should call custom command", function(done) {
+  it("should call custom command", function(done) {
     var adhoc, asset;
 
     asset = textAsset({
@@ -31,6 +31,25 @@ describe("Functoid", function() {
       assert.ifError(err);
       assert.equal(result.text, 'ADHOC');
       assert.equal(result.extname, '.foo');
+      return done();
+    });
+  });
+  return it("should call custom command without callback", function(done) {
+    var adhoc, asset;
+
+    asset = textAsset({
+      text: '#container= name',
+      filename: 'test.jade'
+    });
+    adhoc = function(asset) {
+      return asset.text = 'NOCB';
+    };
+    return filter.process(asset, {
+      command: adhoc
+    }, function(err, result) {
+      assert.ifError(err);
+      assert.equal(result, 'NOCB');
+      assert.equal(asset.text, 'NOCB');
       return done();
     });
   });

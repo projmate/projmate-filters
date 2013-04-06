@@ -16,3 +16,15 @@ describe "Functoid", ->
       assert.equal result.text, 'ADHOC'
       assert.equal result.extname, '.foo'
       done()
+
+  it "should call custom command without callback", (done) ->
+    asset = textAsset(text: '#container= name', filename: 'test.jade')
+
+    adhoc = (asset) ->
+      asset.text = 'NOCB'
+
+    filter.process asset, {command: adhoc}, (err, result) ->
+      assert.ifError err
+      assert.equal result, 'NOCB'
+      assert.equal asset.text, 'NOCB'
+      done()

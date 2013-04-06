@@ -11,20 +11,20 @@ var _,
 _ = require('lodash');
 
 module.exports = function(Projmate) {
-  var Functoid, _ref;
+  var Tap, _ref;
 
-  return Functoid = (function(_super) {
-    __extends(Functoid, _super);
+  return Tap = (function(_super) {
+    __extends(Tap, _super);
 
-    function Functoid() {
-      _ref = Functoid.__super__.constructor.apply(this, arguments);
+    function Tap() {
+      _ref = Tap.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
-    Functoid.prototype.extnames = "*";
+    Tap.prototype.extnames = "*";
 
-    Functoid.prototype.process = function(asset, options, cb) {
-      var ex, fn, result;
+    Tap.prototype.process = function(asset, options, cb) {
+      var ex, fn;
 
       fn = options.command;
       if (typeof fn !== "function") {
@@ -34,8 +34,8 @@ module.exports = function(Projmate) {
         if (fn.length === 3) {
           return fn(asset, options, cb);
         } else {
-          result = fn(asset, options);
-          return cb(null, result);
+          fn(asset, options);
+          return cb();
         }
       } catch (_error) {
         ex = _error;
@@ -43,7 +43,7 @@ module.exports = function(Projmate) {
       }
     };
 
-    return Functoid;
+    return Tap;
 
   })(Projmate.Filter);
 };
