@@ -7,12 +7,17 @@ pp  = require("../support/preprocess")
 _ = require ("lodash")
 
 module.exports = (Projmate) ->
+  escJs = (s) -> s.replace(/\\/g, '\\\\')
+
   # Preprocess the `asset` given definition in `options`.
   #
   class PreProcessor extends Projmate.Filter
     extnames: "*"
 
+
+
     process: (asset, options, cb) ->
+      _.defaults options, root: asset.dirname, escJs: escJs
       try
         result = pp(asset.text, options)
         cb null, result.join("\n")

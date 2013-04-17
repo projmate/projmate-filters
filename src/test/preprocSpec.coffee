@@ -3,12 +3,10 @@
 #
 # See the file LICENSE for copying permission.
 
-{assert, ctorFactory, FileAsset} = require("./helper")
+Fs = require('fs')
+{assert, ctorFactory, FileAsset, textAsset} = require("./helper")
 
 PreProcessor = ctorFactory("../lib/preproc")
-
-textAsset = (text) ->
-  new FileAsset(filename: "notused.txt", text: text, parent: [])
 
 process = (asset, options, cb) ->
   pp = new PreProcessor
@@ -23,21 +21,20 @@ describe "preproc", ->
       assert.equal result, "foobar"
       done()
 
-  it "should use defines", (done) ->
-    asset = textAsset("""
-      #ifdef FOO
-      bar
-      #else
-      bad
-      #endif
-      #define WIN
-      #ifdef WIN
-      windows
-      #endif
-    """)
+  it "should include", (done) ->
+    filename = __dirname + '/res/preproc.txt'
+    asset = textAsset(filename: filename, text: Fs.readFileSync(filename, 'utf8'))
     process asset, FOO:1, (err, result) ->
       assert.ifError err
-      assert.equal result, "bar\nwindows"
+      assert.equal result, "#comment\nbar\nwindows\nhello\\s\n\n"
+      done()
+
+  it "should include with string filters", (done) ->
+    filename = __dirname + '/res/preproc-filter.txt'
+    asset = textAsset(filename: filename, text: Fs.readFileSync(filename, 'utf8'))
+    process asset, FOO:1, (err, result) ->
+      assert.ifError err
+      assert.equal result, "#comment\nbar\nwindows\nhello\\\\s\n\n"
       done()
 
 

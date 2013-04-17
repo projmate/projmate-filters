@@ -1,0 +1,12 @@
+#comment
+%ifdef FOO
+bar
+%else
+bad
+%include bad.txt
+%endif
+%define WIN
+%ifdef WIN
+windows
+%include hello.txt | escJs
+%endif

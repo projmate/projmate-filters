@@ -34,9 +34,6 @@ module.exports = Helper =
     else
       assets.create textOrOptions
 
-
-
-
   Assets: Assets
 
   eventBus: new EventEmitter

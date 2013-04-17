@@ -1,3 +1,6 @@
+var Fs = require('fs');
+var Path = require('path');
+
 /**
  * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
  *
@@ -36,12 +39,13 @@
  * <identifier>     ::= [A-Za-z0-9_]
 */
 /*global block*/
+
 var preprocess = function (source, definitions) {
   var lines = [],
   p,
   lexer = function (lines) {
-    var tokens = new RegExp("^\\s*/*#(ifdef|ifndef|endif|else|define|undef|.*)\\s*(\\w*)$"),
-    index = 0, m;
+    var tokens = /^\s*%(ifdef|ifndef|endif|else|define|undef|include)\s*([\w\. |]*)$/;
+    var index = 0, m;
 
     function token(t, v, p) {
       return {
@@ -53,6 +57,7 @@ var preprocess = function (source, definitions) {
         }
       };
     }
+
 
     return {
       hasNext: function () {
@@ -137,6 +142,31 @@ var preprocess = function (source, definitions) {
       return true;
     }
 
+    /**
+     * %include some.txt | filter1 | filter2
+     */
+    function includeStatement() {
+      var root = definitions.root;
+      if (!root) {
+        throw new Error('Missing required argument: definitions.root');
+      }
+      if (inScope()) {
+        var parts = token.value.split('|');
+        var relFile = parts[0].trim();
+        var filename = Path.join(root, relFile);
+        var content = Fs.readFileSync(filename, 'utf8');
+        // apply filters
+        for (var i = 1, L = parts.length; i < L; i++) {
+          var fn = definitions[parts[i].trim()];
+          if (typeof fn === 'function') {
+            content = fn(content);
+          }
+        }
+        result.push(content);
+      }
+      return true;
+    }
+
     function statement() {
       previousToken = token;
       token = l.next();
@@ -145,6 +175,8 @@ var preprocess = function (source, definitions) {
           return ifStatement();
         } else if (token.id === 'define' || token.id === 'undef') {
           return defineStatement();
+        } else if (token.id === 'include') {
+          return includeStatement();
         } else if (token.id === 'line') {
           return lineStatement();
         }

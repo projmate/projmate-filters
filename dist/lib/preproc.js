@@ -13,8 +13,11 @@ pp = require("../support/preprocess");
 _ = require("lodash");
 
 module.exports = function(Projmate) {
-  var PreProcessor, _ref;
+  var PreProcessor, escJs, _ref;
 
+  escJs = function(s) {
+    return s.replace(/\\/g, '\\\\');
+  };
   return PreProcessor = (function(_super) {
     __extends(PreProcessor, _super);
 
@@ -28,6 +31,10 @@ module.exports = function(Projmate) {
     PreProcessor.prototype.process = function(asset, options, cb) {
       var ex, result;
 
+      _.defaults(options, {
+        root: asset.dirname,
+        escJs: escJs
+      });
       try {
         result = pp(asset.text, options);
         return cb(null, result.join("\n"));

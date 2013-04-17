@@ -4,19 +4,13 @@
  * See the file LICENSE for copying permission.
  */
 
-var FileAsset, PreProcessor, assert, ctorFactory, process, textAsset, _ref;
+var FileAsset, Fs, PreProcessor, assert, ctorFactory, process, textAsset, _ref;
 
-_ref = require("./helper"), assert = _ref.assert, ctorFactory = _ref.ctorFactory, FileAsset = _ref.FileAsset;
+Fs = require('fs');
+
+_ref = require("./helper"), assert = _ref.assert, ctorFactory = _ref.ctorFactory, FileAsset = _ref.FileAsset, textAsset = _ref.textAsset;
 
 PreProcessor = ctorFactory("../lib/preproc");
-
-textAsset = function(text) {
-  return new FileAsset({
-    filename: "notused.txt",
-    text: text,
-    parent: []
-  });
-};
 
 process = function(asset, options, cb) {
   var pp;
@@ -36,15 +30,35 @@ describe("preproc", function() {
       return done();
     });
   });
-  return it("should use defines", function(done) {
-    var asset;
+  it("should include", function(done) {
+    var asset, filename;
 
-    asset = textAsset("#ifdef FOO\nbar\n#else\nbad\n#endif\n#define WIN\n#ifdef WIN\nwindows\n#endif");
+    filename = __dirname + '/res/preproc.txt';
+    asset = textAsset({
+      filename: filename,
+      text: Fs.readFileSync(filename, 'utf8')
+    });
     return process(asset, {
       FOO: 1
     }, function(err, result) {
       assert.ifError(err);
-      assert.equal(result, "bar\nwindows");
+      assert.equal(result, "#comment\nbar\nwindows\nhello\\s\n\n");
+      return done();
+    });
+  });
+  return it("should include with string filters", function(done) {
+    var asset, filename;
+
+    filename = __dirname + '/res/preproc-filter.txt';
+    asset = textAsset({
+      filename: filename,
+      text: Fs.readFileSync(filename, 'utf8')
+    });
+    return process(asset, {
+      FOO: 1
+    }, function(err, result) {
+      assert.ifError(err);
+      assert.equal(result, "#comment\nbar\nwindows\nhello\\\\s\n\n");
       return done();
     });
   });
