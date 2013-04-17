@@ -44,7 +44,7 @@ var preprocess = function (source, definitions) {
   var lines = [],
   p,
   lexer = function (lines) {
-    var tokens = /^\s*%(ifdef|ifndef|endif|else|define|undef|include)\s*([\w\. |]*)$/;
+    var tokens = /^\s*%(ifdef|ifndef|endif|else|define|undef|include)\s*(.*)$/;
     var index = 0, m;
 
     function token(t, v, p) {

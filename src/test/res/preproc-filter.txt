@@ -8,5 +8,5 @@ bad
 %define WIN
 %ifdef WIN
 windows
-%include hello.txt | escJs
+  %include hello.txt | escJs
 %endif

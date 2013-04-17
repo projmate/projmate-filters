@@ -14,10 +14,9 @@ module.exports = (Projmate) ->
   class PreProcessor extends Projmate.Filter
     extnames: "*"
 
-
-
     process: (asset, options, cb) ->
-      _.defaults options, root: asset.dirname, escJs: escJs
+      root = options.root || asset.dirname
+      _.defaults options, root: root, escJs: escJs
       try
         result = pp(asset.text, options)
         cb null, result.join("\n")

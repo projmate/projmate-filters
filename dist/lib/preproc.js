@@ -29,10 +29,11 @@ module.exports = function(Projmate) {
     PreProcessor.prototype.extnames = "*";
 
     PreProcessor.prototype.process = function(asset, options, cb) {
-      var ex, result;
+      var ex, result, root;
 
+      root = options.root || asset.dirname;
       _.defaults(options, {
-        root: asset.dirname,
+        root: root,
         escJs: escJs
       });
       try {
