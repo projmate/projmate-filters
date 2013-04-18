@@ -173,10 +173,10 @@ module.exports = (Projmate) ->
       """
 
       if options.autoRequire
-        autoRequire =options.autoRequire.replace(/^\./, packageName)
+        autoRequire = options.autoRequire.replace(/^\./, packageName)
         result += """
           (function() {
-            require('#{autoRequire}')
+            #{identifier}('#{autoRequire}')
           })();
         """
 

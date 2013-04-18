@@ -101,7 +101,7 @@ module.exports = function(Projmate) {
       result += "}, '" + packageName + "');\n";
       if (options.autoRequire) {
         autoRequire = options.autoRequire.replace(/^\./, packageName);
-        result += "(function() {\n  require('" + autoRequire + "')\n})();";
+        result += "(function() {\n  " + identifier + "('" + autoRequire + "')\n})();";
       }
       this.mapAssets(task, options, result);
       return cb(null);
