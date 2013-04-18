@@ -37,6 +37,15 @@ describe "preproc", ->
       assert.equal result, "#comment\nbar\nwindows\nhello\\\\s\n\n"
       done()
 
+  it "should user user defined filters", (done) ->
+    filename = __dirname + '/res/preproc-udf.txt'
+    asset = textAsset(filename: filename, text: Fs.readFileSync(filename, 'utf8'))
+    caps = (s) -> s.toUpperCase()
+    process asset, caps:caps, (err, result) ->
+      assert.ifError err
+      assert.equal result.trim(), "HELLO\\S"
+      done()
+
 
 
 

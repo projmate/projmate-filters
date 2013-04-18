@@ -46,7 +46,7 @@ describe("preproc", function() {
       return done();
     });
   });
-  return it("should include with string filters", function(done) {
+  it("should include with string filters", function(done) {
     var asset, filename;
 
     filename = __dirname + '/res/preproc-filter.txt';
@@ -59,6 +59,25 @@ describe("preproc", function() {
     }, function(err, result) {
       assert.ifError(err);
       assert.equal(result, "#comment\nbar\nwindows\nhello\\\\s\n\n");
+      return done();
+    });
+  });
+  return it("should user user defined filters", function(done) {
+    var asset, caps, filename;
+
+    filename = __dirname + '/res/preproc-udf.txt';
+    asset = textAsset({
+      filename: filename,
+      text: Fs.readFileSync(filename, 'utf8')
+    });
+    caps = function(s) {
+      return s.toUpperCase();
+    };
+    return process(asset, {
+      caps: caps
+    }, function(err, result) {
+      assert.ifError(err);
+      assert.equal(result.trim(), "HELLO\\S");
       return done();
     });
   });
