@@ -172,11 +172,11 @@ module.exports = (Projmate) ->
         }, '#{packageName}');\n
       """
 
-      if options.autostart
-        autostart =options.autostart.replace(/^\./, packageName)
+      if options.autoRequire
+        autoRequire =options.autoRequire.replace(/^\./, packageName)
         result += """
           (function() {
-            require('#{autostart}')
+            require('#{autoRequire}')
           })();
         """
 

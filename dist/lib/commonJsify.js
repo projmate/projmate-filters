@@ -44,7 +44,7 @@ module.exports = function(Projmate) {
     }
 
     CommonJsify.prototype.process = function(task, options, cb) {
-      var asset, assets, autostart, basename, dirname, err, extname, identifier, index, packageName, path, result, root, sourceMap, text, ugly, _i, _len;
+      var asset, assets, autoRequire, basename, dirname, err, extname, identifier, index, packageName, path, result, root, sourceMap, text, ugly, _i, _len;
 
       identifier = options.identifier || "require";
       assets = task.assets.array();
@@ -99,9 +99,9 @@ module.exports = function(Projmate) {
         result += "" + text + "\n}";
       }
       result += "}, '" + packageName + "');\n";
-      if (options.autostart) {
-        autostart = options.autostart.replace(/^\./, packageName);
-        result += "(function() {\n  require('" + autostart + "')\n})();";
+      if (options.autoRequire) {
+        autoRequire = options.autoRequire.replace(/^\./, packageName);
+        result += "(function() {\n  require('" + autoRequire + "')\n})();";
       }
       this.mapAssets(task, options, result);
       return cb(null);
