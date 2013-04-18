@@ -44,7 +44,7 @@ module.exports = function(Projmate) {
     }
 
     CommonJsify.prototype.process = function(task, options, cb) {
-      var asset, assets, autostart, basename, dirname, err, extname, identifier, index, originalFilename, packageName, path, result, root, sourceMap, text, ugly, _i, _len;
+      var asset, assets, autostart, basename, dirname, err, extname, identifier, index, packageName, path, result, root, sourceMap, text, ugly, _i, _len;
 
       identifier = options.identifier || "require";
       assets = task.assets.array();
@@ -61,12 +61,8 @@ module.exports = function(Projmate) {
       index = 0;
       for (_i = 0, _len = assets.length; _i < _len; _i++) {
         asset = assets[_i];
-        dirname = asset.dirname, basename = asset.basename, extname = asset.extname, text = asset.text, originalFilename = asset.originalFilename;
+        dirname = asset.dirname, basename = asset.basename, extname = asset.extname, text = asset.text;
         if (extname === ".map") {
-          continue;
-        }
-        if (originalFilename === options.autostart) {
-          autostart = asset;
           continue;
         }
         path = Utils.unixPath(Path.join(dirname, Path.basename(basename, extname)));
@@ -103,9 +99,9 @@ module.exports = function(Projmate) {
         result += "" + text + "\n}";
       }
       result += "}, '" + packageName + "');\n";
-      if (autostart) {
-        autostart.markDelete = true;
-        result += "(function() {\n  " + autostart.text + "\n})();";
+      if (options.autostart) {
+        autostart = options.autostart.replace(/^\./, packageName);
+        result += "(function() {\n  require('" + autostart + "')\n})();";
       }
       this.mapAssets(task, options, result);
       return cb(null);

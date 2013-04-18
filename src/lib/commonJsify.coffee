@@ -126,11 +126,8 @@ module.exports = (Projmate) ->
 
       index = 0
       for asset  in assets
-        {dirname, basename, extname, text, originalFilename} = asset
+        {dirname, basename, extname, text} = asset
         continue if extname == ".map"
-        if originalFilename == options.autostart
-          autostart = asset
-          continue
 
         # path is used as the key since it is not on the filesystem
         path = Utils.unixPath(Path.join(dirname, Path.basename(basename, extname)))
@@ -175,11 +172,11 @@ module.exports = (Projmate) ->
         }, '#{packageName}');\n
       """
 
-      if autostart
-        autostart.markDelete = true
+      if options.autostart
+        autostart =options.autostart.replace(/^\./, packageName)
         result += """
           (function() {
-            #{autostart.text}
+            require('#{autostart}')
           })();
         """
 
