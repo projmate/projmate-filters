@@ -98,7 +98,8 @@ module.exports = (Projmate) ->
 
             this.#{identifier} = function(name) {
               return require(name, '');
-            }
+            };
+
             this.#{identifier}.define = function(bundle, package) {
               if (!package) {
                 package = "stitch";
@@ -125,8 +126,11 @@ module.exports = (Projmate) ->
 
       index = 0
       for asset  in assets
-        {dirname, basename, extname, text} = asset
+        {dirname, basename, extname, text, originalFilename} = asset
         continue if extname == ".map"
+        if originalFilename == options.autostart
+          autostart = asset
+          continue
 
         # path is used as the key since it is not on the filesystem
         path = Utils.unixPath(Path.join(dirname, Path.basename(basename, extname)))
@@ -170,6 +174,15 @@ module.exports = (Projmate) ->
       result += """
         }, '#{packageName}');\n
       """
+
+      if autostart
+        autostart.markDelete = true
+        result += """
+          (function() {
+            #{autostart.text}
+          })();
+        """
+
       @mapAssets task, options, result
       cb null
 
