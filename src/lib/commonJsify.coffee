@@ -41,9 +41,10 @@ module.exports = (Projmate) ->
       packageName = options.packageName || options.name || "app"
       options.root = Utils.unixPath(options.root || options.baseDir)
       sourceMap = options.sourceMap
+      options.auto = options.auto || options.autoRequire
 
       return cb("`options.root` is required.") unless options.root
-      return cb("options.filename is required.") unless options.filename
+      options.filename ?= Path.dirname(options.root) + '/' + options.name + '.js'
 
       result = """
         (function() {
@@ -172,11 +173,17 @@ module.exports = (Projmate) ->
         }, '#{packageName}');\n
       """
 
-      if options.autoRequire
-        autoRequire = options.autoRequire.replace(/^\./, packageName)
+      if options.auto
+        if options.auto[0] == '.'
+          # ./module => module/module
+          autorun = options.auto.replace(/^\./, packageName)
+        else
+          # module => module/module
+          autorun = "#{packageName}/#{options.auto}"
+
         result += """
           (function() {
-            #{identifier}('#{autoRequire}')
+            #{identifier}('#{autorun}')
           })();
         """
 
