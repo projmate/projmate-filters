@@ -41,9 +41,10 @@ module.exports = (Projmate) ->
       packageName = options.packageName || options.name || "app"
       options.root = Utils.unixPath(options.root || options.baseDir)
       sourceMap = options.sourceMap
+      options.auto = options.auto || options.autoRequire
 
       return cb("`options.root` is required.") unless options.root
-      return cb("options.filename is required.") unless options.filename
+      options.filename ?= Path.dirname(options.root) + '/' + options.name + '.js'
 
       result = """
         (function() {
@@ -96,30 +97,22 @@ module.exports = (Projmate) ->
               return path.split('/').slice(0, -1).join('/');
             };
 
-            this.#{identifier} = function(name) {
+            var __require = function(name) {
               return require(name, '');
-            }
-            this.#{identifier}.define = function(bundle, package) {
-              if (!package) {
-                package = "stitch";
-              }
+            };
+
+            __require.define = function(bundle, package) {
               if (packages[package]) {
-                throw "Stitch - Package already defined '"+package+"'";
+                throw "Package already defined '"+package+"'";
               }
-
-              for (var key in bundle)
+              for (var key in bundle) {
                 modules[package+"/"+key] = bundle[key];
-            };
-
-            this.#{identifier}.modules = function() {
-              return modules;
-            };
-            this.#{identifier}.packages = function() {
-              return packages;
+              }
             };
           }
 
-          return this.#{identifier}.define;
+          this.#{identifier} = __require;
+          return __require.define;
         }).call(this)({
       """
 
@@ -170,6 +163,21 @@ module.exports = (Projmate) ->
       result += """
         }, '#{packageName}');\n
       """
+
+      if options.auto
+        if options.auto[0] == '.'
+          # ./module => module/module
+          autorun = options.auto.replace(/^\./, packageName)
+        else
+          # module => module/module
+          autorun = "#{packageName}/#{options.auto}"
+
+        result += """
+          (function() {
+            #{identifier}('#{autorun}')
+          })();
+        """
+
       @mapAssets task, options, result
       cb null
 
