@@ -46,6 +46,15 @@ module.exports = (Projmate) ->
       return cb("`options.root` is required.") unless options.root
       options.filename ?= Path.dirname(options.root) + '/' + options.name + '.js'
 
+      if options.DEVELOPMENT
+        diagnostics = """
+          __require.modules = function() { return modules; };
+          __require.packages = function() { return packages; };
+          __require.cache = function() { return cache; };
+        """
+      else
+        diagnostics = ""
+
       result = """
         (function() {
           if (!this.#{identifier}) {
@@ -108,6 +117,8 @@ module.exports = (Projmate) ->
                 modules[package+"/"+key] = bundle[key];
               }
             };
+
+            #{diagnostics}
           }
 
           this.#{identifier} = __require;
