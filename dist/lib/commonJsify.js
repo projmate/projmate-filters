@@ -44,7 +44,7 @@ module.exports = function(Projmate) {
     }
 
     CommonJsify.prototype.process = function(task, options, cb) {
-      var asset, assets, autorun, basename, dirname, err, extname, identifier, index, packageName, path, result, root, sourceMap, text, ugly, _i, _len, _ref;
+      var asset, assets, autoModule, basename, dirname, err, extname, identifier, index, originalFilename, packageName, path, result, root, sourceMap, text, ugly, _i, _len, _ref;
 
       identifier = options.identifier || "require";
       assets = task.assets.array();
@@ -58,11 +58,11 @@ module.exports = function(Projmate) {
       if ((_ref = options.filename) == null) {
         options.filename = Path.dirname(options.root) + '/' + options.name + '.js';
       }
-      result = "(function() {\n  if (!this." + identifier + ") {\n    var modules = {}, packages = {}, cache = {},\n\n    require = function(name, root) {\n      var path = expand(root, name), module = cache[path], fn;\n      if (module) {\n        return module;\n      } else if (fn = modules[path] || modules[path = expand(path, './index')]) {\n        module = {id: name, exports: {}};\n        try {\n          cache[path] = module.exports;\n\n          //=> fn(exports, require, module, __filename, __dirname)\n          fn(module.exports, function(name) {\n            return require(name, dirname(path));\n          }, module, path, dirname(path));\n\n          return cache[path] = module.exports;\n        } catch (err) {\n          delete cache[path];\n          throw err;\n        }\n      } else {\n        throw 'module \\'' + name + '\\' not found';\n      }\n    },\n\n    expand = function(root, name) {\n      var results = [], parts, part;\n      if (/^\\.\\.?(\\/|$)/.test(name)) {\n        parts = [root, name].join('/').split('/');\n      } else {\n        parts = name.split('/');\n      }\n      for (var i = 0, length = parts.length; i < length; i++) {\n        part = parts[i];\n        if (part == '..') {\n          results.pop();\n        } else if (part != '.' && part != '') {\n          results.push(part);\n        }\n      }\n      return results.join('/');\n    },\n\n    dirname = function(path) {\n      return path.split('/').slice(0, -1).join('/');\n    };\n\n    var __require = function(name) {\n      return require(name, '');\n    };\n\n    __require.define = function(bundle, package) {\n      if (packages[package]) {\n        throw \"Package already defined '\"+package+\"'\";\n      }\n      for (var key in bundle) {\n        modules[package+\"/\"+key] = bundle[key];\n      }\n    };\n  }\n\n  this." + identifier + " = __require;\n  return __require.define;\n}).call(this)({";
+      result = "(function() {\n  if (!this." + identifier + ") {\n    var modules = {}, packages = {}, cache = {};\n\n    function dirname(path) {\n      return path.split('/').slice(0, -1).join('/');\n    }\n\n    function expand(root, name) {\n      var results = [], parts, part;\n      if (/^\\.\\.?(\\/|$)/.test(name)) {\n        parts = [root, name].join('/').split('/');\n      } else {\n        parts = name.split('/');\n      }\n      for (var i = 0, length = parts.length; i < length; i++) {\n        part = parts[i];\n        if (part === '..') {\n          results.pop();\n        } else if (part !== '.' && part !== '') {\n          results.push(part);\n        }\n      }\n      return results.join('/');\n    }\n\n    function require(name, root) {\n      var path = expand(root, name), module = cache[path], fn;\n      if (module) return module;\n\n      if (fn = modules[path] || modules[path = expand(path, './index')]) {\n        module = {id: name, exports: {}};\n        try {\n          cache[path] = module.exports;\n          function req(name) {\n            return require(name, dirname(path));\n          }\n          // same as node (exports, require, module, __filename, __dirname)\n          fn(module.exports, req, module, path, dirname(path));\n          return cache[path] = module.exports;\n        } catch (err) {\n          delete cache[path];\n          throw err;\n        }\n      } else {\n        throw 'module \\'' + name + '\\' not found';\n      }\n    }\n\n    var __require = function(name) {\n      return require(name, '');\n    };\n\n    __require.define = function(bundle, package) {\n      if (packages[package]) {\n        throw \"Package exists '\"+package+\"'\";\n      }\n      for (var key in bundle) {\n        modules[package+\"/\"+key] = bundle[key];\n      }\n    };\n  }\n\n  this." + identifier + " = __require;\n  return __require.define;\n}).call(this)({";
       index = 0;
       for (_i = 0, _len = assets.length; _i < _len; _i++) {
         asset = assets[_i];
-        dirname = asset.dirname, basename = asset.basename, extname = asset.extname, text = asset.text;
+        dirname = asset.dirname, basename = asset.basename, extname = asset.extname, text = asset.text, originalFilename = asset.originalFilename;
         if (extname === ".map") {
           continue;
         }
@@ -102,11 +102,11 @@ module.exports = function(Projmate) {
       result += "}, '" + packageName + "');\n";
       if (options.auto) {
         if (options.auto[0] === '.') {
-          autorun = options.auto.replace(/^\./, packageName);
+          autoModule = options.auto.replace(/^\./, packageName);
         } else {
-          autorun = "" + packageName + "/" + options.auto;
+          autoModule = "" + packageName + "/" + options.auto;
         }
-        result += "(function() {\n  " + identifier + "('" + autorun + "')\n})();";
+        result += "(function() {\n  " + identifier + "('" + autoModule + "')\n})();";
       }
       this.mapAssets(task, options, result);
       return cb(null);

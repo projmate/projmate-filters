@@ -49,33 +49,13 @@ module.exports = (Projmate) ->
       result = """
         (function() {
           if (!this.#{identifier}) {
-            var modules = {}, packages = {}, cache = {},
+            var modules = {}, packages = {}, cache = {};
 
-            require = function(name, root) {
-              var path = expand(root, name), module = cache[path], fn;
-              if (module) {
-                return module;
-              } else if (fn = modules[path] || modules[path = expand(path, './index')]) {
-                module = {id: name, exports: {}};
-                try {
-                  cache[path] = module.exports;
+            function dirname(path) {
+              return path.split('/').slice(0, -1).join('/');
+            }
 
-                  //=> fn(exports, require, module, __filename, __dirname)
-                  fn(module.exports, function(name) {
-                    return require(name, dirname(path));
-                  }, module, path, dirname(path));
-
-                  return cache[path] = module.exports;
-                } catch (err) {
-                  delete cache[path];
-                  throw err;
-                }
-              } else {
-                throw 'module \\'' + name + '\\' not found';
-              }
-            },
-
-            expand = function(root, name) {
+            function expand(root, name) {
               var results = [], parts, part;
               if (/^\\.\\.?(\\/|$)/.test(name)) {
                 parts = [root, name].join('/').split('/');
@@ -84,18 +64,37 @@ module.exports = (Projmate) ->
               }
               for (var i = 0, length = parts.length; i < length; i++) {
                 part = parts[i];
-                if (part == '..') {
+                if (part === '..') {
                   results.pop();
-                } else if (part != '.' && part != '') {
+                } else if (part !== '.' && part !== '') {
                   results.push(part);
                 }
               }
               return results.join('/');
-            },
+            }
 
-            dirname = function(path) {
-              return path.split('/').slice(0, -1).join('/');
-            };
+            function require(name, root) {
+              var path = expand(root, name), module = cache[path], fn;
+              if (module) return module;
+
+              if (fn = modules[path] || modules[path = expand(path, './index')]) {
+                module = {id: name, exports: {}};
+                try {
+                  cache[path] = module.exports;
+                  function req(name) {
+                    return require(name, dirname(path));
+                  }
+                  // same as node (exports, require, module, __filename, __dirname)
+                  fn(module.exports, req, module, path, dirname(path));
+                  return cache[path] = module.exports;
+                } catch (err) {
+                  delete cache[path];
+                  throw err;
+                }
+              } else {
+                throw 'module \\'' + name + '\\' not found';
+              }
+            }
 
             var __require = function(name) {
               return require(name, '');
@@ -103,7 +102,7 @@ module.exports = (Projmate) ->
 
             __require.define = function(bundle, package) {
               if (packages[package]) {
-                throw "Package already defined '"+package+"'";
+                throw "Package exists '"+package+"'";
               }
               for (var key in bundle) {
                 modules[package+"/"+key] = bundle[key];
@@ -118,7 +117,7 @@ module.exports = (Projmate) ->
 
       index = 0
       for asset  in assets
-        {dirname, basename, extname, text} = asset
+        {dirname, basename, extname, text, originalFilename} = asset
         continue if extname == ".map"
 
         # path is used as the key since it is not on the filesystem
@@ -167,14 +166,14 @@ module.exports = (Projmate) ->
       if options.auto
         if options.auto[0] == '.'
           # ./module => module/module
-          autorun = options.auto.replace(/^\./, packageName)
+          autoModule = options.auto.replace(/^\./, packageName)
         else
           # module => module/module
-          autorun = "#{packageName}/#{options.auto}"
+          autoModule = "#{packageName}/#{options.auto}"
 
         result += """
           (function() {
-            #{identifier}('#{autorun}')
+            #{identifier}('#{autoModule}')
           })();
         """
 
