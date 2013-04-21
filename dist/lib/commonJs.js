@@ -43,10 +43,25 @@ module.exports = function(Projmate) {
       CommonJsify.__super__.constructor.apply(this, arguments);
     }
 
-    CommonJsify.prototype.process = function(task, options, cb) {
-      var asset, assets, autoModule, basename, diagnostics, dirname, err, extname, identifier, index, originalFilename, packageName, path, result, root, sourceMap, text, ugly, _i, _len, _ref;
+    CommonJsify.prototype.requireShim = function(options, requireProp, defineProp) {
+      var diagnostics, result, signature;
 
-      identifier = options.identifier || "require";
+      if (options.DEVELOPMENT) {
+        diagnostics = "_require.modules = function() { return modules; };\n_require.cache = function() { return cache; };";
+      } else {
+        diagnostics = "";
+      }
+      signature = options.nodeJs ? "module.exports, req, module, path, dirname(path)" : "req, module.exports, module, path, dirname(path)";
+      return result = "(function(root) {\n  if (!root." + requireProp + ") {\n    var modules = {}, cache = {};\n\n    function dirname(path) {\n      return path.split('/').slice(0, -1).join('/');\n    }\n\n    function expand(root, name) {\n      var results = [], parts, part;\n      if (/^\\.\\.?(\\/|$)/.test(name)) {\n        parts = [root, name].join('/').split('/');\n      } else {\n        parts = name.split('/');\n      }\n      for (var i = 0, length = parts.length; i < length; i++) {\n        part = parts[i];\n        if (part === '..') {\n          results.pop();\n        } else if (part !== '.' && part !== '') {\n          results.push(part);\n        }\n      }\n      return results.join('/');\n    }\n\n    function require(name, root) {\n      var path = expand(root, name), module = cache[path], fn;\n      if (module) return module;\n\n      if (fn = modules[path] || modules[path = expand(path, './index')]) {\n        module = {id: name, exports: {}};\n        try {\n          cache[path] = module.exports;\n          function req(name) {\n            return require(name, dirname(path));\n          }\n          fn(" + signature + ");\n          return cache[path] = module.exports;\n        } catch (err) {\n          delete cache[path];\n          throw err;\n        }\n      } else {\n        throw 'module \\'' + name + '\\' not found';\n      }\n    }\n\n    function _require(name) {\n      return require(name, '');\n    };\n    " + diagnostics + "\n\n    function _define(path, deps, mod) {\n      if (arguments.length === 2) {\n        mod = deps;\n        deps = [];\n      };\n      modules[path] = mod;\n    };\n  }\n\n  root." + requireProp + " = _require;\n  root." + defineProp + " = _define;\n})(this);";
+    };
+
+    CommonJsify.prototype.process = function(task, options, cb) {
+      var asset, assets, autoModule, basename, defineProp, dirname, err, extname, nodeJs, originalFilename, packageName, packagePath, path, prependShim, requireProp, result, root, signature, sourceMap, text, ugly, _i, _len, _ref;
+
+      prependShim = options.prependShim || true;
+      requireProp = options.requireProp || options.identifier || "require";
+      defineProp = options.defineProp || "define";
+      nodeJs = options.nodeJs || false;
       assets = task.assets.array();
       packageName = options.packageName || options.name || "app";
       options.root = Utils.unixPath(options.root || options.baseDir);
@@ -58,13 +73,11 @@ module.exports = function(Projmate) {
       if ((_ref = options.filename) == null) {
         options.filename = Path.dirname(options.root) + '/' + options.name + '.js';
       }
-      if (options.DEVELOPMENT) {
-        diagnostics = "__require.modules = function() { return modules; };\n__require.packages = function() { return packages; };\n__require.cache = function() { return cache; };";
-      } else {
-        diagnostics = "";
+      result = ";";
+      if (prependShim) {
+        result += this.requireShim(options, requireProp, defineProp);
       }
-      result = "(function() {\n  if (!this." + identifier + ") {\n    var modules = {}, packages = {}, cache = {};\n\n    function dirname(path) {\n      return path.split('/').slice(0, -1).join('/');\n    }\n\n    function expand(root, name) {\n      var results = [], parts, part;\n      if (/^\\.\\.?(\\/|$)/.test(name)) {\n        parts = [root, name].join('/').split('/');\n      } else {\n        parts = name.split('/');\n      }\n      for (var i = 0, length = parts.length; i < length; i++) {\n        part = parts[i];\n        if (part === '..') {\n          results.pop();\n        } else if (part !== '.' && part !== '') {\n          results.push(part);\n        }\n      }\n      return results.join('/');\n    }\n\n    function require(name, root) {\n      var path = expand(root, name), module = cache[path], fn;\n      if (module) return module;\n\n      if (fn = modules[path] || modules[path = expand(path, './index')]) {\n        module = {id: name, exports: {}};\n        try {\n          cache[path] = module.exports;\n          function req(name) {\n            return require(name, dirname(path));\n          }\n          // same as node (exports, require, module, __filename, __dirname)\n          fn(module.exports, req, module, path, dirname(path));\n          return cache[path] = module.exports;\n        } catch (err) {\n          delete cache[path];\n          throw err;\n        }\n      } else {\n        throw 'module \\'' + name + '\\' not found';\n      }\n    }\n\n    var __require = function(name) {\n      return require(name, '');\n    };\n\n    __require.define = function(bundle, package) {\n      if (packages[package]) {\n        throw \"Package exists '\"+package+\"'\";\n      }\n      for (var key in bundle) {\n        modules[package+\"/\"+key] = bundle[key];\n      }\n    };\n\n    " + diagnostics + "\n  }\n\n  this." + identifier + " = __require;\n  return __require.define;\n}).call(this)({";
-      index = 0;
+      result += "(function(define) {";
       for (_i = 0, _len = assets.length; _i < _len; _i++) {
         asset = assets[_i];
         dirname = asset.dirname, basename = asset.basename, extname = asset.extname, text = asset.text, originalFilename = asset.originalFilename;
@@ -76,9 +89,9 @@ module.exports = function(Projmate) {
           root = Utils.rensure(options.root, '/');
           path = Utils.lchomp(path, root);
         }
-        result += index++ === 0 ? "" : ", ";
-        result += JSON.stringify(path);
-        result += ": function(exports, require, module, __filename, __dirname) {\n";
+        packagePath = JSON.stringify(packageName + '/' + path);
+        signature = nodeJs ? "exports, require, module, __filename, __dirname" : "require, exports, module, __filename, __dirname";
+        result += "" + defineProp + "(" + packagePath + ", function(" + signature + ") {\n";
         asset.sourceMapOffset = numberOfLines(result) - 1;
         if (options.sourceMap && asset.originalFilename.match(/\.js$/)) {
           try {
@@ -102,16 +115,16 @@ module.exports = function(Projmate) {
           text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "");
         }
         asset.markDelete = true;
-        result += "" + text + "\n}";
+        result += "" + text + "\n});";
       }
-      result += "}, '" + packageName + "');\n";
+      result += "})(this." + defineProp + ");";
       if (options.auto) {
         if (options.auto[0] === '.') {
           autoModule = options.auto.replace(/^\./, packageName);
         } else {
           autoModule = "" + packageName + "/" + options.auto;
         }
-        result += "(function() {\n  " + identifier + "('" + autoModule + "')\n})();";
+        result += "(function(" + requireProp + ") {\n  " + requireProp + "('" + autoModule + "')\n})(this." + requireProp + ");";
       }
       this.mapAssets(task, options, result);
       return cb(null);

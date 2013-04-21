@@ -25,6 +25,6 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
 
 exports["writeFile"] = require("./writeFiles");
 
-exports["commonJs"] = require("./commonJsify");
+exports["commonJsify"] = require("./commonJs");
 
-exports["cjs"] = require("./commonJsify");
+exports["cjs"] = require("./commonJs");

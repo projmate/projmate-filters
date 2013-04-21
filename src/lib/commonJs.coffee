@@ -35,30 +35,26 @@ module.exports = (Projmate) ->
         production: {sourceMap: false}
       super
 
-    process: (task, options, cb) ->
-      identifier = options.identifier || "require"
-      assets = task.assets.array()
-      packageName = options.packageName || options.name || "app"
-      options.root = Utils.unixPath(options.root || options.baseDir)
-      sourceMap = options.sourceMap
-      options.auto = options.auto || options.autoRequire
 
-      return cb("`options.root` is required.") unless options.root
-      options.filename ?= Path.dirname(options.root) + '/' + options.name + '.js'
-
+    requireShim: (options, requireProp, defineProp)->
       if options.DEVELOPMENT
         diagnostics = """
-          __require.modules = function() { return modules; };
-          __require.packages = function() { return packages; };
-          __require.cache = function() { return cache; };
+          _require.modules = function() { return modules; };
+          _require.cache = function() { return cache; };
         """
       else
         diagnostics = ""
 
+      signature =
+        if options.nodeJs
+          "module.exports, req, module, path, dirname(path)"
+        else
+          "req, module.exports, module, path, dirname(path)"
+
       result = """
-        (function() {
-          if (!this.#{identifier}) {
-            var modules = {}, packages = {}, cache = {};
+        (function(root) {
+          if (!root.#{requireProp}) {
+            var modules = {}, cache = {};
 
             function dirname(path) {
               return path.split('/').slice(0, -1).join('/');
@@ -93,8 +89,7 @@ module.exports = (Projmate) ->
                   function req(name) {
                     return require(name, dirname(path));
                   }
-                  // same as node (exports, require, module, __filename, __dirname)
-                  fn(module.exports, req, module, path, dirname(path));
+                  fn(#{signature});
                   return cache[path] = module.exports;
                 } catch (err) {
                   delete cache[path];
@@ -105,28 +100,45 @@ module.exports = (Projmate) ->
               }
             }
 
-            var __require = function(name) {
+            function _require(name) {
               return require(name, '');
             };
-
-            __require.define = function(bundle, package) {
-              if (packages[package]) {
-                throw "Package exists '"+package+"'";
-              }
-              for (var key in bundle) {
-                modules[package+"/"+key] = bundle[key];
-              }
-            };
-
             #{diagnostics}
+
+            function _define(path, deps, mod) {
+              if (arguments.length === 2) {
+                mod = deps;
+                deps = [];
+              };
+              modules[path] = mod;
+            };
           }
 
-          this.#{identifier} = __require;
-          return __require.define;
-        }).call(this)({
+          root.#{requireProp} = _require;
+          root.#{defineProp} = _define;
+        })(this);
       """
 
-      index = 0
+    process: (task, options, cb) ->
+      prependShim = options.prependShim || true
+      requireProp = options.requireProp || options.identifier || "require"
+      defineProp = options.defineProp || "define"
+      nodeJs = options.nodeJs || false
+
+      assets = task.assets.array()
+      packageName = options.packageName || options.name || "app"
+      options.root = Utils.unixPath(options.root || options.baseDir)
+      sourceMap = options.sourceMap
+      options.auto = options.auto || options.autoRequire
+
+      return cb("`options.root` is required.") unless options.root
+      options.filename ?= Path.dirname(options.root) + '/' + options.name + '.js'
+
+      result = ";"
+      if prependShim
+        result += @requireShim(options, requireProp, defineProp)
+      result += "(function(define) {"
+
       for asset  in assets
         {dirname, basename, extname, text, originalFilename} = asset
         continue if extname == ".map"
@@ -139,9 +151,15 @@ module.exports = (Projmate) ->
           root = Utils.rensure(options.root, '/')
           path = Utils.lchomp(path, root)
 
-        result += if index++ is 0 then "" else ", "
-        result += JSON.stringify(path)
-        result += ": function(exports, require, module, __filename, __dirname) {\n"
+        packagePath = JSON.stringify(packageName + '/' + path)
+        signature =
+          if nodeJs
+            "exports, require, module, __filename, __dirname"
+          else
+            "require, exports, module, __filename, __dirname"
+
+        #=> define('some/path', function(require, exports, module) {
+        result += "#{defineProp}(#{packagePath}, function(#{signature}) {\n"
 
         # track where this asset was inserted to adjust the source maps (if any later)
         asset.sourceMapOffset = numberOfLines(result) - 1
@@ -168,12 +186,9 @@ module.exports = (Projmate) ->
         # will get swept in @mapAsset
         asset.markDelete = true
 
-        result += "#{text}\n}"
+        result += "#{text}\n});"
 
-      result += """
-        }, '#{packageName}');\n
-      """
-
+      result += "})(this.#{defineProp});"
       if options.auto
         if options.auto[0] == '.'
           # ./module => module/module
@@ -183,9 +198,9 @@ module.exports = (Projmate) ->
           autoModule = "#{packageName}/#{options.auto}"
 
         result += """
-          (function() {
-            #{identifier}('#{autoModule}')
-          })();
+          (function(#{requireProp}) {
+            #{requireProp}('#{autoModule}')
+          })(this.#{requireProp});
         """
 
       @mapAssets task, options, result
