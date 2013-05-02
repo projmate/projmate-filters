@@ -83,7 +83,7 @@ module.exports = (Projmate) ->
               if (module) return module;
 
               if (fn = modules[path] || modules[path = expand(path, './index')]) {
-                module = {id: name, exports: {}};
+                module = {id: path, exports: {}};
                 try {
                   cache[path] = module.exports;
                   function req(name) {
@@ -103,6 +103,10 @@ module.exports = (Projmate) ->
             function _require(name) {
               return require(name, '');
             };
+            _require.resolve = function(path) {
+              return expand('', name);
+            };
+
             #{diagnostics}
 
             function _define(path, deps, mod) {
