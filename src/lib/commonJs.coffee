@@ -15,10 +15,18 @@ numberOfLines = (s) ->
   matches.length + 1
 
 
+moduleSignature = (simplifiedCjs) ->
+  if simplifiedCjs
+    "req, module.exports, module, path, dirname(path)"
+  else
+    "module.exports, req, module, path, dirname(path)"
+
+
 module.exports = (Projmate) ->
   {TaskProcessor, Utils} = Projmate
   {changeExtname} = Utils
   SourceMap = require("../support/sourceMap")
+
 
   # Reduces a task's assets into a single browser-side CommonJS-like module asset.
   #
@@ -45,11 +53,7 @@ module.exports = (Projmate) ->
       else
         diagnostics = ""
 
-      signature =
-        if options.nodeJs
-          "module.exports, req, module, path, dirname(path)"
-        else
-          "req, module.exports, module, path, dirname(path)"
+      signature = moduleSignature(options.simplifiedCjs)
 
       result = """
         (function(root) {
@@ -124,10 +128,10 @@ module.exports = (Projmate) ->
       """
 
     process: (task, options, cb) ->
-      prependShim = options.prependShim || true
+      loader = if options.loader? then options.loader else true
       requireProp = options.requireProp || options.identifier || "require"
       defineProp = options.defineProp || "define"
-      nodeJs = options.nodeJs || false
+      simplifiedCjs = if options.simplifiedCjs? then options.simplifiedCjs else false
 
       assets = task.assets.array()
       packageName = options.packageName || options.name || "app"
@@ -139,7 +143,7 @@ module.exports = (Projmate) ->
       options.filename ?= Path.dirname(options.root) + '/' + options.name + '.js'
 
       result = ";"
-      if prependShim
+      if loader
         result += @requireShim(options, requireProp, defineProp)
       result += "(function(define) {"
 
@@ -156,11 +160,7 @@ module.exports = (Projmate) ->
           path = Utils.lchomp(path, root)
 
         packagePath = JSON.stringify(packageName + '/' + path)
-        signature =
-          if nodeJs
-            "exports, require, module, __filename, __dirname"
-          else
-            "require, exports, module, __filename, __dirname"
+        signature = moduleSignature(simplifiedCjs)
 
         #=> define('some/path', function(require, exports, module) {
         result += "#{defineProp}(#{packagePath}, function(#{signature}) {\n"
