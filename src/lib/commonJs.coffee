@@ -44,7 +44,7 @@ module.exports = (Projmate) ->
       super
 
 
-    requireShim: (options, requireProp, defineProp)->
+    genLoader: (options, requireProp, defineProp) ->
       if options.DEVELOPMENT
         diagnostics = """
           _require.modules = function() { return modules; };
@@ -53,7 +53,11 @@ module.exports = (Projmate) ->
       else
         diagnostics = ""
 
-      signature = moduleSignature(options.simplifiedCjs)
+      signature =
+        if options.simplifiedCjs
+          "req, module.exports, module, path, dirname(path)"
+        else
+          "module.exports, req, module, path, dirname(path)"
 
       result = """
         (function(root) {
@@ -144,7 +148,7 @@ module.exports = (Projmate) ->
 
       result = ";"
       if loader
-        result += @requireShim(options, requireProp, defineProp)
+        result += @genLoader(options, requireProp, defineProp)
       result += "(function(define) {"
 
       for asset  in assets
@@ -160,7 +164,13 @@ module.exports = (Projmate) ->
           path = Utils.lchomp(path, root)
 
         packagePath = JSON.stringify(packageName + '/' + path)
-        signature = moduleSignature(simplifiedCjs)
+
+        signature =
+          if options.simplifiedCjs
+            "require, exports, module, __filename, __dirname"
+          else
+            "exports, require, module, __filename, __dirname"
+
 
         #=> define('some/path', function(require, exports, module) {
         result += "#{defineProp}(#{packagePath}, function(#{signature}) {\n"

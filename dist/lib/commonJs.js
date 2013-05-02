@@ -51,7 +51,7 @@ module.exports = function(Projmate) {
       CommonJsify.__super__.constructor.apply(this, arguments);
     }
 
-    CommonJsify.prototype.requireShim = function(options, requireProp, defineProp) {
+    CommonJsify.prototype.genLoader = function(options, requireProp, defineProp) {
       var diagnostics, result, signature;
 
       if (options.DEVELOPMENT) {
@@ -59,7 +59,7 @@ module.exports = function(Projmate) {
       } else {
         diagnostics = "";
       }
-      signature = moduleSignature(options.simplifiedCjs);
+      signature = options.simplifiedCjs ? "req, module.exports, module, path, dirname(path)" : "module.exports, req, module, path, dirname(path)";
       return result = "(function(root) {\n  if (!root." + requireProp + ") {\n    var modules = {}, cache = {};\n\n    function dirname(path) {\n      return path.split('/').slice(0, -1).join('/');\n    }\n\n    function expand(root, name) {\n      var results = [], parts, part;\n      if (/^\\.\\.?(\\/|$)/.test(name)) {\n        parts = [root, name].join('/').split('/');\n      } else {\n        parts = name.split('/');\n      }\n      for (var i = 0, length = parts.length; i < length; i++) {\n        part = parts[i];\n        if (part === '..') {\n          results.pop();\n        } else if (part !== '.' && part !== '') {\n          results.push(part);\n        }\n      }\n      return results.join('/');\n    }\n\n    function require(name, root) {\n      var path = expand(root, name), module = cache[path], fn;\n      if (module) return module;\n\n      if (fn = modules[path] || modules[path = expand(path, './index')]) {\n        module = {id: path, exports: {}};\n        try {\n          cache[path] = module.exports;\n          function req(name) {\n            return require(name, dirname(path));\n          }\n          fn(" + signature + ");\n          return cache[path] = module.exports;\n        } catch (err) {\n          delete cache[path];\n          throw err;\n        }\n      } else {\n        throw 'module \\'' + name + '\\' not found';\n      }\n    }\n\n    function _require(name) {\n      return require(name, '');\n    };\n    _require.resolve = function(path) {\n      return expand('', name);\n    };\n\n    " + diagnostics + "\n\n    function _define(path, deps, mod) {\n      if (arguments.length === 2) {\n        mod = deps;\n        deps = [];\n      };\n      modules[path] = mod;\n    };\n  }\n\n  root." + requireProp + " = _require;\n  root." + defineProp + " = _define;\n})(this);";
     };
 
@@ -83,7 +83,7 @@ module.exports = function(Projmate) {
       }
       result = ";";
       if (loader) {
-        result += this.requireShim(options, requireProp, defineProp);
+        result += this.genLoader(options, requireProp, defineProp);
       }
       result += "(function(define) {";
       for (_i = 0, _len = assets.length; _i < _len; _i++) {
@@ -98,7 +98,7 @@ module.exports = function(Projmate) {
           path = Utils.lchomp(path, root);
         }
         packagePath = JSON.stringify(packageName + '/' + path);
-        signature = moduleSignature(simplifiedCjs);
+        signature = options.simplifiedCjs ? "require, exports, module, __filename, __dirname" : "exports, require, module, __filename, __dirname";
         result += "" + defineProp + "(" + packagePath + ", function(" + signature + ") {\n";
         asset.sourceMapOffset = numberOfLines(result) - 1;
         if (options.sourceMap && asset.originalFilename.match(/\.js$/)) {
