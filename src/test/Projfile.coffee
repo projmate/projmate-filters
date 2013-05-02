@@ -10,6 +10,7 @@ exports.project = (pm) ->
         filename: 'tmp/apackage.js'
         requireProp: 'brequire'
         auto: 'index'
+        include: 'res/commonJs/standalone.js'
       f.writeFile
     ]
 

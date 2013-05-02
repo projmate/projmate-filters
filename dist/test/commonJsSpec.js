@@ -18,7 +18,7 @@ describe('CommonJs', function() {
       return exec('node tmp/apackage.js', {
         cwd: __dirname
       }, function(err, stdout) {
-        assert.equal(stdout, 'hello world!\n');
+        assert.equal(stdout, 'STANDALONE\nhello world!\n');
         return done();
       });
     });

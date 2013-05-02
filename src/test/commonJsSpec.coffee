@@ -5,7 +5,7 @@ describe 'CommonJs', ->
   it 'should work', (done) ->
     exec 'pm run testCommonJs',  cwd: __dirname, ->
       exec 'node tmp/apackage.js',  cwd: __dirname, (err, stdout) ->
-        assert.equal stdout, 'hello world!\n'
+        assert.equal stdout, 'STANDALONE\nhello world!\n'
         done()
 
 

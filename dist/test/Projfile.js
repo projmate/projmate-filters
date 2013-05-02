@@ -17,7 +17,8 @@ exports.project = function(pm) {
           root: 'res/commonJs',
           filename: 'tmp/apackage.js',
           requireProp: 'brequire',
-          auto: 'index'
+          auto: 'index',
+          include: 'res/commonJs/standalone.js'
         }), f.writeFile
       ]
     }

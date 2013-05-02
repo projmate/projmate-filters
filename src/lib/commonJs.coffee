@@ -5,6 +5,8 @@
 
 Path = require("path")
 UglifyJS = require("uglify-js")
+Async = require('async')
+Fs = require('fs')
 
 
 # Gets the number of lines in `s`
@@ -131,11 +133,37 @@ module.exports = (Projmate) ->
         })(this);
       """
 
+
+    includeFiles: (options, Utils, cb) ->
+      files = options.include
+      cwd = process.cwd()
+      patterns = files.include
+      excludePatterns = files.exclude
+      result = ";"
+
+      Utils.glob patterns, excludePatterns, {nosort: true}, (err, files) ->
+        return cb(err) if err
+
+        if files.length > 0
+          for file in files
+            stat = Fs.statSync(file)
+            continue if stat.isDirectory()
+            content = Fs.readFileSync(file, 'utf8')
+            result += "(function(){#{content}})();"
+
+        return cb(null, result)
+
+
     process: (task, options, cb) ->
-      loader = if options.loader? then options.loader else true
       requireProp = options.requireProp || options.identifier || "require"
       defineProp = options.defineProp || "define"
-      simplifiedCjs = if options.simplifiedCjs? then options.simplifiedCjs else false
+
+      options.loader ?= true
+      options.simplifiedCjs ?= false
+      options.splitFiles ?= false
+
+      loader = options.loader
+      simplifiedCjs = options.simplifiedCjs
 
       assets = task.assets.array()
       packageName = options.packageName || options.name || "app"
@@ -147,78 +175,100 @@ module.exports = (Projmate) ->
       options.filename ?= Path.dirname(options.root) + '/' + options.name + '.js'
 
       result = ";"
-      if loader
-        result += @genLoader(options, requireProp, defineProp)
-      result += "(function(define) {"
+      that = @
 
-      for asset  in assets
-        {dirname, basename, extname, text, originalFilename} = asset
-        continue if extname == ".map"
+      doLoader = (cb) ->
+        if loader
+          result += that.genLoader(options, requireProp, defineProp)
+        cb()
 
-        # path is used as the key since it is not on the filesystem
-        path = Utils.unixPath(Path.join(dirname, Path.basename(basename, extname)))
 
-        # make relative to root
-        if options.root
-          root = Utils.rensure(options.root, '/')
-          path = Utils.lchomp(path, root)
+      doIncludes = (cb) ->
+        if options.include
+          Utils.normalizeFiles options, 'include'
+          that.includeFiles options, Utils, (err, text) ->
+            return cb(err) if err
+            result += text
+            cb()
+        else
+          cb()
 
-        packagePath = JSON.stringify(packageName + '/' + path)
+      doBody = (cb) ->
 
-        signature =
-          if options.simplifiedCjs
-            "require, exports, module, __filename, __dirname"
+        result += "(function(define) {"
+
+        for asset  in assets
+          {dirname, basename, extname, text, originalFilename} = asset
+          continue if extname == ".map"
+
+          # path is used as the key since it is not on the filesystem
+          path = Utils.unixPath(Path.join(dirname, Path.basename(basename, extname)))
+
+          # make relative to root
+          if options.root
+            root = Utils.rensure(options.root, '/')
+            path = Utils.lchomp(path, root)
+
+          packagePath = JSON.stringify(packageName + '/' + path)
+
+          signature =
+            if options.simplifiedCjs
+              "require, exports, module, __filename, __dirname"
+            else
+              "exports, require, module, __filename, __dirname"
+
+
+          #=> define('some/path', function(require, exports, module) {
+          result += "#{defineProp}(#{packagePath}, function(#{signature}) {\n"
+
+          # track where this asset was inserted to adjust the source maps (if any later)
+          asset.sourceMapOffset = numberOfLines(result) - 1
+
+          if options.sourceMap and asset.originalFilename.match(/\.js$/)
+            try
+              # create map file for JS files
+              ugly = UglifyJS.minify asset.text,
+                fromString: true
+                compress: false
+                mangle: false
+                outSourceMap: changeExtname(asset.basename, ".map")
+              # create generated map file
+              asset.parent.create filename: changeExtname(asset.filename, ".map"), text:  ugly.map
+              text = ugly.code
+            catch err
+              that.log.error "#{asset.filename}"
+              return cb(err)
           else
-            "exports, require, module, __filename, __dirname"
+            # don't need the original mapping line
+            text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "")
+
+          # asset is merged into a combined asset so mark it for delete and it
+          # will get swept in @mapAsset
+          asset.markDelete = true
+
+          result += "#{text}\n});"
+
+        result += "})(this.#{defineProp});"
+        if options.auto
+          if options.auto[0] == '.'
+            # ./module => module/module
+            autoModule = options.auto.replace(/^\./, packageName)
+          else
+            # module => module/module
+            autoModule = "#{packageName}/#{options.auto}"
+
+          result += """
+            (function(#{requireProp}) {
+              #{requireProp}('#{autoModule}')
+            })(this.#{requireProp});
+          """
+
+        that.mapAssets task, options, result
+        cb null
+
+      Async.series [doLoader, doIncludes, doBody], cb
 
 
-        #=> define('some/path', function(require, exports, module) {
-        result += "#{defineProp}(#{packagePath}, function(#{signature}) {\n"
-
-        # track where this asset was inserted to adjust the source maps (if any later)
-        asset.sourceMapOffset = numberOfLines(result) - 1
-
-        if options.sourceMap and asset.originalFilename.match(/\.js$/)
-          try
-            # create map file for JS files
-            ugly = UglifyJS.minify asset.text,
-              fromString: true
-              compress: false
-              mangle: false
-              outSourceMap: changeExtname(asset.basename, ".map")
-            # create generated map file
-            asset.parent.create filename: changeExtname(asset.filename, ".map"), text:  ugly.map
-            text = ugly.code
-          catch err
-            @log.error "#{asset.filename}"
-            return cb(err)
-        else
-          # don't need the original mapping line
-          text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "")
-
-        # asset is merged into a combined asset so mark it for delete and it
-        # will get swept in @mapAsset
-        asset.markDelete = true
-
-        result += "#{text}\n});"
-
-      result += "})(this.#{defineProp});"
-      if options.auto
-        if options.auto[0] == '.'
-          # ./module => module/module
-          autoModule = options.auto.replace(/^\./, packageName)
-        else
-          # module => module/module
-          autoModule = "#{packageName}/#{options.auto}"
-
-        result += """
-          (function(#{requireProp}) {
-            #{requireProp}('#{autoModule}')
-          })(this.#{requireProp});
-        """
-
-      @mapAssets task, options, result
-      cb null
 
 
     ##

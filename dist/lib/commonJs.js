@@ -4,13 +4,17 @@
  * See the file LICENSE for copying permission.
  */
 
-var Path, UglifyJS, moduleSignature, numberOfLines,
+var Async, Fs, Path, UglifyJS, moduleSignature, numberOfLines,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Path = require("path");
 
 UglifyJS = require("uglify-js");
+
+Async = require('async');
+
+Fs = require('fs');
 
 numberOfLines = function(s) {
   var matches;
@@ -63,13 +67,53 @@ module.exports = function(Projmate) {
       return result = "(function(root) {\n  if (!root." + requireProp + ") {\n    var modules = {}, cache = {};\n\n    function dirname(path) {\n      return path.split('/').slice(0, -1).join('/');\n    }\n\n    function expand(root, name) {\n      var results = [], parts, part;\n      if (/^\\.\\.?(\\/|$)/.test(name)) {\n        parts = [root, name].join('/').split('/');\n      } else {\n        parts = name.split('/');\n      }\n      for (var i = 0, length = parts.length; i < length; i++) {\n        part = parts[i];\n        if (part === '..') {\n          results.pop();\n        } else if (part !== '.' && part !== '') {\n          results.push(part);\n        }\n      }\n      return results.join('/');\n    }\n\n    function require(name, root) {\n      var path = expand(root, name), module = cache[path], fn;\n      if (module) return module;\n\n      if (fn = modules[path] || modules[path = expand(path, './index')]) {\n        module = {id: path, exports: {}};\n        try {\n          cache[path] = module.exports;\n          function req(name) {\n            return require(name, dirname(path));\n          }\n          fn(" + signature + ");\n          return cache[path] = module.exports;\n        } catch (err) {\n          delete cache[path];\n          throw err;\n        }\n      } else {\n        throw 'module \\'' + name + '\\' not found';\n      }\n    }\n\n    function _require(name) {\n      return require(name, '');\n    };\n    _require.resolve = function(path) {\n      return expand('', name);\n    };\n\n    " + diagnostics + "\n\n    function _define(path, deps, mod) {\n      if (arguments.length === 2) {\n        mod = deps;\n        deps = [];\n      };\n      modules[path] = mod;\n    };\n  }\n\n  root." + requireProp + " = _require;\n  root." + defineProp + " = _define;\n})(this);";
     };
 
-    CommonJsify.prototype.process = function(task, options, cb) {
-      var asset, assets, autoModule, basename, defineProp, dirname, err, extname, loader, originalFilename, packageName, packagePath, path, requireProp, result, root, signature, simplifiedCjs, sourceMap, text, ugly, _i, _len, _ref;
+    CommonJsify.prototype.includeFiles = function(options, Utils, cb) {
+      var cwd, excludePatterns, files, patterns, result;
 
-      loader = options.loader != null ? options.loader : true;
+      files = options.include;
+      cwd = process.cwd();
+      patterns = files.include;
+      excludePatterns = files.exclude;
+      result = ";";
+      return Utils.glob(patterns, excludePatterns, {
+        nosort: true
+      }, function(err, files) {
+        var content, file, stat, _i, _len;
+
+        if (err) {
+          return cb(err);
+        }
+        if (files.length > 0) {
+          for (_i = 0, _len = files.length; _i < _len; _i++) {
+            file = files[_i];
+            stat = Fs.statSync(file);
+            if (stat.isDirectory()) {
+              continue;
+            }
+            content = Fs.readFileSync(file, 'utf8');
+            result += "(function(){" + content + "})();";
+          }
+        }
+        return cb(null, result);
+      });
+    };
+
+    CommonJsify.prototype.process = function(task, options, cb) {
+      var assets, defineProp, doBody, doIncludes, doLoader, loader, packageName, requireProp, result, simplifiedCjs, sourceMap, that, _ref, _ref1, _ref2, _ref3;
+
       requireProp = options.requireProp || options.identifier || "require";
       defineProp = options.defineProp || "define";
-      simplifiedCjs = options.simplifiedCjs != null ? options.simplifiedCjs : false;
+      if ((_ref = options.loader) == null) {
+        options.loader = true;
+      }
+      if ((_ref1 = options.simplifiedCjs) == null) {
+        options.simplifiedCjs = false;
+      }
+      if ((_ref2 = options.splitFiles) == null) {
+        options.splitFiles = false;
+      }
+      loader = options.loader;
+      simplifiedCjs = options.simplifiedCjs;
       assets = task.assets.array();
       packageName = options.packageName || options.name || "app";
       options.root = Utils.unixPath(options.root || options.baseDir);
@@ -78,64 +122,87 @@ module.exports = function(Projmate) {
       if (!options.root) {
         return cb("`options.root` is required.");
       }
-      if ((_ref = options.filename) == null) {
+      if ((_ref3 = options.filename) == null) {
         options.filename = Path.dirname(options.root) + '/' + options.name + '.js';
       }
       result = ";";
-      if (loader) {
-        result += this.genLoader(options, requireProp, defineProp);
-      }
-      result += "(function(define) {";
-      for (_i = 0, _len = assets.length; _i < _len; _i++) {
-        asset = assets[_i];
-        dirname = asset.dirname, basename = asset.basename, extname = asset.extname, text = asset.text, originalFilename = asset.originalFilename;
-        if (extname === ".map") {
-          continue;
+      that = this;
+      doLoader = function(cb) {
+        if (loader) {
+          result += that.genLoader(options, requireProp, defineProp);
         }
-        path = Utils.unixPath(Path.join(dirname, Path.basename(basename, extname)));
-        if (options.root) {
-          root = Utils.rensure(options.root, '/');
-          path = Utils.lchomp(path, root);
+        return cb();
+      };
+      doIncludes = function(cb) {
+        if (options.include) {
+          Utils.normalizeFiles(options, 'include');
+          return that.includeFiles(options, Utils, function(err, text) {
+            if (err) {
+              return cb(err);
+            }
+            result += text;
+            return cb();
+          });
+        } else {
+          return cb();
         }
-        packagePath = JSON.stringify(packageName + '/' + path);
-        signature = options.simplifiedCjs ? "require, exports, module, __filename, __dirname" : "exports, require, module, __filename, __dirname";
-        result += "" + defineProp + "(" + packagePath + ", function(" + signature + ") {\n";
-        asset.sourceMapOffset = numberOfLines(result) - 1;
-        if (options.sourceMap && asset.originalFilename.match(/\.js$/)) {
-          try {
-            ugly = UglifyJS.minify(asset.text, {
-              fromString: true,
-              compress: false,
-              mangle: false,
-              outSourceMap: changeExtname(asset.basename, ".map")
-            });
-            asset.parent.create({
-              filename: changeExtname(asset.filename, ".map"),
-              text: ugly.map
-            });
-            text = ugly.code;
-          } catch (_error) {
-            err = _error;
-            this.log.error("" + asset.filename);
-            return cb(err);
+      };
+      doBody = function(cb) {
+        var asset, autoModule, basename, dirname, err, extname, originalFilename, packagePath, path, root, signature, text, ugly, _i, _len;
+
+        result += "(function(define) {";
+        for (_i = 0, _len = assets.length; _i < _len; _i++) {
+          asset = assets[_i];
+          dirname = asset.dirname, basename = asset.basename, extname = asset.extname, text = asset.text, originalFilename = asset.originalFilename;
+          if (extname === ".map") {
+            continue;
           }
-        } else {
-          text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "");
+          path = Utils.unixPath(Path.join(dirname, Path.basename(basename, extname)));
+          if (options.root) {
+            root = Utils.rensure(options.root, '/');
+            path = Utils.lchomp(path, root);
+          }
+          packagePath = JSON.stringify(packageName + '/' + path);
+          signature = options.simplifiedCjs ? "require, exports, module, __filename, __dirname" : "exports, require, module, __filename, __dirname";
+          result += "" + defineProp + "(" + packagePath + ", function(" + signature + ") {\n";
+          asset.sourceMapOffset = numberOfLines(result) - 1;
+          if (options.sourceMap && asset.originalFilename.match(/\.js$/)) {
+            try {
+              ugly = UglifyJS.minify(asset.text, {
+                fromString: true,
+                compress: false,
+                mangle: false,
+                outSourceMap: changeExtname(asset.basename, ".map")
+              });
+              asset.parent.create({
+                filename: changeExtname(asset.filename, ".map"),
+                text: ugly.map
+              });
+              text = ugly.code;
+            } catch (_error) {
+              err = _error;
+              that.log.error("" + asset.filename);
+              return cb(err);
+            }
+          } else {
+            text = text.replace(/^\/\/@ sourceMappingURL.*$/gm, "");
+          }
+          asset.markDelete = true;
+          result += "" + text + "\n});";
         }
-        asset.markDelete = true;
-        result += "" + text + "\n});";
-      }
-      result += "})(this." + defineProp + ");";
-      if (options.auto) {
-        if (options.auto[0] === '.') {
-          autoModule = options.auto.replace(/^\./, packageName);
-        } else {
-          autoModule = "" + packageName + "/" + options.auto;
+        result += "})(this." + defineProp + ");";
+        if (options.auto) {
+          if (options.auto[0] === '.') {
+            autoModule = options.auto.replace(/^\./, packageName);
+          } else {
+            autoModule = "" + packageName + "/" + options.auto;
+          }
+          result += "(function(" + requireProp + ") {\n  " + requireProp + "('" + autoModule + "')\n})(this." + requireProp + ");";
         }
-        result += "(function(" + requireProp + ") {\n  " + requireProp + "('" + autoModule + "')\n})(this." + requireProp + ");";
-      }
-      this.mapAssets(task, options, result);
-      return cb(null);
+        that.mapAssets(task, options, result);
+        return cb(null);
+      };
+      return Async.series([doLoader, doIncludes, doBody], cb);
     };
 
     CommonJsify.prototype.mapAssets = function(task, options, script) {
