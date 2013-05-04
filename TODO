@@ -1,0 +1,40 @@
+// target = amd
+;(function(define){
+  // modules
+
+})(this.define);
+
+
+// target = cjs
+;(function(define) {
+
+  // modules
+  //
+})(cjs.define);
+
+
+// target = standalone
+;(function(root) {
+  // loader
+
+  var cjs = attach({});
+  var define = cjs.jdefine;
+
+  // modules
+
+  root['foo'] = cjs('foo');
+})(this);
+
+
+// target = node
+;(function(define) {
+  // loader
+
+  var cjs = attach({});
+  var define = cjs.define;
+
+  // modules
+
+  module.exports = cjs('foo');
+})(this);
+
