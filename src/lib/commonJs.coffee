@@ -139,7 +139,7 @@ module.exports = (Projmate) ->
       cwd = process.cwd()
       patterns = files.include
       excludePatterns = files.exclude
-      result = ";"
+      result = ""
 
       Utils.glob patterns, excludePatterns, {nosort: true}, (err, files) ->
         return cb(err) if err
@@ -153,10 +153,32 @@ module.exports = (Projmate) ->
 
         return cb(null, result)
 
+    includeAliases: (options, Utils, cb) ->
+      {defineProp, aliases} = options
+      result = ""
+      for alias, file of aliases
+        console.log "ALIAS", alias, "FILE", file
+        stat = Fs.statSync(file)
+        continue unless stat.isFile()
+        content = Fs.readFileSync(file, 'utf8')
+        result += "(function(define) {"
+        signature =
+          if options.simplifiedCjs
+            "require, exports, module, __filename, __dirname"
+          else
+            "exports, require, module, __filename, __dirname"
+
+        #=> define('some/path', function(require, exports, module) {
+        result += "#{defineProp}('#{alias}', function(#{signature}) {\n"
+        result += "#{content}\n});"
+        result += "})(this.#{defineProp});"
+      return cb(null, result)
+
 
     process: (task, options, cb) ->
       requireProp = options.requireProp || options.identifier || "require"
-      defineProp = options.defineProp || "define"
+      options.defineProp ?= "define"
+      defineProp = options.defineProp
 
       options.loader ?= true
       options.simplifiedCjs ?= false
@@ -184,14 +206,23 @@ module.exports = (Projmate) ->
 
 
       doIncludes = (cb) ->
-        if options.include
-          Utils.normalizeFiles options, 'include'
-          that.includeFiles options, Utils, (err, text) ->
-            return cb(err) if err
-            result += text
-            cb()
-        else
+        return cb() unless options.include
+
+        Utils.normalizeFiles options, 'include'
+        that.includeFiles options, Utils, (err, text) ->
+          return cb(err) if err
+          result += text
           cb()
+
+      # allows files to register themselves
+      doAliases = (cb) ->
+        return cb() unless options.aliases
+
+        that.includeAliases options, Utils, (err, text) ->
+          return cb(err) if err
+          result += text
+          cb()
+
 
       doBody = (cb) ->
 
@@ -266,7 +297,7 @@ module.exports = (Projmate) ->
         that.mapAssets task, options, result
         cb null
 
-      Async.series [doLoader, doIncludes, doBody], cb
+      Async.series [doLoader, doIncludes, doAliases, doBody], cb
 
 
 

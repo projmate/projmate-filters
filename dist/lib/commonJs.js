@@ -74,7 +74,7 @@ module.exports = function(Projmate) {
       cwd = process.cwd();
       patterns = files.include;
       excludePatterns = files.exclude;
-      result = ";";
+      result = "";
       return Utils.glob(patterns, excludePatterns, {
         nosort: true
       }, function(err, files) {
@@ -98,18 +98,43 @@ module.exports = function(Projmate) {
       });
     };
 
+    CommonJsify.prototype.includeAliases = function(options, Utils, cb) {
+      var alias, aliases, content, defineProp, file, result, signature, stat;
+
+      defineProp = options.defineProp, aliases = options.aliases;
+      result = "";
+      for (alias in aliases) {
+        file = aliases[alias];
+        console.log("ALIAS", alias, "FILE", file);
+        stat = Fs.statSync(file);
+        if (!stat.isFile()) {
+          continue;
+        }
+        content = Fs.readFileSync(file, 'utf8');
+        result += "(function(define) {";
+        signature = options.simplifiedCjs ? "require, exports, module, __filename, __dirname" : "exports, require, module, __filename, __dirname";
+        result += "" + defineProp + "('" + alias + "', function(" + signature + ") {\n";
+        result += "" + content + "\n});";
+        result += "})(this." + defineProp + ");";
+      }
+      return cb(null, result);
+    };
+
     CommonJsify.prototype.process = function(task, options, cb) {
-      var assets, defineProp, doBody, doIncludes, doLoader, loader, packageName, requireProp, result, simplifiedCjs, sourceMap, that, _ref, _ref1, _ref2, _ref3;
+      var assets, defineProp, doAliases, doBody, doIncludes, doLoader, loader, packageName, requireProp, result, simplifiedCjs, sourceMap, that, _ref, _ref1, _ref2, _ref3, _ref4;
 
       requireProp = options.requireProp || options.identifier || "require";
-      defineProp = options.defineProp || "define";
-      if ((_ref = options.loader) == null) {
+      if ((_ref = options.defineProp) == null) {
+        options.defineProp = "define";
+      }
+      defineProp = options.defineProp;
+      if ((_ref1 = options.loader) == null) {
         options.loader = true;
       }
-      if ((_ref1 = options.simplifiedCjs) == null) {
+      if ((_ref2 = options.simplifiedCjs) == null) {
         options.simplifiedCjs = false;
       }
-      if ((_ref2 = options.splitFiles) == null) {
+      if ((_ref3 = options.splitFiles) == null) {
         options.splitFiles = false;
       }
       loader = options.loader;
@@ -122,7 +147,7 @@ module.exports = function(Projmate) {
       if (!options.root) {
         return cb("`options.root` is required.");
       }
-      if ((_ref3 = options.filename) == null) {
+      if ((_ref4 = options.filename) == null) {
         options.filename = Path.dirname(options.root) + '/' + options.name + '.js';
       }
       result = ";";
@@ -134,18 +159,29 @@ module.exports = function(Projmate) {
         return cb();
       };
       doIncludes = function(cb) {
-        if (options.include) {
-          Utils.normalizeFiles(options, 'include');
-          return that.includeFiles(options, Utils, function(err, text) {
-            if (err) {
-              return cb(err);
-            }
-            result += text;
-            return cb();
-          });
-        } else {
+        if (!options.include) {
           return cb();
         }
+        Utils.normalizeFiles(options, 'include');
+        return that.includeFiles(options, Utils, function(err, text) {
+          if (err) {
+            return cb(err);
+          }
+          result += text;
+          return cb();
+        });
+      };
+      doAliases = function(cb) {
+        if (!options.aliases) {
+          return cb();
+        }
+        return that.includeAliases(options, Utils, function(err, text) {
+          if (err) {
+            return cb(err);
+          }
+          result += text;
+          return cb();
+        });
       };
       doBody = function(cb) {
         var asset, autoModule, basename, dirname, err, extname, originalFilename, packagePath, path, root, signature, text, ugly, _i, _len;
@@ -202,7 +238,7 @@ module.exports = function(Projmate) {
         that.mapAssets(task, options, result);
         return cb(null);
       };
-      return Async.series([doLoader, doIncludes, doBody], cb);
+      return Async.series([doLoader, doIncludes, doAliases, doBody], cb);
     };
 
     CommonJsify.prototype.mapAssets = function(task, options, script) {

@@ -5,11 +5,10 @@
 })(this.define);
 
 
-// target = cjs
+// target = cjs, requires loader like cjs
 ;(function(define) {
 
   // modules
-  //
 })(cjs.define);
 
 
