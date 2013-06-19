@@ -200,7 +200,7 @@ module.exports = function(Projmate) {
           }
           packagePath = JSON.stringify(packageName + '/' + path);
           signature = options.simplifiedCjs ? "require, exports, module, __filename, __dirname" : "exports, require, module, __filename, __dirname";
-          result += "" + defineProp + "(" + packagePath + ", function(" + signature + ") {\n";
+          result += "define(" + packagePath + ", function(" + signature + ") {\n";
           asset.sourceMapOffset = numberOfLines(result) - 1;
           if (options.sourceMap && asset.originalFilename.match(/\.js$/)) {
             try {

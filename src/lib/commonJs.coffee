@@ -252,7 +252,8 @@ module.exports = (Projmate) ->
 
 
           #=> define('some/path', function(require, exports, module) {
-          result += "#{defineProp}(#{packagePath}, function(#{signature}) {\n"
+          #result += "#{defineProp}(#{packagePath}, function(#{signature}) {\n"
+          result += "define(#{packagePath}, function(#{signature}) {\n"
 
           # track where this asset was inserted to adjust the source maps (if any later)
           asset.sourceMapOffset = numberOfLines(result) - 1
