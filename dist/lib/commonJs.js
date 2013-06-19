@@ -113,7 +113,7 @@ module.exports = function(Projmate) {
         content = Fs.readFileSync(file, 'utf8');
         result += "(function(define) {";
         signature = options.simplifiedCjs ? "require, exports, module, __filename, __dirname" : "exports, require, module, __filename, __dirname";
-        result += "" + defineProp + "('" + alias + "', function(" + signature + ") {\n";
+        result += "define('" + alias + "', function(" + signature + ") {\n";
         result += "" + content + "\n});";
         result += "})(this." + defineProp + ");";
       }

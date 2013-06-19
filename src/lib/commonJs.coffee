@@ -170,7 +170,8 @@ module.exports = (Projmate) ->
             "exports, require, module, __filename, __dirname"
 
         #=> define('some/path', function(require, exports, module) {
-        result += "#{defineProp}('#{alias}', function(#{signature}) {\n"
+        #result += "#{defineProp}('#{alias}', function(#{signature}) {\n"
+        result += "define('#{alias}', function(#{signature}) {\n"
         result += "#{content}\n});"
         result += "})(this.#{defineProp});"
       return cb(null, result)
