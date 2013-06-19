@@ -126,10 +126,11 @@ module.exports = (Projmate) ->
               };
               modules[path] = mod;
             };
+
+            root.#{requireProp} = _require;
+            root.#{defineProp} = _define;
           }
 
-          root.#{requireProp} = _require;
-          root.#{defineProp} = _define;
         })(this);
       """
 

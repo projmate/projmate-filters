@@ -10,7 +10,6 @@ module.exports = (Projmate) ->
   escJs = (s) -> s.replace(/\\/g, '\\\\')
 
   # Preprocess the `asset` given definition in `options`.
-  #
   class PreProcessor extends Projmate.Filter
     extnames: "*"
 
