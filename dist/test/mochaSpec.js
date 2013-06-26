@@ -15,7 +15,6 @@ Fs = require('fs');
 describe("Mocha", function() {
   return it("should run tests", function(done) {
     var assets, output, task;
-
     assets = new Assets;
     assets.create({
       filename: "" + __dirname + "/res/mocha/aSpec.coffee"

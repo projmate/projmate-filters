@@ -12,7 +12,6 @@ recess = require("recess");
 
 module.exports = function(Projmate) {
   var Coffee, _ref;
-
   return Coffee = (function(_super) {
     __extends(Coffee, _super);
 
@@ -27,7 +26,6 @@ module.exports = function(Projmate) {
 
     Coffee.prototype.process = function(asset, options, cb) {
       var ex;
-
       try {
         return recess(asset.filename, options, function(err, result) {
           if (err) {

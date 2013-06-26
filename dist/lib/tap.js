@@ -12,7 +12,6 @@ _ = require('lodash');
 
 module.exports = function(Projmate) {
   var Tap, _ref;
-
   return Tap = (function(_super) {
     __extends(Tap, _super);
 
@@ -25,7 +24,6 @@ module.exports = function(Projmate) {
 
     Tap.prototype.process = function(asset, options, cb) {
       var ex, fn;
-
       fn = options.command;
       if (typeof fn !== "function") {
         return cb("Options.command is required and must be a function(asset, options[, cb])");

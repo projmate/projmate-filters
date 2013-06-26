@@ -16,7 +16,6 @@ Util = require("util");
 
 module.exports = function(Projmate) {
   var FileAsset, LoadFilenames, PmUtils, TaskProcessor, _ref;
-
   FileAsset = Projmate.FileAsset, TaskProcessor = Projmate.TaskProcessor, PmUtils = Projmate.Utils;
   return LoadFilenames = (function(_super) {
     __extends(LoadFilenames, _super);
@@ -30,7 +29,6 @@ module.exports = function(Projmate) {
 
     LoadFilenames.prototype.process = function(task, options, cb) {
       var assets, cwd, excludePatterns, log, patterns;
-
       log = this.log;
       cwd = process.cwd();
       patterns = task.config.files.include;
@@ -40,7 +38,6 @@ module.exports = function(Projmate) {
         nosort: true
       }, function(err, files) {
         var file, stat, _i, _len;
-
         if (err) {
           return cb(err);
         }

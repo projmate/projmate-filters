@@ -25,20 +25,17 @@ module.exports = Helper = {
   Projmate: Projmate,
   ctorFactory: function(path) {
     var factory;
-
     factory = require(path);
     return factory(Projmate);
   },
   FileAsset: Projmate.FileAsset,
   Filter: function(path) {
     var FilterClass, factory;
-
     factory = require(path);
     FilterClass = factory(Projmate);
     return {
       process: function(asset, options, cb) {
         var filter;
-
         filter = new FilterClass;
         return filter.process(asset, options, cb);
       }
@@ -46,7 +43,6 @@ module.exports = Helper = {
   },
   textAsset: function(textOrOptions) {
     var assets;
-
     assets = new Assets;
     if (_.isString(textOrOptions)) {
       return assets.create({

@@ -15,7 +15,6 @@ fs = require('fs');
 describe("template", function() {
   it("should write an asset", function(done) {
     var asset, filename;
-
     filename = __dirname + '/tmp/writefile1.txt';
     asset = textAsset({
       text: 'foo',
@@ -23,7 +22,6 @@ describe("template", function() {
     });
     return filter.process(asset, {}, function(err, result) {
       var text;
-
       assert.ifError(err);
       text = fs.readFileSync(filename, 'utf8');
       assert.equal(text, 'foo');
@@ -33,7 +31,6 @@ describe("template", function() {
   });
   return it("should write an asset without extension", function(done) {
     var asset, filename;
-
     filename = __dirname + '/tmp/writeFile2';
     asset = textAsset({
       text: 'foo2',
@@ -41,7 +38,6 @@ describe("template", function() {
     });
     return filter.process(asset, {}, function(err, result) {
       var text;
-
       assert.ifError(err);
       text = fs.readFileSync(filename, 'utf8');
       assert.equal(text, 'foo2');

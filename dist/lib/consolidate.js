@@ -12,7 +12,6 @@ cons = require("consolidate");
 
 module.exports = function(Projmate) {
   var Template, _ref;
-
   return Template = (function(_super) {
     __extends(Template, _super);
 
@@ -27,7 +26,6 @@ module.exports = function(Projmate) {
 
     Template.prototype.process = function(asset, options, cb) {
       var engine, ex;
-
       engine = options.engine || "underscore";
       if (options.requires) {
         require(options.requires);

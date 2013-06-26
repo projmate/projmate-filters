@@ -13,7 +13,6 @@ template = Filter("../lib/jade");
 describe("template", function() {
   return it("compile a template and default to 'it' as only argument", function(done) {
     var asset;
-
     asset = textAsset({
       text: '#container= name',
       filename: 'test.jade'

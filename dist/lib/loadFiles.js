@@ -18,7 +18,6 @@ _ = require("lodash");
 
 module.exports = function(Projmate) {
   var FileAsset, LoadFiles, PmUtils, TaskProcessor, _ref;
-
   FileAsset = Projmate.FileAsset, TaskProcessor = Projmate.TaskProcessor, PmUtils = Projmate.Utils;
   return LoadFiles = (function(_super) {
     __extends(LoadFiles, _super);
@@ -32,7 +31,6 @@ module.exports = function(Projmate) {
 
     LoadFiles.prototype.process = function(task, options, cb) {
       var assets, cwd, excludePatterns, log, patterns;
-
       log = this.log;
       cwd = process.cwd();
       patterns = task.config.files.include;
@@ -51,7 +49,6 @@ module.exports = function(Projmate) {
         if (files.length > 0) {
           return Async.eachSeries(files, function(file, cb) {
             var stat;
-
             if (file.indexOf("./") === 0 || file.indexOf(".\\") === 0) {
               file = file.slice(2);
             }

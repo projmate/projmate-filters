@@ -14,7 +14,6 @@ _ = require('lodash');
 
 module.exports = function(Projmate) {
   var Filter, JadeFilter, Utils, jade, _ref;
-
   Filter = Projmate.Filter, Utils = Projmate.Utils;
   jade = require('jade');
   return JadeFilter = (function(_super) {
@@ -29,7 +28,6 @@ module.exports = function(Projmate) {
 
     JadeFilter.prototype.process = function(asset, options, cb) {
       var defaults, ex, fn, result, text;
-
       if (options.jst) {
         defaults = {
           client: true,

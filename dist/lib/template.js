@@ -14,7 +14,6 @@ _ = require('lodash');
 
 module.exports = function(Projmate) {
   var Filter, Jst, Utils, _ref;
-
   Filter = Projmate.Filter, Utils = Projmate.Utils;
   return Jst = (function(_super) {
     __extends(Jst, _super);
@@ -60,7 +59,6 @@ module.exports = function(Projmate) {
 
     Jst.prototype.render = function(asset, options, cb) {
       var defaults, ex, func, newlinePos, result, text;
-
       defaults = {
         evaluate: /<%([\s\S]+?)%>/g,
         interpolate: /<%-([\s\S]+?)%>/g,
@@ -91,7 +89,6 @@ module.exports = function(Projmate) {
 
     Jst.prototype.process = function(asset, options, cb) {
       var compiled, defaults, ex, fnName, func, newlinePos, text;
-
       if (options.jst) {
         options.variable = options.paramName || 'it';
         defaults = {

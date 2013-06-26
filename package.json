@@ -27,7 +27,8 @@
     "source-map": "~0.1.16",
     "uglify-js": "~2.2.5",
     "underscore": "~1.4.4",
-    "jade": "~0.28.2"
+    "jade": "~0.28.2",
+    "marked": "~0.2.9"
   },
   "keywords": [
     "Projmate",

@@ -13,7 +13,6 @@ cat = Filter("../lib/cat");
 describe("Cat", function() {
   return it("should handle concat", function(done) {
     var assets, task;
-
     assets = new Assets;
     assets.create({
       filename: "notused.ext",

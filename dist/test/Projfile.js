@@ -6,7 +6,6 @@
 
 exports.project = function(pm) {
   var $, f;
-
   f = pm.f, $ = pm.$;
   return {
     testCommonJs: {

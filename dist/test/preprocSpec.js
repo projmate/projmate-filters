@@ -14,7 +14,6 @@ PreProcessor = ctorFactory("../lib/preproc");
 
 process = function(asset, options, cb) {
   var pp;
-
   pp = new PreProcessor;
   return pp.process(asset, options, cb);
 };
@@ -22,7 +21,6 @@ process = function(asset, options, cb) {
 describe("preproc", function() {
   it("should return original text in absence of directives", function(done) {
     var asset;
-
     asset = textAsset("foobar");
     return process(asset, {}, function(err, result) {
       assert.ifError(err);
@@ -32,7 +30,6 @@ describe("preproc", function() {
   });
   it("should include", function(done) {
     var asset, filename;
-
     filename = __dirname + '/res/preproc.txt';
     asset = textAsset({
       filename: filename,
@@ -48,7 +45,6 @@ describe("preproc", function() {
   });
   it("should include with string filters", function(done) {
     var asset, filename;
-
     filename = __dirname + '/res/preproc-filter.txt';
     asset = textAsset({
       filename: filename,
@@ -64,7 +60,6 @@ describe("preproc", function() {
   });
   return it("should user user defined filters", function(done) {
     var asset, caps, filename;
-
     filename = __dirname + '/res/preproc-udf.txt';
     asset = textAsset({
       filename: filename,

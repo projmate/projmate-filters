@@ -12,7 +12,6 @@ Path = require("path");
 
 module.exports = function(Projmate) {
   var Handlebars;
-
   return Handlebars = (function(_super) {
     __extends(Handlebars, _super);
 
@@ -24,7 +23,6 @@ module.exports = function(Projmate) {
 
     Handlebars.prototype.process = function(asset, options, cb) {
       var config, hbs, _;
-
       if (!options.root) {
         return cb("options.root is required");
       }

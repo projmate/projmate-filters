@@ -13,7 +13,6 @@ coffee = Filter("../lib/coffee");
 describe("Coffee", function() {
   it("should handle simple coffee", function(done) {
     var asset;
-
     asset = textAsset("a=1");
     return coffee.process(asset, {
       bare: true
@@ -25,7 +24,6 @@ describe("Coffee", function() {
   });
   return it("should create sourcemaps", function(done) {
     var asset, assets;
-
     asset = textAsset("a=1");
     assets = asset.parent;
     assert.equal(asset.parent.size(), 1);

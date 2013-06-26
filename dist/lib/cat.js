@@ -9,7 +9,6 @@ var __hasProp = {}.hasOwnProperty,
 
 module.exports = function(Projmate) {
   var Cat, TaskProcessor, _ref;
-
   TaskProcessor = Projmate.TaskProcessor;
   return Cat = (function(_super) {
     __extends(Cat, _super);
@@ -23,7 +22,6 @@ module.exports = function(Projmate) {
 
     Cat.prototype.process = function(task, options, cb) {
       var filename, first, join, script;
-
       if (task.assets.isEmpty()) {
         return cb();
       }

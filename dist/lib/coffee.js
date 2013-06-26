@@ -16,7 +16,6 @@ Path = require("path");
 
 exports.repeat = repeat = function(str, n) {
   var res;
-
   res = '';
   while (n > 0) {
     if (n & 1) {
@@ -30,7 +29,6 @@ exports.repeat = repeat = function(str, n) {
 
 prettyErrorMessage = function(error, fileName, code) {
   var codeLine, end, first_column, first_line, last_column, last_line, marker, message, start, _ref;
-
   if (!error.location) {
     return error.stack || ("" + error);
   }
@@ -44,7 +42,6 @@ prettyErrorMessage = function(error, fileName, code) {
 
 module.exports = function(Projmate) {
   var Coffee, Filter, Utils, _ref;
-
   Filter = Projmate.Filter, Utils = Projmate.Utils;
   return Coffee = (function(_super) {
     __extends(Coffee, _super);
@@ -69,7 +66,6 @@ module.exports = function(Projmate) {
 
     Coffee.prototype.process = function(asset, options, cb) {
       var err, js, mapAsset, result, sourceMap;
-
       if (options.sourceMap) {
         options.filename = asset.filename;
         options.sourceFiles = [asset.basename];
@@ -87,7 +83,6 @@ module.exports = function(Projmate) {
           });
           mapAsset.whenWriting(function() {
             var relPath;
-
             relPath = Path.relative(Path.dirname(asset.filename), asset.originalFilename);
             return mapAsset.text = mapAsset.text.replace(Path.basename(asset.originalFilename), relPath);
           });

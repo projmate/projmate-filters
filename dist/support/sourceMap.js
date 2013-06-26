@@ -19,13 +19,11 @@ SourceMap = {
   },
   loadFile: function(file) {
     var content;
-
     content = Fs.readFileSync(file, "utf8");
     return new SourceMapConsumer(content);
   },
   rebase: function(generator, map, source, offsetLine) {
     var consumer;
-
     consumer = new SourceMapConsumer(map);
     return consumer.eachMapping(function(item) {
       return generator.addMapping({
@@ -44,7 +42,6 @@ SourceMap = {
   },
   dump: function(map, max) {
     var cons, i;
-
     if (max == null) {
       max = Number.MAX_VALUE;
     }

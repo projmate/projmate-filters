@@ -13,13 +13,11 @@ template = Filter("../lib/template");
 describe("template", function() {
   it("compile a template and default to 'it' as only argument", function(done) {
     var asset;
-
     asset = textAsset("<html>\n<% var code = 0; %>\n<%= it.name %>\n<%- '<raw>' %>\n</html>");
     return template.process(asset, {
       jst: true
     }, function(err, result) {
       var text;
-
       assert.ifError(err);
       text = result.text;
       assert.isTrue(text.indexOf('<%') < 0);
@@ -32,13 +30,11 @@ describe("template", function() {
   });
   it("should compile with a function header", function(done) {
     var asset;
-
     asset = textAsset("<!--function(user)-->\n<html>\n<% var code = 0; %>\n<%= user.name %>\n<%- '<raw>' %>\n</html>");
     return template.process(asset, {
       jst: true
     }, function(err, result) {
       var text;
-
       assert.ifError(err);
       text = result.text;
       assert.isTrue(text.indexOf('<%') < 0);
@@ -51,7 +47,6 @@ describe("template", function() {
   });
   return it("should compile  simple text", function(done) {
     var asset;
-
     asset = textAsset('Hello <%= name %>');
     return template.process(asset, {
       jst: false,

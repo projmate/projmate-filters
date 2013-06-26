@@ -14,7 +14,6 @@ _ = require("lodash");
 
 module.exports = function(Projmate) {
   var PreProcessor, escJs, _ref;
-
   escJs = function(s) {
     return s.replace(/\\/g, '\\\\');
   };
@@ -30,7 +29,6 @@ module.exports = function(Projmate) {
 
     PreProcessor.prototype.process = function(asset, options, cb) {
       var ex, result, root;
-
       root = options.root || asset.dirname;
       _.defaults(options, {
         root: root,

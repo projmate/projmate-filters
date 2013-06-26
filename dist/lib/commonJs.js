@@ -18,7 +18,6 @@ Fs = require('fs');
 
 numberOfLines = function(s) {
   var matches;
-
   matches = s.match(/(\r|\n)/g);
   return matches.length + 1;
 };
@@ -33,7 +32,6 @@ moduleSignature = function(simplifiedCjs) {
 
 module.exports = function(Projmate) {
   var CommonJsify, SourceMap, TaskProcessor, Utils, changeExtname;
-
   TaskProcessor = Projmate.TaskProcessor, Utils = Projmate.Utils;
   changeExtname = Utils.changeExtname;
   SourceMap = require("../support/sourceMap");
@@ -57,7 +55,6 @@ module.exports = function(Projmate) {
 
     CommonJsify.prototype.genLoader = function(options, requireProp, defineProp) {
       var diagnostics, result, signature;
-
       if (options.DEVELOPMENT) {
         diagnostics = "_require.modules = function() { return modules; };\n_require.cache = function() { return cache; };";
       } else {
@@ -69,7 +66,6 @@ module.exports = function(Projmate) {
 
     CommonJsify.prototype.includeFiles = function(options, Utils, cb) {
       var cwd, excludePatterns, files, patterns, result;
-
       files = options.include;
       cwd = process.cwd();
       patterns = files.include;
@@ -79,7 +75,6 @@ module.exports = function(Projmate) {
         nosort: true
       }, function(err, files) {
         var content, file, stat, _i, _len;
-
         if (err) {
           return cb(err);
         }
@@ -100,7 +95,6 @@ module.exports = function(Projmate) {
 
     CommonJsify.prototype.includeAliases = function(options, Utils, cb) {
       var alias, aliases, content, defineProp, file, result, signature, stat;
-
       defineProp = options.defineProp, aliases = options.aliases;
       result = "";
       for (alias in aliases) {
@@ -121,20 +115,19 @@ module.exports = function(Projmate) {
     };
 
     CommonJsify.prototype.process = function(task, options, cb) {
-      var assets, defineProp, doAliases, doBody, doIncludes, doLoader, loader, packageName, requireProp, result, simplifiedCjs, sourceMap, that, _ref, _ref1, _ref2, _ref3, _ref4;
-
+      var assets, defineProp, doAliases, doBody, doIncludes, doLoader, loader, packageName, requireProp, result, simplifiedCjs, sourceMap, that;
       requireProp = options.requireProp || options.identifier || "require";
-      if ((_ref = options.defineProp) == null) {
+      if (options.defineProp == null) {
         options.defineProp = "define";
       }
       defineProp = options.defineProp;
-      if ((_ref1 = options.loader) == null) {
+      if (options.loader == null) {
         options.loader = true;
       }
-      if ((_ref2 = options.simplifiedCjs) == null) {
+      if (options.simplifiedCjs == null) {
         options.simplifiedCjs = false;
       }
-      if ((_ref3 = options.splitFiles) == null) {
+      if (options.splitFiles == null) {
         options.splitFiles = false;
       }
       loader = options.loader;
@@ -147,7 +140,7 @@ module.exports = function(Projmate) {
       if (!options.root) {
         return cb("`options.root` is required.");
       }
-      if ((_ref4 = options.filename) == null) {
+      if (options.filename == null) {
         options.filename = Path.dirname(options.root) + '/' + options.name + '.js';
       }
       result = ";";
@@ -185,7 +178,6 @@ module.exports = function(Projmate) {
       };
       doBody = function(cb) {
         var asset, autoModule, basename, dirname, err, extname, originalFilename, packagePath, path, root, signature, text, ugly, _i, _len;
-
         result += "(function(define) {";
         for (_i = 0, _len = assets.length; _i < _len; _i++) {
           asset = assets[_i];
@@ -243,7 +235,6 @@ module.exports = function(Projmate) {
 
     CommonJsify.prototype.mapAssets = function(task, options, script) {
       var asset, generator, json, mapAsset, mapFilename, source, sourceRoot, _i, _len, _ref;
-
       if (options.sourceMap) {
         sourceRoot = options.sourceRoot;
         script += "/*\n//@ sourceMappingURL=" + (changeExtname(Path.basename(options.filename), ".map")) + "\n*/";

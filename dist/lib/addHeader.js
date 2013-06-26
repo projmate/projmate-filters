@@ -12,7 +12,6 @@ Fs = require("fs");
 
 module.exports = function(Projmate) {
   var AddHeader;
-
   return AddHeader = (function(_super) {
     __extends(AddHeader, _super);
 
@@ -25,7 +24,6 @@ module.exports = function(Projmate) {
 
     AddHeader.prototype.process = function(asset, options, cb) {
       var cache, filename, header, returnResult, text;
-
       text = options.text, filename = options.filename;
       returnResult = function(header) {
         if (asset.text.indexOf(header) < 0) {

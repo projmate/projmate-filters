@@ -13,14 +13,12 @@ liveReload = Filter("../lib/liveReload");
 describe("liveReload", function() {
   return it("should add header", function(done) {
     var asset;
-
     asset = textAsset("<html><head></head><body></body></html>");
     return liveReload.process(asset, {
       domain: 'localhost',
       port: 1337
     }, function(err, result) {
       var end, mid, start;
-
       start = result.indexOf("<html><head>");
       mid = result.indexOf("localhost:1337/livereload.js");
       end = result.indexOf("</head><body></body></html>");

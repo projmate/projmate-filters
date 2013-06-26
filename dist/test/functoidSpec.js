@@ -13,7 +13,6 @@ filter = Filter("../lib/functoid");
 describe("Functoid", function() {
   it("should call custom command", function(done) {
     var adhoc, asset;
-
     asset = textAsset({
       text: '#container= name',
       filename: 'test.jade'
@@ -36,7 +35,6 @@ describe("Functoid", function() {
   });
   return it("should call custom command without callback", function(done) {
     var adhoc, asset;
-
     asset = textAsset({
       text: '#container= name',
       filename: 'test.jade'
