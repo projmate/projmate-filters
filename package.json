@@ -28,7 +28,7 @@
     "uglify-js": "~2.2.5",
     "underscore": "~1.4.4",
     "jade": "~0.28.2",
-    "marked": "~0.2.9"
+    "tutdown": "git+ssh://git@bitbucket.org/mgutz/tutdown#master"
   },
   "keywords": [
     "Projmate",

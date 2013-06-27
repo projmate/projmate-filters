@@ -8,7 +8,7 @@ var FileAsset, Filter, assert, ctorFactory, process, textAsset, _ref;
 
 _ref = require("./helper"), assert = _ref.assert, ctorFactory = _ref.ctorFactory, FileAsset = _ref.FileAsset;
 
-Filter = ctorFactory("../lib/markdown");
+Filter = ctorFactory("../lib/tutdown");
 
 textAsset = function(text) {
   return new FileAsset({
@@ -24,7 +24,7 @@ process = function(asset, options, cb) {
   return filter.process(asset, options, cb);
 };
 
-describe("markdown", function() {
+describe("tutdown", function() {
   it("should convert markdown to HTML", function(done) {
     var asset;
     asset = textAsset('Hello world!');
@@ -45,14 +45,15 @@ describe("markdown", function() {
       return done();
     });
   });
-  return it("should return error if layout is not found", function(done) {
+  return it("should return error if layout is not found", function() {
     var asset;
     asset = textAsset('Hello world!');
-    return process(asset, {
-      layout: __dirname + '/res/dummylayout.html'
-    }, function(err) {
-      assert.isNotNull(err);
-      return done();
+    return assert.throws(function() {
+      return process(asset, {
+        layout: __dirname + '/res/dummylayout.html'
+      }, function(err) {
+        return assert.isNotNull(err);
+      });
     });
   });
 });

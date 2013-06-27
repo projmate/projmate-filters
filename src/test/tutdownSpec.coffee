@@ -1,6 +1,6 @@
 {assert, ctorFactory, FileAsset} = require("./helper")
 
-Filter = ctorFactory("../lib/markdown")
+Filter = ctorFactory("../lib/tutdown")
 
 textAsset = (text) ->
   new FileAsset(filename: "notused.md", text: text, parent: [])
@@ -9,7 +9,7 @@ process = (asset, options, cb) ->
   filter = new Filter
   filter.process asset, options, cb
 
-describe "markdown", ->
+describe "tutdown", ->
 
   it "should convert markdown to HTML", (done) ->
     asset = textAsset('Hello world!')
@@ -25,10 +25,8 @@ describe "markdown", ->
       assert.equal result.trim(), "<div><p>Hello world!</p>\n</div>"
       done()
 
-  it "should return error if layout is not found", (done) ->
+  it "should return error if layout is not found", ->
     asset = textAsset('Hello world!')
-    process asset, {layout: __dirname + '/res/dummylayout.html'}, (err) ->
-      assert.isNotNull err
-      done()
-
-
+    assert.throws ->
+      process asset, {layout: __dirname + '/res/dummylayout.html'}, (err) ->
+        assert.isNotNull err
