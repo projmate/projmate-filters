@@ -36,7 +36,7 @@ module.exports = (Projmate) ->
 
   class Jst extends Projmate.Filter
 
-    extnames: ['.*']
+    extnames: ['*']
     outExtname: ".html"
 
     @meta:

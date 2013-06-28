@@ -42,7 +42,7 @@ module.exports = function(Projmate) {
       return _ref;
     }
 
-    Jst.prototype.extnames = ['.*'];
+    Jst.prototype.extnames = ['*'];
 
     Jst.prototype.outExtname = ".html";
 
