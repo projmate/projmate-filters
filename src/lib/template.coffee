@@ -5,7 +5,7 @@
 
 Path = require('path')
 _ = require('lodash')
-
+Fs = require('fs')
 
 delimiters =
   # <% code %>
@@ -58,15 +58,24 @@ module.exports = (Projmate) ->
 
 
     render: (asset, options, cb) ->
+      options.asset = asset
       #options.variable = options.paramName || 'it'
       if options.delimiters and delimiters[options.delimiters]
         templateDelimiters = delimiters[options.delimiters]
       else
         templateDelimiters = delimiters.ejs
 
+      if options.layout
+        @cache ?= {}
+        if @cache[options.layout]
+          text = @cache[options.layout]
+        else
+          text = Fs.readFileSync(options.layout, 'utf8')
+          @cache[options.layout] = text
+      else
+        text = asset.text
 
       # parse function declaration fom comment
-      text = asset.text
       if text.indexOf('<!--function') == 0
         newlinePos = text.indexOf('\n')
         func = text.slice(0, newlinePos)

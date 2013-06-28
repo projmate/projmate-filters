@@ -4,13 +4,15 @@
  * See the file LICENSE for copying permission.
  */
 
-var Path, delimiters, _,
+var Fs, Path, delimiters, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Path = require('path');
 
 _ = require('lodash');
+
+Fs = require('fs');
 
 delimiters = {
   ejs: {
@@ -57,12 +59,25 @@ module.exports = function(Projmate) {
 
     Jst.prototype.render = function(asset, options, cb) {
       var ex, func, newlinePos, result, templateDelimiters, text;
+      options.asset = asset;
       if (options.delimiters && delimiters[options.delimiters]) {
         templateDelimiters = delimiters[options.delimiters];
       } else {
         templateDelimiters = delimiters.ejs;
       }
-      text = asset.text;
+      if (options.layout) {
+        if (this.cache == null) {
+          this.cache = {};
+        }
+        if (this.cache[options.layout]) {
+          text = this.cache[options.layout];
+        } else {
+          text = Fs.readFileSync(options.layout, 'utf8');
+          this.cache[options.layout] = text;
+        }
+      } else {
+        text = asset.text;
+      }
       if (text.indexOf('<!--function') === 0) {
         newlinePos = text.indexOf('\n');
         func = text.slice(0, newlinePos);
