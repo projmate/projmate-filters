@@ -4,13 +4,30 @@
  * See the file LICENSE for copying permission.
  */
 
-var Path, _,
+var Path, delimiters, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Path = require('path');
 
 _ = require('lodash');
+
+delimiters = {
+  ejs: {
+    evaluate: /<%([\s\S]+?)%>/g,
+    interpolate: /<%-([\s\S]+?)%>/g,
+    escape: /<%=([\s\S]+?)%>/g
+  },
+  php: {
+    evaluate: /<\?([\s\S]+?)\?>/g,
+    interpolate: /<\?-([\s\S]+?)\?>/g,
+    escape: /<\?=([\s\S]+?)\?>/g
+  },
+  mustache: {
+    interpolate: /{{{(.+?)}}}/g,
+    escape: /{{([^{]+?)}}/g
+  }
+};
 
 module.exports = function(Projmate) {
   var Filter, Jst, Utils, _ref;
@@ -27,25 +44,6 @@ module.exports = function(Projmate) {
 
     Jst.prototype.outExtname = ".html";
 
-    Jst.prototype.defaults = {
-      development: {
-        jst: true
-      }
-    };
-
-    Jst.prototype.delimiters = {
-      ejs: {
-        evaluate: /<%([\s\S]+?)%>/g,
-        interpolate: /<%-([\s\S]+?)%>/g,
-        escape: /<%=([\s\S]+?)%>/g
-      },
-      php: {
-        evaluate: /<\?([\s\S]+?)\?>/g,
-        interpolate: /<\?-([\s\S]+?)\?>/g,
-        escape: /<\?=([\s\S]+?)\?>/g
-      }
-    };
-
     Jst.meta = {
       description: "Compiles a buffer into a JavaScript function using the following\ndirectives:\n\nfunction(it, foo)   // must be first line\n\n<%= escaped %>\n<%- raw %>\n<% code %>",
       options: {
@@ -58,13 +56,12 @@ module.exports = function(Projmate) {
     };
 
     Jst.prototype.render = function(asset, options, cb) {
-      var defaults, ex, func, newlinePos, result, text;
-      defaults = {
-        evaluate: /<%([\s\S]+?)%>/g,
-        interpolate: /<%-([\s\S]+?)%>/g,
-        escape: /<%=([\s\S]+?)%>/g
-      };
-      _.defaults(options, defaults);
+      var ex, func, newlinePos, result, templateDelimiters, text;
+      if (options.delimiters && delimiters[options.delimiters]) {
+        templateDelimiters = delimiters[options.delimiters];
+      } else {
+        templateDelimiters = delimiters.ejs;
+      }
       text = asset.text;
       if (text.indexOf('<!--function') === 0) {
         newlinePos = text.indexOf('\n');
@@ -76,6 +73,7 @@ module.exports = function(Projmate) {
         options.variable = 'SUPAHFLY';
       }
       try {
+        _.extend(_.templateSettings, templateDelimiters);
         result = _.template(text, options);
         return cb(null, {
           text: result,

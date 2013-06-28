@@ -6,6 +6,31 @@
 Path = require('path')
 _ = require('lodash')
 
+
+delimiters =
+  # <% code %>
+  # <%- raw %>
+  # <%= escaped %>
+  ejs:
+    evaluate: /<%([\s\S]+?)%>/g
+    interpolate: /<%-([\s\S]+?)%>/g
+    escape: /<%=([\s\S]+?)%>/g
+
+  # <? code ?>
+  # <?- raw ?>
+  # <?= escape ?>
+  php:
+    evaluate: /<\?([\s\S]+?)\?>/g
+    interpolate: /<\?-([\s\S]+?)\?>/g
+    escape: /<\?=([\s\S]+?)\?>/g
+
+
+  mustache:
+    interpolate: /{{{(.+?)}}}/g
+    escape: /{{([^{]+?)}}/g
+
+
+
 module.exports = (Projmate) ->
   {Filter, Utils} = Projmate
 
@@ -13,25 +38,6 @@ module.exports = (Projmate) ->
 
     extnames: ['.jst', '.html', '.ejs']
     outExtname: ".html"
-    defaults:
-      development: { jst: true }
-
-    delimiters:
-      # <% code %>
-      # <%- raw %>
-      # <%= escaped %>
-      ejs:
-        evaluate: /<%([\s\S]+?)%>/g
-        interpolate: /<%-([\s\S]+?)%>/g
-        escape: /<%=([\s\S]+?)%>/g
-
-      # <? code ?>
-      # <?- raw ?>
-      # <?= escape ?>
-      php:
-        evaluate: /<\?([\s\S]+?)\?>/g
-        interpolate: /<\?-([\s\S]+?)\?>/g
-        escape: /<\?=([\s\S]+?)\?>/g
 
     @meta:
       description: """
@@ -53,12 +59,10 @@ module.exports = (Projmate) ->
 
     render: (asset, options, cb) ->
       #options.variable = options.paramName || 'it'
-      defaults =
-        evaluate: /<%([\s\S]+?)%>/g
-        interpolate: /<%-([\s\S]+?)%>/g
-        escape: /<%=([\s\S]+?)%>/g
-
-      _.defaults options, defaults
+      if options.delimiters and delimiters[options.delimiters]
+        templateDelimiters = delimiters[options.delimiters]
+      else
+        templateDelimiters = delimiters.ejs
 
 
       # parse function declaration fom comment
@@ -73,6 +77,7 @@ module.exports = (Projmate) ->
       options.variable = 'SUPAHFLY' if func
 
       try
+        _.extend _.templateSettings, templateDelimiters
         result = _.template(text, options)
         cb null, text: result, extname: '.html'
       catch ex
@@ -90,7 +95,6 @@ module.exports = (Projmate) ->
           escape: /<%=([\s\S]+?)%>/g
 
         _.defaults options, defaults
-
 
         # parse function declaration fom comment
         text = asset.text
