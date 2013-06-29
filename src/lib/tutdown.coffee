@@ -45,7 +45,6 @@ module.exports = (Projmate) ->
     # Process the markdown, optionally inserting it into a layout.
     process: (asset, options, cb) ->
       options.assetsDirname = asset.dirname + '/_assets'
-
       if options.layout
         options.docLayoutFile = options.layout
 
@@ -54,5 +53,10 @@ module.exports = (Projmate) ->
       else
         if asset.extname == ".coffee"
           options.coffeeScript = true
-        tutdown.renderApi asset.text, options, cb
+        tutdown.renderApi asset.text, options, (err, result) ->
+          return cb(err) if err
+          {content, nav} = result
+          asset.nav = nav
+          cb null, text: content, extname: ".html"
+
 

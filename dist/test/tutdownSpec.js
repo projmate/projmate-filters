@@ -34,17 +34,6 @@ describe("tutdown", function() {
       return done();
     });
   });
-  it("should use a layout", function(done) {
-    var asset;
-    asset = textAsset('Hello world!');
-    return process(asset, {
-      layout: __dirname + '/res/layout.html'
-    }, function(err, result) {
-      assert.ifError(err);
-      assert.equal(result.trim(), "<div><p>Hello world!</p>\n</div>");
-      return done();
-    });
-  });
   return it("should return error if layout is not found", function() {
     var asset;
     asset = textAsset('Hello world!');

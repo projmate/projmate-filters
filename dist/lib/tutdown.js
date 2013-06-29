@@ -43,7 +43,18 @@ module.exports = function(Projmate) {
         if (asset.extname === ".coffee") {
           options.coffeeScript = true;
         }
-        return tutdown.renderApi(asset.text, options, cb);
+        return tutdown.renderApi(asset.text, options, function(err, result) {
+          var content, nav;
+          if (err) {
+            return cb(err);
+          }
+          content = result.content, nav = result.nav;
+          asset.nav = nav;
+          return cb(null, {
+            text: content,
+            extname: ".html"
+          });
+        });
       }
     };
 
