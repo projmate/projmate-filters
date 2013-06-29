@@ -28,7 +28,7 @@
     "uglify-js": "~2.2.5",
     "underscore": "~1.4.4",
     "jade": "~0.28.2",
-    "tutdown": "barc/tutdown#master",
+    "tutdown": "git://github.com/barc/tutdown#master",
     "iced-coffee-script": "~1.6.3-b",
     "funcd": "~0.1.2"
   },
