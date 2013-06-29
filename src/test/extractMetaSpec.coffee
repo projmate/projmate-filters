@@ -39,7 +39,7 @@ describe "extractMeta", ->
         """
         done()
 
-  it "should extract meta and assign to .__merge (merges with options)", (done) ->
+  it "should extract meta and assign to .__filterOptions (merges with options)", (done) ->
       asset = textAsset """
         ---
         foo: 1
@@ -52,8 +52,8 @@ describe "extractMeta", ->
       pp = new ExtractMeta
       pp.process asset, {}, (err, result) ->
         assert.ifError err
-        assert.equal asset.__merge.foo, 1
-        assert.equal asset.__merge.baz[2], 3
+        assert.equal asset.__filterOptions.foo, 1
+        assert.equal asset.__filterOptions.baz[2], 3
         assert.equal asset.text, """
         one
         two
@@ -66,7 +66,7 @@ describe "extractMeta", ->
       pp = new ExtractMeta
       pp.process asset, from: {bah: "baz"}, (err, result) ->
         assert.ifError err
-        assert.equal asset.__merge.bah, "baz"
+        assert.equal asset.__filterOptions.bah, "baz"
         assert.equal asset.text, "Hello"
         done()
 

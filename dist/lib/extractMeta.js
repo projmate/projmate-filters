@@ -117,7 +117,7 @@ module.exports = function(Projmate) {
         asset.__meta = { name: options.as, meta: meta };
       } else {
         // task's pipeline looks for this hidden property
-        asset.__merge = meta;
+        asset.__filterOptions = meta;
       }
       cb();
     } catch (ex) {

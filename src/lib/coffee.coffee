@@ -3,7 +3,6 @@
 #
 # See the file LICENSE for copying permission.
 
-coffee  = require("coffee-script")
 _ = require ("lodash")
 Path = require("path")
 
@@ -55,6 +54,11 @@ module.exports = (Projmate) ->
         options.sourceFiles = [asset.basename]
         # the generate js file
         options.generatedFile = Utils.changeExtname(asset.basename, ".js")
+
+      if options.iced
+        coffee = require('iced-coffee-script')
+      else
+        coffee = require('coffee-script')
 
       try
         result = coffee.compile(asset.text, options)

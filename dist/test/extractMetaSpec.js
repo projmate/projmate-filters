@@ -44,14 +44,14 @@ describe("extractMeta", function() {
       return done();
     });
   });
-  it("should extract meta and assign to .__merge (merges with options)", function(done) {
+  it("should extract meta and assign to .__filterOptions (merges with options)", function(done) {
     var asset, pp;
     asset = textAsset("---\nfoo: 1\nbar: \"baz\"\nbaz:  [1, 2, 3]\n---\none\ntwo");
     pp = new ExtractMeta;
     return pp.process(asset, {}, function(err, result) {
       assert.ifError(err);
-      assert.equal(asset.__merge.foo, 1);
-      assert.equal(asset.__merge.baz[2], 3);
+      assert.equal(asset.__filterOptions.foo, 1);
+      assert.equal(asset.__filterOptions.baz[2], 3);
       assert.equal(asset.text, "one\ntwo");
       return done();
     });
@@ -66,7 +66,7 @@ describe("extractMeta", function() {
       }
     }, function(err, result) {
       assert.ifError(err);
-      assert.equal(asset.__merge.bah, "baz");
+      assert.equal(asset.__filterOptions.bah, "baz");
       assert.equal(asset.text, "Hello");
       return done();
     });

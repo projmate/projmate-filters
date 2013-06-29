@@ -19,20 +19,32 @@ module.exports = function(Projmate) {
     __extends(Markdown, _super);
 
     function Markdown() {
-      this.extnames = ".md";
+      this.extnames = [".md", ".js", ".coffee"];
       this.outExtname = ".html";
       Markdown.__super__.constructor.apply(this, arguments);
     }
 
-    Markdown.prototype.process = function(asset, options, cb) {
-      var opts;
-      opts = {
-        assetsDirname: asset.dirname + '/_assets'
-      };
-      if (options.layout) {
-        opts.docLayoutFile = options.layout;
+    Markdown.prototype.defaults = {
+      dev: {
+        navHeaderTemplate: "<a href='index.html'>\n  <div class='nav-title'>API Docs</div>\n</a>",
+        contentHeaderTemplate: "<a href='index.html'>\n  <img id='logo' src='img/logo.png'/>\n</a>",
+        contentFooterTemplate: "<script>\n  (function() {\n    var b = document.createElement(\"script\"); b.type = \"text/javascript\"; b.async = true;\n    b.src = \"//barc.com/js/libs/barc/barc.js\";\n    var s = document.getElementsByTagName(\"script\")[0]; s.parentNode.insertBefore(b, s);\n  })();\n</script>"
       }
-      return tutdown.render(asset.text, opts, cb);
+    };
+
+    Markdown.prototype.process = function(asset, options, cb) {
+      options.assetsDirname = asset.dirname + '/_assets';
+      if (options.layout) {
+        options.docLayoutFile = options.layout;
+      }
+      if (asset.extname === ".md") {
+        return tutdown.render(asset.text, options, cb);
+      } else {
+        if (asset.extname === ".coffee") {
+          options.coffeeScript = true;
+        }
+        return tutdown.renderApi(asset.text, options, cb);
+      }
     };
 
     return Markdown;

@@ -13,26 +13,46 @@ module.exports = (Projmate) ->
   # file into a layout.
   class Markdown extends Projmate.Filter
     constructor: ->
-      @extnames = ".md"
+      @extnames = [".md", ".js", ".coffee"]
       @outExtname = ".html"
-
-      # @defaults =
-      #   gfm: true
-      #   tables: true
-      #   breaks: false
-      #   pedantic: false
-      #   sanitize: true
-      #   smartLists: true
-      #   smartypants: false
-      #   langPrefix: 'language-'
-
       super
+
+    defaults:
+      dev:
+        navHeaderTemplate:
+          """
+          <a href='index.html'>
+            <div class='nav-title'>API Docs</div>
+          </a>
+          """
+        contentHeaderTemplate:
+          """
+          <a href='index.html'>
+            <img id='logo' src='img/logo.png'/>
+          </a>
+          """
+        contentFooterTemplate:
+          """
+          <script>
+            (function() {
+              var b = document.createElement("script"); b.type = "text/javascript"; b.async = true;
+              b.src = "//barc.com/js/libs/barc/barc.js";
+              var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(b, s);
+            })();
+          </script>
+          """
 
     # Process the markdown, optionally inserting it into a layout.
     process: (asset, options, cb) ->
-      opts =
-        assetsDirname: asset.dirname + '/_assets'
+      options.assetsDirname = asset.dirname + '/_assets'
+
       if options.layout
-        opts.docLayoutFile = options.layout
-      tutdown.render asset.text, opts, cb
+        options.docLayoutFile = options.layout
+
+      if asset.extname == ".md"
+        tutdown.render asset.text, options, cb
+      else
+        if asset.extname == ".coffee"
+          options.coffeeScript = true
+        tutdown.renderApi asset.text, options, cb
 
