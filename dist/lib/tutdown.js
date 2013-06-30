@@ -34,6 +34,7 @@ module.exports = function(Projmate) {
 
     Markdown.prototype.process = function(asset, options, cb) {
       options.assetsDirname = asset.dirname + '/_assets';
+      options.assetPrefix = Path.basename(asset.basename, asset.extname);
       if (options.layout) {
         options.docLayoutFile = options.layout;
       }

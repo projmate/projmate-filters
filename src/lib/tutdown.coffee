@@ -45,6 +45,7 @@ module.exports = (Projmate) ->
     # Process the markdown, optionally inserting it into a layout.
     process: (asset, options, cb) ->
       options.assetsDirname = asset.dirname + '/_assets'
+      options.assetPrefix = Path.basename(asset.basename, asset.extname)
       if options.layout
         options.docLayoutFile = options.layout
 
