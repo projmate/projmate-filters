@@ -23,7 +23,6 @@ module.exports = (Projmate) ->
     # Directly manipulates a task such as its assets property.
     #
     process: (task, options, cb) ->
-      log = @log
       cwd = process.cwd()
       patterns = task.config.files.include
       excludePatterns = task.config.files.exclude
@@ -33,10 +32,13 @@ module.exports = (Projmate) ->
         return cb(err) if err
 
         if files.length > 0
-          for file in files
-            stat = Fs.statSync(file)
-            assets.create filename: file, text: "", stat: stat, cwd: cwd
-          cb()
+          # Need to process files in order
+          Async.eachSeries files, (file, cb) ->
+            Fs.stat file, (err, stat) ->
+              return cb(err) if err
+              assets.create filename: file, text: "", stat: stat, cwd: cwd
+              cb()
+          , cb
         else
           cb "No files found: " + Util.inspect(patterns)
 

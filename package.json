@@ -1,6 +1,6 @@
 {
   "name": "projmate-filters",
-  "version": "0.0.8",
+  "version": "0.1.0-dev",
   "description": "Official Projmate Filters",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "chai": "~1.5.0"
   },
   "dependencies": {
-    "async": "~0.2.5",
+    "async": "~0.2.9",
     "coffee-script": "~1.6.3",
     "consolidate": "~0.8.0",
     "dustjs-linkedin": "~1.2.1",

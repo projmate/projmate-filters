@@ -50,29 +50,32 @@ module.exports = function(Projmate) {
         }
         if (files.length > 0) {
           return Async.eachSeries(files, function(file, cb) {
-            var stat;
             if (file.indexOf("./") === 0 || file.indexOf(".\\") === 0) {
               file = file.slice(2);
             }
-            stat = Fs.statSync(file);
-            if (stat.isDirectory()) {
-              return cb();
-            }
-            if (PmUtils.isFileBinary(file)) {
-              log.debug("Ignoring binary file: " + file);
-              return cb();
-            }
-            return Fs.readFile(file, "utf8", function(err, text) {
+            return Fs.stat(file, function(err, stat) {
               if (err) {
                 return cb(err);
               }
-              assets.create({
-                filename: file,
-                text: text,
-                stat: stat,
-                cwd: cwd
+              if (stat.isDirectory()) {
+                return cb();
+              }
+              if (PmUtils.isFileBinary(file)) {
+                log.debug("Ignoring binary file: " + file);
+                return cb();
+              }
+              return Fs.readFile(file, "utf8", function(err, text) {
+                if (err) {
+                  return cb(err);
+                }
+                assets.create({
+                  filename: file,
+                  text: text,
+                  stat: stat,
+                  cwd: cwd
+                });
+                return cb();
               });
-              return cb();
             });
           }, cb);
         } else {

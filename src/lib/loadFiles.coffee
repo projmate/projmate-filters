@@ -46,18 +46,19 @@ module.exports = (Projmate) ->
 
             # Ignore directories
             # TODO performance issues by stating each file?
-            stat = Fs.statSync(file)
-            return cb() if stat.isDirectory()
-
-            # ignore binary files for now!?
-            if PmUtils.isFileBinary(file)
-              log.debug "Ignoring binary file: #{file}"
-              return cb()
-
-            Fs.readFile file, "utf8", (err, text) ->
+            Fs.stat file, (err, stat) ->
               return cb(err) if err
-              assets.create filename: file, text: text, stat: stat, cwd: cwd
-              cb()
+              return cb() if stat.isDirectory()
+
+              # ignore binary files for now!?
+              if PmUtils.isFileBinary(file)
+                log.debug "Ignoring binary file: #{file}"
+                return cb()
+
+              Fs.readFile file, "utf8", (err, text) ->
+                return cb(err) if err
+                assets.create filename: file, text: text, stat: stat, cwd: cwd
+                cb()
           , cb # async eachSeries
         else
           cb "No files found: " + Util.inspect(patterns)

@@ -30,8 +30,7 @@ module.exports = function(Projmate) {
     Stat.prototype.isAssetLoader = true;
 
     Stat.prototype.process = function(task, options, cb) {
-      var assets, cwd, excludePatterns, log, patterns;
-      log = this.log;
+      var assets, cwd, excludePatterns, patterns;
       cwd = process.cwd();
       patterns = task.config.files.include;
       excludePatterns = task.config.files.exclude;
@@ -39,22 +38,24 @@ module.exports = function(Projmate) {
       return PmUtils.glob(patterns, excludePatterns, {
         nosort: true
       }, function(err, files) {
-        var file, stat, _i, _len;
         if (err) {
           return cb(err);
         }
         if (files.length > 0) {
-          for (_i = 0, _len = files.length; _i < _len; _i++) {
-            file = files[_i];
-            stat = Fs.statSync(file);
-            assets.create({
-              filename: file,
-              text: "",
-              stat: stat,
-              cwd: cwd
+          return Async.eachSeries(files, function(file, cb) {
+            return Fs.stat(file, function(err, stat) {
+              if (err) {
+                return cb(err);
+              }
+              assets.create({
+                filename: file,
+                text: "",
+                stat: stat,
+                cwd: cwd
+              });
+              return cb();
             });
-          }
-          return cb();
+          }, cb);
         } else {
           return cb("No files found: " + Util.inspect(patterns));
         }
