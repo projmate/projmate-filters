@@ -29,6 +29,8 @@ module.exports = function(Projmate) {
 
     LoadFiles.prototype.extnames = "*";
 
+    LoadFiles.prototype.isAssetLoader = true;
+
     LoadFiles.prototype.process = function(task, options, cb) {
       var assets, cwd, excludePatterns, log, patterns;
       log = this.log;

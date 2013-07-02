@@ -19,6 +19,8 @@ module.exports = (Projmate) ->
   #
   class LoadFiles extends TaskProcessor
     extnames: "*"
+    isAssetLoader: true
+
 
     # Directly manipulates a task such as its assets property.
     #

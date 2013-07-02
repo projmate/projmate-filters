@@ -29,7 +29,10 @@ exports.project = (pm) ->
     files:
       include: "src/test/*Spec.{coffee,js}"
 
-    dev: [f.mocha]
+    dev: [
+      f.stat
+      f.mocha
+    ]
 
     # development: (cb) ->
     #   $.run "mocha --compilers coffee:coffee-script src/test", cb

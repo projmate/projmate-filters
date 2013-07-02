@@ -14,7 +14,7 @@ module.exports = function(Projmate) {
     this.extnames = ['.js', '.coffee'];
     Projmate.Filter.apply(this, arguments);
   }
-  Projmate.extendsTaskProcessor(Mocha)
+  Projmate.extendsTaskProcessor(Mocha);
 
   Mocha.prototype.process = function(task, options, cb) {
     var mocha = new MochaClass(options);
@@ -27,10 +27,6 @@ module.exports = function(Projmate) {
     });
   };
 
-  /**
-   * This processor loads files on its own.
-   */
-  Mocha.__pragma = { disableLoadFiles: true};
 
   /**
    * For UI.
