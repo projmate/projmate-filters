@@ -26,20 +26,21 @@ module.exports = (Projmate) ->
         type: 'boolean'
         description: 'Whether to compress the output CSS'
       defines:
-        type: 'array'
+        type: 'object'
         description: 'Key-value pairs to define'
-        items: 'object'
       nib:
         type: 'boolean'
         description: 'Enables nib support'
       imports:
         type: 'array'
         description: 'Assets to import'
-        items: 'string'
+        items:
+          type: 'string'
       plugins:
         type: 'array'
         description: 'Plugins to use'
-        items: 'string'
+        items:
+          type: 'string'
 
     __:
       extnames: ".styl"

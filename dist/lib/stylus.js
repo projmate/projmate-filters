@@ -35,9 +35,8 @@ module.exports = function(Projmate) {
         description: 'Whether to compress the output CSS'
       },
       defines: {
-        type: 'array',
-        description: 'Key-value pairs to define',
-        items: 'object'
+        type: 'object',
+        description: 'Key-value pairs to define'
       },
       nib: {
         type: 'boolean',
@@ -46,12 +45,16 @@ module.exports = function(Projmate) {
       imports: {
         type: 'array',
         description: 'Assets to import',
-        items: 'string'
+        items: {
+          type: 'string'
+        }
       },
       plugins: {
         type: 'array',
         description: 'Plugins to use',
-        items: 'string'
+        items: {
+          type: 'string'
+        }
       }
     },
     __: {
