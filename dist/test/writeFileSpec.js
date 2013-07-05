@@ -8,7 +8,7 @@ var Filter, assert, filter, fs, textAsset, _ref;
 
 _ref = require("./helper"), assert = _ref.assert, textAsset = _ref.textAsset, Filter = _ref.Filter;
 
-filter = Filter("../lib/writeFiles");
+filter = Filter("../lib/writeFile");
 
 fs = require('fs');
 

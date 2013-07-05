@@ -1,8 +1,8 @@
 {assert, textAsset, Filter} = require("./helper")
 
-filter = Filter("../lib/functoid")
+filter = Filter("../lib/tap")
 
-describe "Functoid", ->
+describe "Tap", ->
 
   it "should call custom command", (done) ->
     asset = textAsset(text: '#container= name', filename: 'test.jade')
@@ -23,8 +23,7 @@ describe "Functoid", ->
     adhoc = (asset) ->
       asset.text = 'NOCB'
 
-    filter.process asset, {command: adhoc}, (err, result) ->
+    filter.process asset, {command: adhoc}, (err) ->
       assert.ifError err
-      assert.equal result, 'NOCB'
       assert.equal asset.text, 'NOCB'
       done()

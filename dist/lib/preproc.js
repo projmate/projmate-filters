@@ -13,9 +13,16 @@ pp = require("../support/preprocess");
 _ = require("lodash");
 
 module.exports = function(Projmate) {
-  var PreProcessor, escJs, _ref;
+  var PreProcessor, escJs, schema, _ref;
   escJs = function(s) {
     return s.replace(/\\/g, '\\\\');
+  };
+  schema = {
+    title: 'Preprocesses assets given definitions in options',
+    type: 'object',
+    __: {
+      extnames: "*"
+    }
   };
   return PreProcessor = (function(_super) {
     __extends(PreProcessor, _super);
@@ -25,7 +32,7 @@ module.exports = function(Projmate) {
       return _ref;
     }
 
-    PreProcessor.prototype.extnames = "*";
+    PreProcessor.schema = schema;
 
     PreProcessor.prototype.process = function(asset, options, cb) {
       var ex, result, root;

@@ -9,6 +9,14 @@ Util = require("util")
 _ = require("lodash")
 
 
+schema =
+  title: 'Loads file using task patterns and creates FileAsset(s)'
+  type: 'object'
+
+  __:
+    extnames: "*"
+    isAssetLoader: true
+
 module.exports = (Projmate) ->
   {FileAsset, TaskProcessor, Utils:PmUtils} = Projmate
 
@@ -18,9 +26,7 @@ module.exports = (Projmate) ->
   # This is usually invoked as the first filter of a pipeline.
   #
   class LoadFiles extends TaskProcessor
-    extnames: "*"
-    isAssetLoader: true
-
+    @schema: schema
 
     # Directly manipulates a task such as its assets property.
     #

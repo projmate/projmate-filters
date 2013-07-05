@@ -11,7 +11,29 @@ var _,
 _ = require('lodash');
 
 module.exports = function(Projmate) {
-  var Tap, _ref;
+  var Tap, schema, _ref;
+  schema = {
+    title: 'Custom processing',
+    type: 'object',
+    properties: {
+      command: {
+        description: '(assets, options) or (assets, options, cb)',
+        type: 'function'
+      }
+    },
+    __: {
+      extnames: '*',
+      examples: [
+        {
+          title: 'Change file name from `src` to `build`',
+          text: "f.tap(function(asset) {\n  asset.filename = asset.filename.replace(/^src/, 'build');\n})"
+        }, {
+          title: 'Replace a string in assets',
+          text: "f.tap(function(asset, options, cb) {\n  fs.readFile('common.txt', 'utf8', function(err, text) {\n    if (err) return cb(err);\n    asset.text = asset.text.replace('{{{common}}}', text);\n    cb();\n  });\n})"
+        }
+      ]
+    }
+  };
   return Tap = (function(_super) {
     __extends(Tap, _super);
 
@@ -20,7 +42,7 @@ module.exports = function(Projmate) {
       return _ref;
     }
 
-    Tap.prototype.extnames = "*";
+    Tap.schema = schema;
 
     Tap.prototype.process = function(asset, options, cb) {
       var ex, fn;

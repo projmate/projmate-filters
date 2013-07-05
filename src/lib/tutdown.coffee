@@ -9,38 +9,27 @@ Fs = require("fs")
 module.exports = (Projmate) ->
   tutdown = require("tutdown")
 
+  schema =
+    title: 'Creates awesome docuementation from Coffee, JS, and Markdown'
+    type: 'object'
+    properties:
+      assetsDirname:
+        type: 'string'
+        description: 'Directory to write assets'
+
+    __:
+      extnames: ['.md', '.js', '.coffee']
+      outExtname: '.html'
+
   # Compiles markdown to HTML, optionally inserting the
   # file into a layout.
   class Markdown extends Projmate.Filter
-    constructor: ->
-      @extnames = [".md", ".js", ".coffee"]
-      @outExtname = ".html"
-      super
+    # constructor: ->
+    #   @extnames = [".md", ".js", ".coffee"]
+    #   @outExtname = ".html"
+    #   super
 
-    defaults:
-      dev:
-        navHeaderTemplate:
-          """
-          <a href='index.html'>
-            <div class='nav-title'>API Docs</div>
-          </a>
-          """
-        contentHeaderTemplate:
-          """
-          <a href='index.html'>
-            <img id='logo' src='img/logo.png'/>
-          </a>
-          """
-        contentFooterTemplate:
-          """
-          <script>
-            (function() {
-              var b = document.createElement("script"); b.type = "text/javascript"; b.async = true;
-              b.src = "//barc.com/js/libs/barc/barc.js";
-              var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(b, s);
-            })();
-          </script>
-          """
+    @schema: schema
 
     # Process the markdown, optionally inserting it into a layout.
     process: (asset, options, cb) ->

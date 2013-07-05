@@ -17,8 +17,9 @@ function parseCSON(source) {
 }
 
 
+
 /**
- * Extracts meta from a text file and assets it to `asset.meta`.
+ * Extracts meta from text and returns the meta and text separately.
  *
  * @returns {
  *  {String} meta The metadata found.
@@ -73,10 +74,48 @@ module.exports = function(Projmate) {
    * ---
    */
   function ExtractMeta() {
-    this.extnames = '*';
     Projmate.Filter.apply(this, arguments);
   }
   Projmate.extendsFilter(ExtractMeta);
+
+
+  ExtractMeta.schema = {
+    title: "Assigns metadata to next filter's options.",
+    type: 'object',
+    properties: {
+      from: {
+        type: 'object',
+        description: "The meta, else meta is extracted from previous asset.text."
+      },
+      as: {
+        type: 'string',
+        description: "Options property name, else meta is merged."
+      }
+    },
+
+    __: {
+      extnames: '*',
+      examples: [
+        { title: 'Extract from previous asset and assign it to options.data.',
+          text: [
+            'dev: [',
+            '  f.extractMeta({as: "data"}),',
+            '  f.template({text: "Hello <%= data.name %>"})',
+            ']'
+          ].join('\n')
+        },
+
+        { title: 'Extract from object and merge with options',
+          text: [
+            'dev: [',
+            '  f.extractMeta({from: {data: { name: "foo" }}}),',
+            '  f.template({text: "Hello <%= data.name %>"})',
+            ']'
+          ].join('\n')
+        }
+      ]
+    }
+  };
 
 
   /**

@@ -4,16 +4,23 @@
  * See the file LICENSE for copying permission.
  */
 
-var UglifyJS, _,
+var _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-UglifyJS = require("uglify-js");
 
 _ = require("lodash");
 
 module.exports = function(Projmate) {
-  var Uglify, _ref;
+  var Uglify, UglifyJS, schema, _ref;
+  UglifyJS = require("uglify-js");
+  schema = {
+    title: 'Minifies JavaScript',
+    type: 'object',
+    __: {
+      extnames: ".js",
+      outExtname: ".js"
+    }
+  };
   return Uglify = (function(_super) {
     __extends(Uglify, _super);
 
@@ -22,9 +29,7 @@ module.exports = function(Projmate) {
       return _ref;
     }
 
-    Uglify.prototype.extnames = ".js";
-
-    Uglify.prototype.outExtname = ".js";
+    Uglify.schema = schema;
 
     Uglify.prototype.process = function(asset, options, cb) {
       var ex, result;

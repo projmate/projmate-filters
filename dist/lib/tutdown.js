@@ -13,24 +13,31 @@ Path = require("path");
 Fs = require("fs");
 
 module.exports = function(Projmate) {
-  var Markdown, tutdown;
+  var Markdown, schema, tutdown, _ref;
   tutdown = require("tutdown");
+  schema = {
+    title: 'Creates awesome docuementation from Coffee, JS, and Markdown',
+    type: 'object',
+    properties: {
+      assetsDirname: {
+        type: 'string',
+        description: 'Directory to write assets'
+      }
+    },
+    __: {
+      extnames: ['.md', '.js', '.coffee'],
+      outExtname: '.html'
+    }
+  };
   return Markdown = (function(_super) {
     __extends(Markdown, _super);
 
     function Markdown() {
-      this.extnames = [".md", ".js", ".coffee"];
-      this.outExtname = ".html";
-      Markdown.__super__.constructor.apply(this, arguments);
+      _ref = Markdown.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
 
-    Markdown.prototype.defaults = {
-      dev: {
-        navHeaderTemplate: "<a href='index.html'>\n  <div class='nav-title'>API Docs</div>\n</a>",
-        contentHeaderTemplate: "<a href='index.html'>\n  <img id='logo' src='img/logo.png'/>\n</a>",
-        contentFooterTemplate: "<script>\n  (function() {\n    var b = document.createElement(\"script\"); b.type = \"text/javascript\"; b.async = true;\n    b.src = \"//barc.com/js/libs/barc/barc.js\";\n    var s = document.getElementsByTagName(\"script\")[0]; s.parentNode.insertBefore(b, s);\n  })();\n</script>"
-      }
-    };
+    Markdown.schema = schema;
 
     Markdown.prototype.process = function(asset, options, cb) {
       options.assetsDirname = asset.dirname + '/_assets';

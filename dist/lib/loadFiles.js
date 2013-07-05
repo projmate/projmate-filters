@@ -4,7 +4,7 @@
  * See the file LICENSE for copying permission.
  */
 
-var Async, Fs, Util, _,
+var Async, Fs, Util, schema, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -15,6 +15,15 @@ Fs = require("fs");
 Util = require("util");
 
 _ = require("lodash");
+
+schema = {
+  title: 'Loads file using task patterns and creates FileAsset(s)',
+  type: 'object',
+  __: {
+    extnames: "*",
+    isAssetLoader: true
+  }
+};
 
 module.exports = function(Projmate) {
   var FileAsset, LoadFiles, PmUtils, TaskProcessor, _ref;
@@ -27,9 +36,7 @@ module.exports = function(Projmate) {
       return _ref;
     }
 
-    LoadFiles.prototype.extnames = "*";
-
-    LoadFiles.prototype.isAssetLoader = true;
+    LoadFiles.schema = schema;
 
     LoadFiles.prototype.process = function(task, options, cb) {
       var assets, cwd, excludePatterns, log, patterns;

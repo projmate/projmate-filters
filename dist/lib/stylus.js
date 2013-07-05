@@ -13,36 +13,54 @@ _ = require("lodash");
 path = require("path");
 
 module.exports = function(Projmate) {
-  var Less, Parser, schema, _ref;
-  Parser = require("less").Parser;
+  var Stylus, schema, stylus, _ref;
+  stylus = require('stylus');
   schema = {
-    title: 'Compiles Less CSS',
+    title: 'Compiles Stylus CSS',
     type: 'object',
+    properties: {
+      linenos: {
+        type: 'boolean',
+        description: 'Reference source line numbers in compiled CSS'
+      },
+      paths: {
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        description: 'Paths containing assets?'
+      },
+      compress: {
+        type: 'boolean',
+        description: 'Whether to compress the output CSS'
+      }
+    },
     __: {
-      extnames: ".less",
+      extnames: ".styl",
       outExtname: ".css",
       defaults: {
         development: {
-          dumpLineNumbers: "comments",
+          linenos: true,
           compress: false
         },
         production: {
+          linenos: false,
           compress: true
         }
       }
     }
   };
-  return Less = (function(_super) {
-    __extends(Less, _super);
+  return Stylus = (function(_super) {
+    __extends(Stylus, _super);
 
-    function Less() {
-      _ref = Less.__super__.constructor.apply(this, arguments);
+    function Stylus() {
+      _ref = Stylus.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
-    Less.schema = schema;
+    Stylus.schema = schema;
 
-    Less.prototype.process = function(asset, options, cb) {
+    Stylus.prototype.process = function(asset, options, cb) {
       var ex, parser;
       options.filename = asset.filename;
       options.paths = [asset.dirname];
@@ -67,7 +85,7 @@ module.exports = function(Projmate) {
       }
     };
 
-    return Less;
+    return Stylus;
 
   })(Projmate.Filter);
 };

@@ -25,9 +25,14 @@ module.exports = function(Projmate) {
       return _ref;
     }
 
-    Stat.prototype.extnames = "*";
-
-    Stat.prototype.isAssetLoader = true;
+    Stat.schema = {
+      title: 'Load asset stats only, not text',
+      type: 'object',
+      __: {
+        extnames: "*",
+        isAssetLoader: true
+      }
+    };
 
     Stat.prototype.process = function(task, options, cb) {
       var assets, cwd, excludePatterns, patterns;

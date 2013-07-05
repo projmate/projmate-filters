@@ -30,7 +30,8 @@
     "jade": "~0.28.2",
     "tutdown": "git://github.com/barc/tutdown#master",
     "iced-coffee-script": "~1.6.3-b",
-    "funcd": "~0.1.2"
+    "funcd": "~0.1.2",
+    "stylus": "~0.33.1"
   },
   "keywords": [
     "Projmate",

@@ -9,14 +9,20 @@ path = require("path")
 
 module.exports = (Projmate) ->
   {Parser} = require("less")
+  schema =
+    title: 'Compiles Less CSS'
+    type: 'object'
+
+    __:
+      extnames: ".less"
+      outExtname: ".css"
+      defaults:
+        development: {dumpLineNumbers: "comments", compress: false}
+        production: {compress: true}
 
   # Compiles a less buffer.
   class Less extends Projmate.Filter
-    extnames: ".less"
-    outExtname: ".css"
-    defaults:
-      development: {dumpLineNumbers: "comments", compress: false}
-      production: {compress: true}
+    @schema: schema
 
     process: (asset, options, cb) ->
       options.filename = asset.filename

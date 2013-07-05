@@ -12,8 +12,3 @@ for file in Fs.readdirSync(__dirname)
   continue if basename == "index"
   continue if Fs.statSync("#{__dirname}/#{file}").isDirectory()
   exports[basename] = require("./#{basename}")
-
-# Aliases
-exports["writeFile"] = require("./writeFiles")
-exports["commonJsify"] = require("./commonJs")
-exports["cjs"] = require("./commonJs")

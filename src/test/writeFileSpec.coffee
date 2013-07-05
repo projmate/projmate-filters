@@ -1,6 +1,6 @@
 {assert, textAsset, Filter} = require("./helper")
 
-filter = Filter("../lib/writeFiles")
+filter = Filter("../lib/writeFile")
 fs = require('fs')
 
 describe "template", ->

@@ -13,9 +13,16 @@ Path = require('path');
 _ = require('lodash');
 
 module.exports = function(Projmate) {
-  var Filter, JadeFilter, Utils, jade, _ref;
-  Filter = Projmate.Filter, Utils = Projmate.Utils;
+  var Filter, JadeFilter, Utils, jade, schema, _ref;
   jade = require('jade');
+  Filter = Projmate.Filter, Utils = Projmate.Utils;
+  schema = {
+    title: 'Compiles Jade templates',
+    type: 'object',
+    __: {
+      extnames: '.jade'
+    }
+  };
   return JadeFilter = (function(_super) {
     __extends(JadeFilter, _super);
 
@@ -24,7 +31,7 @@ module.exports = function(Projmate) {
       return _ref;
     }
 
-    JadeFilter.prototype.extnames = '.jade';
+    JadeFilter.schema = schema;
 
     JadeFilter.prototype.process = function(asset, options, cb) {
       var defaults, ex, fn, result, text;

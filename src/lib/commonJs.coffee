@@ -29,22 +29,53 @@ module.exports = (Projmate) ->
   {changeExtname} = Utils
   SourceMap = require("../support/sourceMap")
 
+  schema =
+    title: 'Creates a single file CommonJS or AMD module from a directory'
+    type: 'object'
+    properties:
+      requireProp:
+        type: 'string'
+        description: 'Name for window.`require`'
+      loader:
+        type: 'boolean'
+        description: 'Whether to include CommonJS loader'
+      simplifiedCjs:
+        type: 'boolean'
+        description: 'Whether to use AMD Simplified CommonJS signature'
+      name:
+        type: 'string'
+        description: 'Package name'
+      root:
+        type: 'string'
+        description: 'Source root. Paths become relative to this directory'
+      sourceMap:
+        type: 'boolean'
+        description: 'Whether to generate source maps'
+      auto:
+        type: 'string'
+        description: 'The module to autoload'
+      filename:
+        type: 'string'
+        description: 'The output file'
+      defineProp:
+        type: 'string'
+        description: 'Name for window.`define`'
+    required: ['name', 'root', 'filename']
+
+    __:
+      extnames: ".js"
+      defaults:
+        development: {sourceMap: false}
+        production: {sourceMap: false}
+
 
   # Reduces a task's assets into a single browser-side CommonJS-like module asset.
   #
   # Script is mostly [stitch](https://github.com/sstephenson/stitch.git) with
   # added support for modules.
   #
-  class CommonJsify extends TaskProcessor
-    extnames: ".js"
-
-    constructor: ->
-      @extnames = ".js"
-      @defaults =
-        development: {sourceMap: false}
-        production: {sourceMap: false}
-      super
-
+  class CommonJs extends TaskProcessor
+    @schema: schema
 
     genLoader: (options, requireProp, defineProp) ->
       if options.DEVELOPMENT

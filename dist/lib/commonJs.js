@@ -31,29 +31,75 @@ moduleSignature = function(simplifiedCjs) {
 };
 
 module.exports = function(Projmate) {
-  var CommonJsify, SourceMap, TaskProcessor, Utils, changeExtname;
+  var CommonJs, SourceMap, TaskProcessor, Utils, changeExtname, schema, _ref;
   TaskProcessor = Projmate.TaskProcessor, Utils = Projmate.Utils;
   changeExtname = Utils.changeExtname;
   SourceMap = require("../support/sourceMap");
-  return CommonJsify = (function(_super) {
-    __extends(CommonJsify, _super);
-
-    CommonJsify.prototype.extnames = ".js";
-
-    function CommonJsify() {
-      this.extnames = ".js";
-      this.defaults = {
+  schema = {
+    title: 'Creates a single file CommonJS or AMD module from a directory',
+    type: 'object',
+    properties: {
+      requireProp: {
+        type: 'string',
+        description: 'Name for window.`require`'
+      },
+      loader: {
+        type: 'boolean',
+        description: 'Whether to include CommonJS loader'
+      },
+      simplifiedCjs: {
+        type: 'boolean',
+        description: 'Whether to use AMD Simplified CommonJS signature'
+      },
+      name: {
+        type: 'string',
+        description: 'Package name'
+      },
+      root: {
+        type: 'string',
+        description: 'Source root. Paths become relative to this directory'
+      },
+      sourceMap: {
+        type: 'boolean',
+        description: 'Whether to generate source maps'
+      },
+      auto: {
+        type: 'string',
+        description: 'The module to autoload'
+      },
+      filename: {
+        type: 'string',
+        description: 'The output file'
+      },
+      defineProp: {
+        type: 'string',
+        description: 'Name for window.`define`'
+      }
+    },
+    required: ['name', 'root', 'filename'],
+    __: {
+      extnames: ".js",
+      defaults: {
         development: {
           sourceMap: false
         },
         production: {
           sourceMap: false
         }
-      };
-      CommonJsify.__super__.constructor.apply(this, arguments);
+      }
+    }
+  };
+  return CommonJs = (function(_super) {
+    __extends(CommonJs, _super);
+
+    function CommonJs() {
+      _ref = CommonJs.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
 
-    CommonJsify.prototype.genLoader = function(options, requireProp, defineProp) {
+    CommonJs.schema = schema;
+
+    CommonJs.prototype.genLoader = function(options, requireProp, defineProp) {
       var diagnostics, result, signature;
       if (options.DEVELOPMENT) {
         diagnostics = "_require.modules = function() { return modules; };\n_require.cache = function() { return cache; };";
@@ -64,7 +110,7 @@ module.exports = function(Projmate) {
       return result = "(function(root) {\n  if (!root." + requireProp + ") {\n    var modules = {}, cache = {};\n\n    function dirname(path) {\n      return path.split('/').slice(0, -1).join('/');\n    }\n\n    function expand(root, name) {\n      var results = [], parts, part;\n      if (/^\\.\\.?(\\/|$)/.test(name)) {\n        parts = [root, name].join('/').split('/');\n      } else {\n        parts = name.split('/');\n      }\n      for (var i = 0, length = parts.length; i < length; i++) {\n        part = parts[i];\n        if (part === '..') {\n          results.pop();\n        } else if (part !== '.' && part !== '') {\n          results.push(part);\n        }\n      }\n      return results.join('/');\n    }\n\n    function require(name, root) {\n      var path = expand(root, name), module = cache[path], fn;\n      if (module) return module;\n\n      if (fn = modules[path] || modules[path = expand(path, './index')]) {\n        module = {id: path, exports: {}};\n        try {\n          cache[path] = module.exports;\n          function req(name) {\n            return require(name, dirname(path));\n          }\n          fn(" + signature + ");\n          return cache[path] = module.exports;\n        } catch (err) {\n          delete cache[path];\n          throw err;\n        }\n      } else {\n        throw 'module \\'' + name + '\\' not found';\n      }\n    }\n\n    function _require(name) {\n      return require(name, '');\n    };\n    _require.resolve = function(path) {\n      return expand('', name);\n    };\n\n    " + diagnostics + "\n\n    function _define(path, deps, mod) {\n      if (arguments.length === 2) {\n        mod = deps;\n        deps = [];\n      };\n      modules[path] = mod;\n    };\n\n    root." + requireProp + " = _require;\n    root." + defineProp + " = _define;\n  }\n\n})(this);";
     };
 
-    CommonJsify.prototype.includeFiles = function(options, Utils, cb) {
+    CommonJs.prototype.includeFiles = function(options, Utils, cb) {
       var cwd, excludePatterns, files, patterns, result;
       files = options.include;
       cwd = process.cwd();
@@ -93,7 +139,7 @@ module.exports = function(Projmate) {
       });
     };
 
-    CommonJsify.prototype.includeAliases = function(options, Utils, cb) {
+    CommonJs.prototype.includeAliases = function(options, Utils, cb) {
       var alias, aliases, content, defineProp, file, result, signature, stat;
       defineProp = options.defineProp, aliases = options.aliases;
       result = "";
@@ -114,7 +160,7 @@ module.exports = function(Projmate) {
       return cb(null, result);
     };
 
-    CommonJsify.prototype.process = function(task, options, cb) {
+    CommonJs.prototype.process = function(task, options, cb) {
       var assets, defineProp, doAliases, doBody, doIncludes, doLoader, loader, packageName, requireProp, result, simplifiedCjs, sourceMap, that;
       requireProp = options.requireProp || options.identifier || "require";
       if (options.defineProp == null) {
@@ -233,15 +279,15 @@ module.exports = function(Projmate) {
       return Async.series([doLoader, doIncludes, doAliases, doBody], cb);
     };
 
-    CommonJsify.prototype.mapAssets = function(task, options, script) {
-      var asset, generator, json, mapAsset, mapFilename, source, sourceRoot, _i, _len, _ref;
+    CommonJs.prototype.mapAssets = function(task, options, script) {
+      var asset, generator, json, mapAsset, mapFilename, source, sourceRoot, _i, _len, _ref1;
       if (options.sourceMap) {
         sourceRoot = options.sourceRoot;
         script += "/*\n//@ sourceMappingURL=" + (changeExtname(Path.basename(options.filename), ".map")) + "\n*/";
         generator = SourceMap.createGenerator(options.filename);
-        _ref = task.assets.array();
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          asset = _ref[_i];
+        _ref1 = task.assets.array();
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          asset = _ref1[_i];
           if (asset.sourceMapOffset != null) {
             mapFilename = changeExtname(asset.filename, ".map");
             mapAsset = task.assets.detect(function(map) {
@@ -280,7 +326,7 @@ module.exports = function(Projmate) {
       });
     };
 
-    return CommonJsify;
+    return CommonJs;
 
   })(TaskProcessor);
 };

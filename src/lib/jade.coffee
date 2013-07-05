@@ -7,12 +7,17 @@ Path = require('path')
 _ = require('lodash')
 
 module.exports = (Projmate) ->
+  jade = require('jade')
   {Filter, Utils} = Projmate
 
-  jade = require('jade')
+  schema =
+    title: 'Compiles Jade templates'
+    type: 'object'
+    __:
+      extnames: '.jade'
 
   class JadeFilter extends Filter
-    extnames: '.jade'
+    @schema: schema
 
     process: (asset, options, cb) ->
       if options.jst

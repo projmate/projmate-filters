@@ -37,15 +37,22 @@ prettyErrorMessage = (error, fileName, code) ->
 module.exports = (Projmate) ->
   {Filter, Utils} = Projmate
 
+  schema =
+    title: 'Compiles CoffeeScript to JavaScript'
+    type: 'object'
+
+    __:
+      extnames: [".coffee", ".litcoffee", ".coffee.md"]
+      outExtname: ".js"
+      defaults:
+        # source maps are a good thing in development but not yet fully tested
+        development: {sourceMap: false}
+        production: {sourceMap: false}
+
   # Compiles CoffeeScript to JavaScript.
   #
   class Coffee extends Filter
-    extnames: [".coffee", ".litcoffee", ".coffee.md"]
-    outExtname: ".js"
-    defaults:
-      # source maps are a good thing in development but not yet fully tested
-      development: {sourceMap: false}
-      production: {sourceMap: false}
+    @schema: schema
 
     process: (asset, options, cb) ->
       if options.sourceMap

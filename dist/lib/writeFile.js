@@ -16,10 +16,17 @@ module.exports = function(Projmate) {
    * and remain compatiblewith CoffeeScript class.
    */
   function WriteFile() {
-    this.extnames = "*";
     Projmate.Filter.apply(this, arguments);
   }
   Projmate.extendsFilter(WriteFile);
+
+  WriteFile.schema = {
+    title: 'Writes each asset to `asset.filename`',
+    type: 'object',
+    __: {
+      extnames: '*'
+    }
+  };
 
 
   WriteFile.prototype.process = function(asset, options, cb) {

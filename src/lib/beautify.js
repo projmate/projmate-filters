@@ -12,10 +12,35 @@ module.exports = function(Projmate) {
    * Beautifies web assets.
    */
   function Beautify() {
-    this.extnames = ['.css', '.html', '.js'];
     Projmate.Filter.apply(this, arguments);
   }
   Projmate.extendsFilter(Beautify);
+
+
+  Beautify.schema = {
+    title: 'Beautifies CSs, HTML or JavaScript',
+    type: 'object',
+    properties: {
+      indent_size: {
+        description: 'Number of spaces to indent',
+        type: 'integer',
+        default: 2
+      },
+      indent_char: {
+        description: 'Character to indent with',
+        type: 'string',
+        default: ' '
+      },
+      max_preserve_newlines: {
+        description: 'Maximum number of lines breaks to preserve',
+        type: 'integer'
+      }
+    },
+
+    __: {
+      extnames: ['.css', '.html', '.js'],
+    },
+  };
 
   /**
    * Beautifies based on extension.

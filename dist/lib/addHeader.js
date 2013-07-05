@@ -15,7 +15,23 @@ module.exports = function(Projmate) {
   return AddHeader = (function(_super) {
     __extends(AddHeader, _super);
 
-    AddHeader.prototype.extnames = "*";
+    AddHeader.schema = {
+      title: 'Prepends a header if it does not exist',
+      type: 'object',
+      properties: {
+        text: {
+          description: 'The text to prepend',
+          type: 'string'
+        },
+        filename: {
+          description: 'Path to file containing text',
+          type: 'string'
+        }
+      },
+      __: {
+        extnames: "*"
+      }
+    };
 
     function AddHeader() {
       this.cache = {};

@@ -11,7 +11,15 @@ var cons,
 cons = require("consolidate");
 
 module.exports = function(Projmate) {
-  var Template, _ref;
+  var Template, schema, _ref;
+  schema = {
+    title: 'Runs consolidate templates [deprecating]',
+    type: 'obj',
+    __: {
+      extnames: "*",
+      outExtname: ".html"
+    }
+  };
   return Template = (function(_super) {
     __extends(Template, _super);
 
@@ -20,9 +28,7 @@ module.exports = function(Projmate) {
       return _ref;
     }
 
-    Template.prototype.extnames = "*";
-
-    Template.prototype.outExtname = ".html";
+    Template.schema = schema;
 
     Template.prototype.process = function(asset, options, cb) {
       var engine, ex;

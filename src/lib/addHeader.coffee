@@ -10,7 +10,19 @@ module.exports = (Projmate) ->
   # Adds a header to an asset.
   #
   class AddHeader extends Projmate.Filter
-    extnames: "*"
+    @schema:
+      title: 'Prepends a header if it does not exist'
+      type: 'object'
+      properties:
+        text:
+          description: 'The text to prepend'
+          type: 'string'
+        filename:
+          description: 'Path to file containing text'
+          type: 'string'
+
+      __:
+        extnames: "*"
 
     constructor: ->
       @cache = {}

@@ -11,15 +11,31 @@ var Path,
 Path = require("path");
 
 module.exports = function(Projmate) {
-  var Handlebars;
+  var Handlebars, schema, _ref;
+  schema = {
+    title: 'Compiles handlebars templates',
+    type: 'object',
+    properties: {
+      root: {
+        type: 'string',
+        description: 'Root directory for relative templates and partials'
+      },
+      required: ['root']
+    },
+    __: {
+      extnames: ".hbs",
+      outExtname: ".html"
+    }
+  };
   return Handlebars = (function(_super) {
     __extends(Handlebars, _super);
 
     function Handlebars() {
-      this.extnames = ".hbs";
-      this.outExtname = ".html";
-      Handlebars.__super__.constructor.apply(this, arguments);
+      _ref = Handlebars.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
+
+    Handlebars.schema = schema;
 
     Handlebars.prototype.process = function(asset, options, cb) {
       var config, hbs, _;

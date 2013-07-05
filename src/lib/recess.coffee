@@ -10,9 +10,13 @@ module.exports = (Projmate) ->
   # Compiles and compresses less and css using Twitter's
   # [recess](https://github.com/twitter/recess)
   #
-  class Coffee extends Projmate.Filter
-    extnames: [".css", ".less"]
-    outExtname: ".css"
+  class Recess extends Projmate.Filter
+    @schema:
+      title: 'Optimizes CSS'
+      type: 'object'
+      __:
+        extnames: [".css", ".less"]
+        outExtname: ".css"
 
     process: (asset, options, cb) ->
       try

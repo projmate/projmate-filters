@@ -6,8 +6,13 @@
 module.exports = (Projmate) ->
   {TaskProcessor} = Projmate
 
+  schema =
+    title: 'Concatenates files'
+    __:
+      extnames: "*"
+
   class Cat extends TaskProcessor
-    extnames: "*"
+    @schema: schema
 
     # Concatenate all assets to a single asset.
     #

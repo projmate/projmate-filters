@@ -8,8 +8,14 @@ var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 module.exports = function(Projmate) {
-  var Cat, TaskProcessor, _ref;
+  var Cat, TaskProcessor, schema, _ref;
   TaskProcessor = Projmate.TaskProcessor;
+  schema = {
+    title: 'Concatenates files',
+    __: {
+      extnames: "*"
+    }
+  };
   return Cat = (function(_super) {
     __extends(Cat, _super);
 
@@ -18,7 +24,7 @@ module.exports = function(Projmate) {
       return _ref;
     }
 
-    Cat.prototype.extnames = "*";
+    Cat.schema = schema;
 
     Cat.prototype.process = function(task, options, cb) {
       var filename, first, join, script;

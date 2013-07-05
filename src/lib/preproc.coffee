@@ -9,9 +9,16 @@ _ = require ("lodash")
 module.exports = (Projmate) ->
   escJs = (s) -> s.replace(/\\/g, '\\\\')
 
+  schema =
+    title: 'Preprocesses assets given definitions in options'
+    type: 'object'
+
+    __:
+      extnames: "*"
+
   # Preprocess the `asset` given definition in `options`.
   class PreProcessor extends Projmate.Filter
-    extnames: "*"
+    @schema: schema
 
     process: (asset, options, cb) ->
       root = options.root || asset.dirname

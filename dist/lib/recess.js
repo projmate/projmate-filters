@@ -11,20 +11,25 @@ var recess,
 recess = require("recess");
 
 module.exports = function(Projmate) {
-  var Coffee, _ref;
-  return Coffee = (function(_super) {
-    __extends(Coffee, _super);
+  var Recess, _ref;
+  return Recess = (function(_super) {
+    __extends(Recess, _super);
 
-    function Coffee() {
-      _ref = Coffee.__super__.constructor.apply(this, arguments);
+    function Recess() {
+      _ref = Recess.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
-    Coffee.prototype.extnames = [".css", ".less"];
+    Recess.schema = {
+      title: 'Optimizes CSS',
+      type: 'object',
+      __: {
+        extnames: [".css", ".less"],
+        outExtname: ".css"
+      }
+    };
 
-    Coffee.prototype.outExtname = ".css";
-
-    Coffee.prototype.process = function(asset, options, cb) {
+    Recess.prototype.process = function(asset, options, cb) {
       var ex;
       try {
         return recess(asset.filename, options, function(err, result) {
@@ -39,7 +44,7 @@ module.exports = function(Projmate) {
       }
     };
 
-    return Coffee;
+    return Recess;
 
   })(Projmate.Filter);
 };

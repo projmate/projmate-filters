@@ -11,7 +11,6 @@ module.exports = function(Projmate) {
   var MochaClass = require('mocha');
 
   function Mocha() {
-    this.extnames = ['.js', '.coffee'];
     Projmate.Filter.apply(this, arguments);
   }
   Projmate.extendsTaskProcessor(Mocha);
@@ -27,20 +26,23 @@ module.exports = function(Projmate) {
     });
   };
 
-
-  /**
-   * For UI.
-   */
-  Mocha.meta = {
-    globals: {
-      desc: "Allow these global variables",
-      type: "[String]"
+  Mocha.schema = {
+    title: 'Runs mocha tests (CoffeeScript aware)',
+    type: 'object',
+    properties: {
+      globals: {
+        description: "Allowed global variables",
+        type: "string"
+      },
+      reporter: {
+        description: "The reporter to use",
+        type: 'string'
+      }
     },
-    reporter: {
-      desc: "The reporter to use",
-      type: "String",
-      enums: "reporter",
-      example: "spec"
+
+    __: {
+      extnames: ['.js', '.coffee'],
+      useLoader: 'stat'
     }
   };
 

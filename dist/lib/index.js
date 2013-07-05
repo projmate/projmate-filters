@@ -22,9 +22,3 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   }
   exports[basename] = require("./" + basename);
 }
-
-exports["writeFile"] = require("./writeFiles");
-
-exports["commonJsify"] = require("./commonJs");
-
-exports["cjs"] = require("./commonJs");

@@ -7,13 +7,22 @@ Path = require("path")
 
 module.exports = (Projmate) ->
 
+  schema =
+    title: 'Compiles handlebars templates'
+    type: 'object'
+    properties:
+      root:
+        type: 'string'
+        description: 'Root directory for relative templates and partials'
+      required: ['root']
+    __:
+      extnames: ".hbs"
+      outExtname: ".html"
+
   # Compiles many types of Handlebarss to HTML using consolidate.
   #
   class Handlebars extends Projmate.Filter
-    constructor: ->
-      @extnames = ".hbs"
-      @outExtname = ".html"
-      super
+    @schema = schema
 
     process: (asset, options, cb) ->
       return cb("options.root is required") unless options.root

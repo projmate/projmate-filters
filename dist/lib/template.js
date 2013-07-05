@@ -4,7 +4,7 @@
  * See the file LICENSE for copying permission.
  */
 
-var Fs, Path, delimiters, _,
+var Fs, Path, delimiters, schema, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -31,33 +31,52 @@ delimiters = {
   }
 };
 
-module.exports = function(Projmate) {
-  var Filter, Jst, Utils, _ref;
-  Filter = Projmate.Filter, Utils = Projmate.Utils;
-  return Jst = (function(_super) {
-    __extends(Jst, _super);
+schema = {
+  title: 'Filters an asset through a template.',
+  type: 'object',
+  properties: {
+    delimiters: {
+      type: 'enum',
+      description: 'The delimiters used in template. ejs | php | mustache'
+    },
+    filename: {
+      type: 'string',
+      description: 'Path to template file'
+    },
+    text: {
+      type: 'string',
+      description: 'String template'
+    }
+  },
+  __: {
+    extnames: ['*'],
+    outExtname: ".html",
+    examples: [
+      {
+        title: 'Use a mustache file',
+        text: "f.template({delimiters: 'mustache', filename: 'src/docs/_layout.mustache'})"
+      }, {
+        title: 'Use a string template',
+        text: "f.template({text: 'Your asset: <%= asset.text %>'})"
+      }
+    ]
+  }
+};
 
-    function Jst() {
-      _ref = Jst.__super__.constructor.apply(this, arguments);
+module.exports = function(Projmate) {
+  var Filter, Template, Utils, _ref;
+  Filter = Projmate.Filter, Utils = Projmate.Utils;
+  return Template = (function(_super) {
+    __extends(Template, _super);
+
+    function Template() {
+      _ref = Template.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
-    Jst.prototype.extnames = ['*'];
+    Template.schema = schema;
 
-    Jst.prototype.outExtname = ".html";
-
-    Jst.meta = {
-      description: "Compiles a buffer into a JavaScript function using the following\ndirectives:\n\nfunction(it, foo)   // must be first line\n\n<%= escaped %>\n<%- raw %>\n<% code %>",
-      options: {
-        paramName: {
-          type: 'string',
-          desc: 'The name of the single parameter to the function.',
-          "default": 'it'
-        }
-      }
-    };
-
-    Jst.prototype.render = function(asset, options, cb) {
+    Template.prototype.render = function(asset, options, cb) {
       var ex, func, newlinePos, result, templateDelimiters, text;
       options.asset = asset;
       if (options.delimiters && delimiters[options.delimiters]) {
@@ -66,14 +85,17 @@ module.exports = function(Projmate) {
         templateDelimiters = delimiters.ejs;
       }
       if (options.layout) {
+        options.filename = options.layout;
+      }
+      if (options.filename) {
         if (this.cache == null) {
           this.cache = {};
         }
-        if (this.cache[options.layout]) {
-          text = this.cache[options.layout];
+        if (this.cache[options.filename]) {
+          text = this.cache[options.filename];
         } else {
-          text = Fs.readFileSync(options.layout, 'utf8');
-          this.cache[options.layout] = text;
+          text = Fs.readFileSync(options.filename, 'utf8');
+          this.cache[options.filename] = text;
         }
       } else {
         text = asset.text;
@@ -100,7 +122,7 @@ module.exports = function(Projmate) {
       }
     };
 
-    Jst.prototype.process = function(asset, options, cb) {
+    Template.prototype.process = function(asset, options, cb) {
       var compiled, defaults, ex, fnName, func, newlinePos, text;
       if (options.jst) {
         options.variable = options.paramName || 'it';
@@ -142,7 +164,7 @@ module.exports = function(Projmate) {
       }
     };
 
-    return Jst;
+    return Template;
 
   })(Projmate.Filter);
 };

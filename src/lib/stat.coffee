@@ -16,8 +16,13 @@ module.exports = (Projmate) ->
   # This is usually invoked as the first filter of a pipeline.
   #
   class Stat extends TaskProcessor
-    extnames: "*"
-    isAssetLoader: true
+
+    @schema:
+      title: 'Load asset stats only, not text'
+      type: 'object'
+      __:
+        extnames: "*"
+        isAssetLoader: true
 
     ##
     # Directly manipulates a task such as its assets property.

@@ -10,7 +10,6 @@ module.exports = function(Projmate) {
    * Adds live reload header to HTML files.
    */
   function LiveReload() {
-    this.extnames = ".html";
     Projmate.Filter.apply(this, arguments);
   }
   Projmate.extendsFilter(LiveReload);
@@ -19,24 +18,27 @@ module.exports = function(Projmate) {
   /**
    * For the UI.
    */
-  LiveReload.meta = {
-    _: {
-      description: "Adds [LiveReload2]() header to HTML files which notifies pages of asset changes",
-      example: "liveReload({port: 1080})",
-      extnames: [".html"],
+  LiveReload.schema = {
+    title: "Adds LiveReload2 header to HMTL pages",
+    type: 'object',
+
+    properties: {
+      port: {
+        type: "Integer",
+        default: 1080,
+        description: "Specify the port the server should listen to",
+        validate: function(n) { return n > 0; }
+      },
+
+      domain: {
+        type: "String",
+        default: "local.projmate.com",
+        description: "The domain to use."
+      }
     },
 
-    port: {
-      type: "Integer",
-      default: 1080,
-      description: "Specify the port the server should listen to",
-      validate: function(n) { return n > 0; }
-    },
-
-    domain: {
-      type: "String",
-      default: "local.projmate.com",
-      description: "The domain to use."
+    __: {
+      extnames: '.html'
     }
   };
 

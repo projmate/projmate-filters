@@ -7,11 +7,18 @@ cons = require("consolidate")
 
 module.exports = (Projmate) ->
 
+
+  schema =
+    title: 'Runs consolidate templates [deprecating]'
+    type: 'obj'
+    __:
+      extnames: "*"
+      outExtname: ".html"
+
   # Compiles many types of templates to HTML using consolidate.
   #
   class Template extends Projmate.Filter
-    extnames: "*"
-    outExtname: ".html"
+    @schema: schema
 
     process: (asset, options, cb) ->
       engine = options.engine || "underscore"

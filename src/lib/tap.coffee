@@ -7,6 +7,39 @@ _ = require('lodash')
 
 module.exports = (Projmate) ->
 
+  schema =
+    title: 'Custom processing'
+    type: 'object'
+    properties:
+      command:
+        description: '(assets, options) or (assets, options, cb)'
+        type: 'function'
+
+    __:
+      extnames: '*'
+      examples: [
+        title: 'Change file name from `src` to `build`'
+        text:
+          """
+          f.tap(function(asset) {
+            asset.filename = asset.filename.replace(/^src/, 'build');
+          })
+          """
+      ,
+        title: 'Replace a string in assets'
+        text:
+          """
+          f.tap(function(asset, options, cb) {
+            fs.readFile('common.txt', 'utf8', function(err, text) {
+              if (err) return cb(err);
+              asset.text = asset.text.replace('{{{common}}}', text);
+              cb();
+            });
+          })
+          """
+      ]
+
+
   # Difference between tap and Functoid is that doesn't return a value so
   # it does not change asset as a result of sync function.
   #
@@ -15,14 +48,13 @@ module.exports = (Projmate) ->
   # replaceVersion = f.functoid process: (asset, options) ->
   #   asset.text = asset.text.replace /VERSION/g, "1.0.1"
   class Tap extends Projmate.Filter
-    extnames: "*"
+    @schema: schema
 
     process: (asset, options, cb) ->
       fn = options.command
       return cb("Options.command is required and must be a function(asset, options[, cb])") unless typeof fn == "function"
 
       try
-
         if fn.length == 3
           fn asset, options, cb
         else

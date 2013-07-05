@@ -39,8 +39,24 @@ prettyErrorMessage = function(error, fileName, code) {
 };
 
 module.exports = function(Projmate) {
-  var Coffee, Filter, Utils, _ref;
+  var Coffee, Filter, Utils, schema, _ref;
   Filter = Projmate.Filter, Utils = Projmate.Utils;
+  schema = {
+    title: 'Compiles CoffeeScript to JavaScript',
+    type: 'object',
+    __: {
+      extnames: [".coffee", ".litcoffee", ".coffee.md"],
+      outExtname: ".js",
+      defaults: {
+        development: {
+          sourceMap: false
+        },
+        production: {
+          sourceMap: false
+        }
+      }
+    }
+  };
   return Coffee = (function(_super) {
     __extends(Coffee, _super);
 
@@ -49,18 +65,7 @@ module.exports = function(Projmate) {
       return _ref;
     }
 
-    Coffee.prototype.extnames = [".coffee", ".litcoffee", ".coffee.md"];
-
-    Coffee.prototype.outExtname = ".js";
-
-    Coffee.prototype.defaults = {
-      development: {
-        sourceMap: false
-      },
-      production: {
-        sourceMap: false
-      }
-    };
+    Coffee.schema = schema;
 
     Coffee.prototype.process = function(asset, options, cb) {
       var coffee, err, js, mapAsset, result, sourceMap;

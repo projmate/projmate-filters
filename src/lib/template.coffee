@@ -24,38 +24,47 @@ delimiters =
     interpolate: /<\?-([\s\S]+?)\?>/g
     escape: /<\?=([\s\S]+?)\?>/g
 
-
   mustache:
     interpolate: /{{{(.+?)}}}/g
     escape: /{{([^{]+?)}}/g
 
+schema =
+  title: 'Filters an asset through a template.'
+  type: 'object'
+  properties:
+    delimiters:
+      type: 'enum'
+      description: 'The delimiters used in template. ejs | php | mustache'
+    filename:
+      type: 'string'
+      description: 'Path to template file'
+    text:
+      type: 'string'
+      description: 'String template'
+
+  __:
+    extnames: ['*']
+    outExtname: ".html"
+    examples: [
+      title: 'Use a mustache file'
+      text:
+        """
+        f.template({delimiters: 'mustache', filename: 'src/docs/_layout.mustache'})
+        """
+    ,
+      title: 'Use a string template'
+      text:
+        """
+        f.template({text: 'Your asset: <%= asset.text %>'})
+        """
+    ]
 
 
 module.exports = (Projmate) ->
   {Filter, Utils} = Projmate
 
-  class Jst extends Projmate.Filter
-
-    extnames: ['*']
-    outExtname: ".html"
-
-    @meta:
-      description: """
-        Compiles a buffer into a JavaScript function using the following
-        directives:
-
-        function(it, foo)   // must be first line
-
-        <%= escaped %>
-        <%- raw %>
-        <% code %>
-      """
-      options:
-        paramName:
-          type: 'string'
-          desc: 'The name of the single parameter to the function.'
-          default: 'it'
-
+  class Template extends Projmate.Filter
+    @schema: schema
 
     render: (asset, options, cb) ->
       options.asset = asset
@@ -65,13 +74,17 @@ module.exports = (Projmate) ->
       else
         templateDelimiters = delimiters.ejs
 
+      # legacy name
       if options.layout
+        options.filename = options.layout
+
+      if options.filename
         @cache ?= {}
-        if @cache[options.layout]
-          text = @cache[options.layout]
+        if @cache[options.filename]
+          text = @cache[options.filename]
         else
-          text = Fs.readFileSync(options.layout, 'utf8')
-          @cache[options.layout] = text
+          text = Fs.readFileSync(options.filename, 'utf8')
+          @cache[options.filename] = text
       else
         text = asset.text
 
@@ -133,9 +146,4 @@ module.exports = (Projmate) ->
 
       else
         @render asset, options, cb
-
-
-
-
-
 

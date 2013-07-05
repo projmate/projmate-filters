@@ -8,9 +8,9 @@ var Filter, assert, filter, textAsset, _ref;
 
 _ref = require("./helper"), assert = _ref.assert, textAsset = _ref.textAsset, Filter = _ref.Filter;
 
-filter = Filter("../lib/functoid");
+filter = Filter("../lib/tap");
 
-describe("Functoid", function() {
+describe("Tap", function() {
   it("should call custom command", function(done) {
     var adhoc, asset;
     asset = textAsset({
@@ -44,9 +44,8 @@ describe("Functoid", function() {
     };
     return filter.process(asset, {
       command: adhoc
-    }, function(err, result) {
+    }, function(err) {
       assert.ifError(err);
-      assert.equal(result, 'NOCB');
       assert.equal(asset.text, 'NOCB');
       return done();
     });

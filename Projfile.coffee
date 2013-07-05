@@ -22,7 +22,7 @@ exports.project = (pm) ->
     development: [
       f.coffee(bare: true)
       f.addHeader(text: copyright)
-      f.writeFiles(toDist)
+      f.writeFile(toDist)
     ]
 
   tests:
