@@ -28,7 +28,9 @@ describe("tutdown", function() {
   it("should convert markdown to HTML", function(done) {
     var asset;
     asset = textAsset('Hello world!');
-    return process(asset, {}, function(err, result) {
+    return process(asset, {
+      assetsDirname: __dirname + '/_assets'
+    }, function(err, result) {
       assert.ifError(err);
       assert.equal(result, "<p>Hello world!</p>\n");
       return done();
@@ -39,7 +41,8 @@ describe("tutdown", function() {
     asset = textAsset('Hello world!');
     return assert.throws(function() {
       return process(asset, {
-        layout: __dirname + '/res/dummylayout.html'
+        layout: __dirname + '/res/dummylayout.html',
+        assetsDirname: __dirname + '/_assets'
       }, function(err) {
         return assert.isNotNull(err);
       });

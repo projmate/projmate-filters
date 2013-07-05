@@ -13,7 +13,7 @@ describe "tutdown", ->
 
   it "should convert markdown to HTML", (done) ->
     asset = textAsset('Hello world!')
-    process asset, {}, (err, result) ->
+    process asset, {assetsDirname: __dirname + '/_assets'}, (err, result) ->
       assert.ifError err
       assert.equal result, "<p>Hello world!</p>\n"
       done()
@@ -28,5 +28,5 @@ describe "tutdown", ->
   it "should return error if layout is not found", ->
     asset = textAsset('Hello world!')
     assert.throws ->
-      process asset, {layout: __dirname + '/res/dummylayout.html'}, (err) ->
+      process asset, {layout: __dirname + '/res/dummylayout.html', assetsDirname: __dirname + '/_assets'}, (err) ->
         assert.isNotNull err

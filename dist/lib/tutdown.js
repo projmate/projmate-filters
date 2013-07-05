@@ -22,7 +22,12 @@ module.exports = function(Projmate) {
       assetsDirname: {
         type: 'string',
         description: 'Directory to write assets'
-      }
+      },
+      commentFiller: {
+        type: 'string',
+        description: 'Comment filler in CoffeeScript, usually `# ` or `* `'
+      },
+      required: ['assetsDirname']
     },
     __: {
       extnames: ['.md', '.js', '.coffee'],
@@ -40,12 +45,14 @@ module.exports = function(Projmate) {
     Markdown.schema = schema;
 
     Markdown.prototype.process = function(asset, options, cb) {
-      options.assetsDirname = asset.dirname + '/_assets';
-      options.assetPrefix = Path.basename(asset.basename, asset.extname);
-      if (options.layout) {
-        options.docLayoutFile = options.layout;
-      }
       if (asset.extname === ".md") {
+        if (!options.assetsDirname) {
+          return cb('options.assetsDirname is required');
+        }
+        options.assetPrefix = Path.basename(asset.basename, asset.extname);
+        if (options.layout) {
+          options.docLayoutFile = options.layout;
+        }
         return tutdown.render(asset.text, options, cb);
       } else {
         if (asset.extname === ".coffee") {
