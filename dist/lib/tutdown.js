@@ -26,9 +26,9 @@ module.exports = function(Projmate) {
       commentFiller: {
         type: 'string',
         description: 'Comment filler in CoffeeScript, usually `# ` or `* `'
-      },
-      required: ['assetsDirname']
+      }
     },
+    required: ['assetsDirname'],
     __: {
       extnames: ['.md', '.js', '.coffee'],
       outExtname: '.html'
