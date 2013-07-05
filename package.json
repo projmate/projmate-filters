@@ -31,7 +31,8 @@
     "tutdown": "git://github.com/barc/tutdown#master",
     "iced-coffee-script": "~1.6.3-b",
     "funcd": "~0.1.2",
-    "stylus": "~0.33.1"
+    "stylus": "~0.33.1",
+    "nib": "~0.9.2"
   },
   "keywords": [
     "Projmate",

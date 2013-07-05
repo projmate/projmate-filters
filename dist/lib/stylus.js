@@ -28,11 +28,30 @@ module.exports = function(Projmate) {
         items: {
           type: 'string'
         },
-        description: 'Paths containing assets?'
+        description: 'Paths to include'
       },
       compress: {
         type: 'boolean',
         description: 'Whether to compress the output CSS'
+      },
+      defines: {
+        type: 'array',
+        description: 'Key-value pairs to define',
+        items: 'object'
+      },
+      nib: {
+        type: 'boolean',
+        description: 'Enables nib support'
+      },
+      imports: {
+        type: 'array',
+        description: 'Assets to import',
+        items: 'string'
+      },
+      plugins: {
+        type: 'array',
+        description: 'Plugins to use',
+        items: 'string'
       }
     },
     __: {
@@ -61,28 +80,40 @@ module.exports = function(Projmate) {
     Stylus.schema = schema;
 
     Stylus.prototype.process = function(asset, options, cb) {
-      var ex, parser;
-      options.filename = asset.filename;
-      options.paths = [asset.dirname];
-      try {
-        parser = new Parser(options);
-        return parser.parse(asset.text, function(err, tree) {
-          var css, ex;
-          if (err) {
-            return cb(err);
-          }
-          try {
-            css = tree.toCSS(options);
-            return cb(null, css);
-          } catch (_error) {
-            ex = _error;
-            return cb(ex);
-          }
-        });
-      } catch (_error) {
-        ex = _error;
-        return cb(ex);
+      var k, nib, plugin, renderer, v, _ref1;
+      if (options.paths == null) {
+        options.paths = [asset.dirname];
       }
+      renderer = stylus(asset.text, {
+        filename: asset.filename
+      });
+      if (options.defines != null) {
+        _ref1 = options.defines;
+        for (k in _ref1) {
+          v = _ref1[k];
+          renderer.define(k, v);
+        }
+      }
+      if (options.paths != null) {
+        for (path in options.paths) {
+          renderer.include(path);
+        }
+      }
+      if (options.imports != null) {
+        for (path in options.imports) {
+          renderer["import"](path);
+        }
+      }
+      if (options.plugins != null) {
+        for (plugin in options.plugins) {
+          renderer.use(Plugin);
+        }
+      }
+      if (options.nib) {
+        nib = require('nib');
+        renderer.use(nib());
+      }
+      return renderer.render(cb);
     };
 
     return Stylus;

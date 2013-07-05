@@ -11,7 +11,7 @@ exports.project = function(pm) {
     testCommonJs: {
       files: 'res/commonJs/**/*.js',
       dev: [
-        f.cjs({
+        f.commonJs({
           name: 'apackage',
           root: 'res/commonJs',
           filename: 'tmp/apackage.js',
@@ -19,6 +19,14 @@ exports.project = function(pm) {
           auto: 'index',
           include: 'res/commonJs/standalone.js'
         }), f.writeFile
+      ]
+    },
+    stylus: {
+      files: 'res/style.styl',
+      dev: [
+        f.stylus, f.writeFile({
+          _filename: 'tmp/stylus.css'
+        })
       ]
     }
   };

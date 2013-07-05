@@ -1,27 +1,3 @@
- # if (stat.isFile()) {
- #    fs.readFile(file, 'utf8', function(err, str){
- #      if (err) throw err;
- #      options.filename = file;
- #      options._imports = [];
- #      var style = stylus(str, options);
- #      if (includeCSS) style.set('include css', true);
- #      usePlugins(style);
- #      importFiles(style);
- #      style.render(function(err, css){
- #        watchImports(file, options._imports);
- #        if (err) {
- #          if (watchers) {
- #            console.error(err.stack || err.message);
- #          } else {
- #            throw err;
- #          }
- #        } else {
- #          writeFile(file, css);
- #        }
- #      });
- #    });
-
-
 ##
 # Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
 #
@@ -45,10 +21,25 @@ module.exports = (Projmate) ->
         type: 'array'
         items:
           type: 'string'
-        description: 'Paths containing assets?'
+        description: 'Paths to include'
       compress:
         type: 'boolean'
         description: 'Whether to compress the output CSS'
+      defines:
+        type: 'array'
+        description: 'Key-value pairs to define'
+        items: 'object'
+      nib:
+        type: 'boolean'
+        description: 'Enables nib support'
+      imports:
+        type: 'array'
+        description: 'Assets to import'
+        items: 'string'
+      plugins:
+        type: 'array'
+        description: 'Plugins to use'
+        items: 'string'
 
     __:
       extnames: ".styl"
@@ -65,19 +56,24 @@ module.exports = (Projmate) ->
     process: (asset, options, cb) ->
       # css - reverse compiles to stylus
 
-      options.filename = asset.filename
-      options.paths = [asset.dirname]
+      if !options.paths?
+        options.paths = [asset.dirname]
 
-      try
-        parser = new Parser(options)
-        parser.parse asset.text, (err, tree) ->
-          return cb(err) if err
-          try
-            css = tree.toCSS(options)
-            cb null, css
-          catch ex
-            cb ex
-      catch ex
-        cb ex
+      renderer = stylus(asset.text, {filename: asset.filename})
+      if options.defines?
+        for k, v of options.defines
+          renderer.define k, v
+      if options.paths?
+        for path of options.paths
+          renderer.include path
+      if options.imports?
+        for path of options.imports
+          renderer.import path
+      if options.plugins?
+        for plugin of options.plugins
+          renderer.use Plugin
+      if options.nib
+        nib = require('nib')
+        renderer.use nib()
 
-
+      renderer.render cb
