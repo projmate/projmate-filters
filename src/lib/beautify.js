@@ -18,7 +18,7 @@ module.exports = function(Projmate) {
 
 
   Beautify.schema = {
-    title: 'Beautifies CSs, HTML or JavaScript',
+    title: 'Beautifies CSS, HTML or JavaScript',
     type: 'object',
     properties: {
       indent_size: {

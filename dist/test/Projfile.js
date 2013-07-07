@@ -28,6 +28,17 @@ exports.project = function(pm) {
           _filename: 'tmp/stylus.css'
         })
       ]
+    },
+    tapper: {
+      files: 'res/style.styl',
+      dev: [
+        f.tap({
+          foo: 'bar',
+          command: function(asset, options) {
+            return console.log(options.foo);
+          }
+        })
+      ]
     }
   };
 };

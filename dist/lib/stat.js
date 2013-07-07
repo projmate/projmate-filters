@@ -30,7 +30,13 @@ module.exports = function(Projmate) {
       type: 'object',
       __: {
         extnames: "*",
-        isAssetLoader: true
+        isAssetLoader: true,
+        examples: [
+          {
+            title: 'Process filenames without loading their content',
+            text: "dev: [\n  f.stat,\n  f.tap(function(asset) {\n    // log properties of asset, asset.text === ''\n    console.dir(asset);\n  })\n]"
+          }
+        ]
       }
     };
 

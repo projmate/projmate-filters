@@ -30,6 +30,9 @@ module.exports = function(Projmate) {
         }, {
           title: 'Replace a string in assets',
           text: "f.tap(function(asset, options, cb) {\n  fs.readFile('common.txt', 'utf8', function(err, text) {\n    if (err) return cb(err);\n    asset.text = asset.text.replace('{{{common}}}', text);\n    cb();\n  });\n})"
+        }, {
+          title: 'Pass options, must use long form',
+          text: "f.tap({ foo: 'bar', command: function(asset, options) {\n  // prints 'bar'\n  console.log(options.foo);\n}})"
         }
       ]
     }

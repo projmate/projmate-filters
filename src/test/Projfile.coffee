@@ -21,6 +21,14 @@ exports.project = (pm) ->
       f.writeFile _filename: 'tmp/stylus.css'
     ]
 
+  tapper:
+    files: 'res/style.styl'
+    dev: [
+      f.tap foo: 'bar', command: (asset, options) ->
+        console.log options.foo
+    ]
+
+
 
 
 

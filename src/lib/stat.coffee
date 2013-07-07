@@ -23,6 +23,20 @@ module.exports = (Projmate) ->
       __:
         extnames: "*"
         isAssetLoader: true
+        examples: [
+          title: 'Process filenames without loading their content'
+          text:
+            """
+            dev: [
+              f.stat,
+              f.tap(function(asset) {
+                // log properties of asset, asset.text === ''
+                console.dir(asset);
+              })
+            ]
+            """
+        ]
+
 
     ##
     # Directly manipulates a task such as its assets property.

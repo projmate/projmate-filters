@@ -37,6 +37,15 @@ module.exports = (Projmate) ->
             });
           })
           """
+      ,
+        title: 'Pass options, must use long form'
+        text:
+          """
+          f.tap({ foo: 'bar', command: function(asset, options) {
+            // prints 'bar'
+            console.log(options.foo);
+          }})
+          """
       ]
 
 
