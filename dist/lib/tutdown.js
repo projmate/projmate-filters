@@ -14,7 +14,7 @@ Fs = require("fs");
 
 module.exports = function(Projmate) {
   var Markdown, schema, tutdown, _ref;
-  tutdown = require("tutdown");
+  tutdown = null;
   schema = {
     title: 'Creates awesome docuementation from Coffee, JS, and Markdown',
     type: 'object',
@@ -45,6 +45,9 @@ module.exports = function(Projmate) {
     Markdown.schema = schema;
 
     Markdown.prototype.process = function(asset, options, cb) {
+      if (tutdown == null) {
+        tutdown = require("tutdown");
+      }
       if (asset.extname === ".md") {
         if (!options.assetsDirname) {
           return cb('options.assetsDirname is required');
