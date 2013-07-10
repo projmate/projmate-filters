@@ -31,12 +31,17 @@ module.exports = function(Projmate) {
       reporter: {
         description: "The reporter to use",
         type: 'string'
+      },
+      ui: {
+        decription: 'The type of tests',
+        type: 'string'
       }
     },
 
     __: {
       extnames: ['.js', '.coffee'],
-      useLoader: 'stat'
+      useLoader: 'stat',
+      note: "Run `mocha --help` from terminal to see other options"
     }
   };
 
