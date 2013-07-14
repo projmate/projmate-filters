@@ -19,9 +19,9 @@ module.exports = function(Projmate) {
       root: {
         type: 'string',
         description: 'Root directory for relative templates and partials'
-      },
-      required: ['root']
+      }
     },
+    required: ['root'],
     __: {
       extnames: ".hbs",
       outExtname: ".html"
