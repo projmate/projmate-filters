@@ -29,7 +29,7 @@ delimiters =
     escape: /{{([^{]+?)}}/g
 
 schema =
-  title: 'Filters an asset through a template.'
+  title: 'Filters asset(s) through a template.'
   type: 'object'
   properties:
     delimiters:
@@ -44,7 +44,6 @@ schema =
 
   __:
     extnames: ['*']
-    outExtname: ".html"
     examples: [
       title: 'Use a mustache file'
       text:
@@ -66,17 +65,15 @@ module.exports = (Projmate) ->
   class Template extends Projmate.Filter
     @schema: schema
 
-    render: (asset, options, cb) ->
+    process: (asset, options, cb) ->
+      if not (options.text or options.filename)
+        return cb('options.text or options.filename is required')
+
       options.asset = asset
-      #options.variable = options.paramName || 'it'
       if options.delimiters and delimiters[options.delimiters]
         templateDelimiters = delimiters[options.delimiters]
       else
         templateDelimiters = delimiters.ejs
-
-      # legacy name
-      if options.layout
-        options.filename = options.layout
 
       if options.filename
         @cache ?= {}
@@ -86,64 +83,12 @@ module.exports = (Projmate) ->
           text = Fs.readFileSync(options.filename, 'utf8')
           @cache[options.filename] = text
       else
-        text = asset.text
-
-      # parse function declaration fom comment
-      if text.indexOf('<!--function') == 0
-        newlinePos = text.indexOf('\n')
-        func = text.slice(0, newlinePos)
-        func = func.match(/function[^-]*/)[0]
-        text = text.slice(newlinePos+1)
-
-      # lodash expects a variable to not use 'with', create one and delete after
-      options.variable = 'SUPAHFLY' if func
+        text = options.text
 
       try
         _.extend _.templateSettings, templateDelimiters
         result = _.template(text, options)
-        cb null, text: result, extname: '.html'
+        cb null, result
       catch ex
         return cb ex
-
-
-    # Process asset
-    process: (asset, options, cb) ->
-      if options.jst
-
-        options.variable = options.paramName || 'it'
-        defaults =
-          evaluate: /<%([\s\S]+?)%>/g
-          interpolate: /<%-([\s\S]+?)%>/g
-          escape: /<%=([\s\S]+?)%>/g
-
-        _.defaults options, defaults
-
-        # parse function declaration fom comment
-        text = asset.text
-        if text.indexOf('<!--function') == 0
-          newlinePos = text.indexOf('\n')
-          func = text.slice(0, newlinePos)
-          func = func.match(/function[^-]*/)[0]
-          text = text.slice(newlinePos+1)
-
-        # lodash expects a variable to not use 'with', create one and delete after
-        options.variable = 'SUPAHFLY' if func
-
-        try
-          compiled = _.template(text, null, options)
-          text = compiled.source
-
-          if func
-            text = text.replace("function(SUPAHFLY)", func)
-            text = text.replace(/SUPAHFLY\./g, '')
-
-          fnName = Path.basename(asset.basename, asset.extname)
-
-          text = text.replace('function', "function #{fnName}") + "\nmodule.exports = #{fnName};"
-          cb null, text: text, extname: '.js'
-        catch ex
-          return cb ex
-
-      else
-        @render asset, options, cb
 

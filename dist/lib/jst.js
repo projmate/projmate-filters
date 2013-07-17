@@ -32,7 +32,7 @@ delimiters = {
 };
 
 schema = {
-  title: 'Filters asset(s) through a template.',
+  title: 'Converts files to JST',
   type: 'object',
   properties: {
     delimiters: {
@@ -50,6 +50,7 @@ schema = {
   },
   __: {
     extnames: ['*'],
+    outExtname: ".html",
     examples: [
       {
         title: 'Use a mustache file',
@@ -75,16 +76,16 @@ module.exports = function(Projmate) {
 
     Template.schema = schema;
 
-    Template.prototype.process = function(asset, options, cb) {
-      var ex, result, templateDelimiters, text;
-      if (!(options.text || options.filename)) {
-        return cb('options.text or options.filename is required');
-      }
+    Template.prototype.render = function(asset, options, cb) {
+      var ex, func, newlinePos, result, templateDelimiters, text;
       options.asset = asset;
       if (options.delimiters && delimiters[options.delimiters]) {
         templateDelimiters = delimiters[options.delimiters];
       } else {
         templateDelimiters = delimiters.ejs;
+      }
+      if (options.layout) {
+        options.filename = options.layout;
       }
       if (options.filename) {
         if (this.cache == null) {
@@ -97,15 +98,69 @@ module.exports = function(Projmate) {
           this.cache[options.filename] = text;
         }
       } else {
-        text = options.text;
+        text = asset.text;
+      }
+      if (text.indexOf('<!--function') === 0) {
+        newlinePos = text.indexOf('\n');
+        func = text.slice(0, newlinePos);
+        func = func.match(/function[^-]*/)[0];
+        text = text.slice(newlinePos + 1);
+      }
+      if (func) {
+        options.variable = 'SUPAHFLY';
       }
       try {
         _.extend(_.templateSettings, templateDelimiters);
         result = _.template(text, options);
-        return cb(null, result);
+        return cb(null, {
+          text: result,
+          extname: '.html'
+        });
       } catch (_error) {
         ex = _error;
         return cb(ex);
+      }
+    };
+
+    Template.prototype.process = function(asset, options, cb) {
+      var compiled, defaults, ex, fnName, func, newlinePos, text;
+      if (options.jst) {
+        options.variable = options.paramName || 'it';
+        defaults = {
+          evaluate: /<%([\s\S]+?)%>/g,
+          interpolate: /<%-([\s\S]+?)%>/g,
+          escape: /<%=([\s\S]+?)%>/g
+        };
+        _.defaults(options, defaults);
+        text = asset.text;
+        if (text.indexOf('<!--function') === 0) {
+          newlinePos = text.indexOf('\n');
+          func = text.slice(0, newlinePos);
+          func = func.match(/function[^-]*/)[0];
+          text = text.slice(newlinePos + 1);
+        }
+        if (func) {
+          options.variable = 'SUPAHFLY';
+        }
+        try {
+          compiled = _.template(text, null, options);
+          text = compiled.source;
+          if (func) {
+            text = text.replace("function(SUPAHFLY)", func);
+            text = text.replace(/SUPAHFLY\./g, '');
+          }
+          fnName = Path.basename(asset.basename, asset.extname);
+          text = text.replace('function', "function " + fnName) + ("\nmodule.exports = " + fnName + ";");
+          return cb(null, {
+            text: text,
+            extname: '.js'
+          });
+        } catch (_error) {
+          ex = _error;
+          return cb(ex);
+        }
+      } else {
+        return this.render(asset, options, cb);
       }
     };
 
