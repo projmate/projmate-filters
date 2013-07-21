@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 var FileAsset, Fs, PreProcessor, assert, ctorFactory, process, textAsset, _ref;
 
 Fs = require('fs');
@@ -77,3 +71,8 @@ describe("preproc", function() {
     });
   });
 });
+
+
+/*
+//@ sourceMappingURL=preprocSpec.map
+*/

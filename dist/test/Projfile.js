@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 exports.project = function(pm) {
   var $, f;
   f = pm.f, $ = pm.$;
@@ -42,3 +36,8 @@ exports.project = function(pm) {
     }
   };
 };
+
+
+/*
+//@ sourceMappingURL=Projfile.map
+*/

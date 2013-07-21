@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 var FileAsset, Filter, assert, ctorFactory, process, textAsset, _ref;
 
 _ref = require("./helper"), assert = _ref.assert, ctorFactory = _ref.ctorFactory, FileAsset = _ref.FileAsset;
@@ -49,3 +43,8 @@ describe("tutdown", function() {
     });
   });
 });
+
+
+/*
+//@ sourceMappingURL=tutdownSpec.map
+*/

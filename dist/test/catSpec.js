@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 var Assets, Filter, assert, cat, _ref;
 
 _ref = require("./helper"), assert = _ref.assert, Assets = _ref.Assets, Filter = _ref.Filter;
@@ -45,3 +39,8 @@ describe("Cat", function() {
     });
   });
 });
+
+
+/*
+//@ sourceMappingURL=catSpec.map
+*/

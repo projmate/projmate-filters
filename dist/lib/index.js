@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 var Fs, Path, basename, file, _i, _len, _ref;
 
 Fs = require("fs");
@@ -22,3 +16,8 @@ for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   }
   exports[basename] = require("./" + basename);
 }
+
+
+/*
+//@ sourceMappingURL=index.map
+*/

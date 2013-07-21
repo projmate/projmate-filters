@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 var Filter, assert, coffee, textAsset, _ref;
 
 _ref = require("./helper"), assert = _ref.assert, textAsset = _ref.textAsset, Filter = _ref.Filter;
@@ -41,3 +35,8 @@ describe("Coffee", function() {
     });
   });
 });
+
+
+/*
+//@ sourceMappingURL=coffeeSpec.map
+*/

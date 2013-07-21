@@ -20,8 +20,7 @@ exports.project = (pm) ->
     files: "src/**/*"
 
     development: [
-      f.coffee(bare: true)
-      f.addHeader(text: copyright)
+      f.coffee(bare: true, sourceMap: true)
       f.writeFile(toDist)
     ]
 

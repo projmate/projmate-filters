@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 var Fs, Node, SourceMap, SourceMapConsumer, SourceMapGenerator, _ref;
 
 Fs = require('fs');
@@ -56,3 +50,8 @@ SourceMap = {
 };
 
 module.exports = SourceMap;
+
+
+/*
+//@ sourceMappingURL=sourceMap.map
+*/

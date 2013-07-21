@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 var Assertion, Assets, EventEmitter, Fs, Helper, Projmate, assert, _, _ref;
 
 _ref = require("chai"), assert = _ref.assert, Assertion = _ref.Assertion;
@@ -57,3 +51,8 @@ module.exports = Helper = {
   eventBus: new EventEmitter,
   $: require("projmate-shell")
 };
+
+
+/*
+//@ sourceMappingURL=helper.map
+*/

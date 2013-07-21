@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 var assert, exec;
 
 exec = require('child_process').exec;
@@ -24,3 +18,8 @@ describe('CommonJs', function() {
     });
   });
 });
+
+
+/*
+//@ sourceMappingURL=commonJsSpec.map
+*/

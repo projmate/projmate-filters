@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 var $, Assets, Filter, Fs, assert, eventBus, mocha, readFileInt, _ref;
 
 _ref = require("./helper"), $ = _ref.$, assert = _ref.assert, readFileInt = _ref.readFileInt, Assets = _ref.Assets, Filter = _ref.Filter, eventBus = _ref.eventBus;
@@ -41,3 +35,8 @@ describe("Mocha", function() {
     });
   });
 });
+
+
+/*
+//@ sourceMappingURL=mochaSpec.map
+*/

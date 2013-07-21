@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 var Assertion, ExtractMeta, FileAsset, Fs, Projmate, assert, factory, textAsset, _ref;
 
 _ref = require("chai"), assert = _ref.assert, Assertion = _ref.Assertion;
@@ -72,3 +66,8 @@ describe("extractMeta", function() {
     });
   });
 });
+
+
+/*
+//@ sourceMappingURL=extractMetaSpec.map
+*/

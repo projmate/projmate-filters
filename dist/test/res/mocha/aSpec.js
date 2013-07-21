@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2013 Mario Gutierrez <mario@projmate.com>
- *
- * See the file LICENSE for copying permission.
- */
-
 var eventBus;
 
 eventBus = require("../../helper").eventBus;
@@ -17,3 +11,8 @@ describe("aSpec", function() {
     return done();
   });
 });
+
+
+/*
+//@ sourceMappingURL=aSpec.map
+*/
