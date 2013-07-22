@@ -52,12 +52,21 @@ module.exports = function(Projmate) {
               if (err) {
                 return cb(err);
               }
-              assets.create({
-                filename: file,
-                text: "",
-                stat: stat,
-                cwd: cwd
-              });
+              if (stat.isDirectory()) {
+                assets.create({
+                  dirname: file,
+                  text: "",
+                  stat: stat,
+                  cwd: cwd
+                });
+              } else {
+                assets.create({
+                  filename: file,
+                  text: "",
+                  stat: stat,
+                  cwd: cwd
+                });
+              }
               return cb();
             });
           }, cb);

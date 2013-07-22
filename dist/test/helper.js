@@ -14,6 +14,12 @@ Assets = require("projmate-core/dist/lib/run/assets");
 
 EventEmitter = require('events').EventEmitter;
 
+/*
+* A helper function
+*
+*/
+
+
 module.exports = Helper = {
   assert: assert,
   Projmate: Projmate,

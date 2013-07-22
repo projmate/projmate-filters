@@ -28,8 +28,8 @@ exports.project = (pm) ->
         console.log options.foo
     ]
 
-
-
-
-
-
+  yuidoc:
+    files: __dirname
+    dev: [
+      f.yuidoc paths: __dirname, outdir: __dirname + '/tmp'
+    ]

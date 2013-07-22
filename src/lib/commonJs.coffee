@@ -343,6 +343,7 @@ module.exports = (Projmate) ->
       if options.sourceMap
         sourceRoot = options.sourceRoot
 
+
         # The combined script needs this line for browsers and IDEs
         script += """
         /*

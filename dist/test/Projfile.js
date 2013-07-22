@@ -33,6 +33,15 @@ exports.project = function(pm) {
           }
         })
       ]
+    },
+    yuidoc: {
+      files: __dirname,
+      dev: [
+        f.yuidoc({
+          paths: __dirname,
+          outdir: __dirname + '/tmp'
+        })
+      ]
     }
   };
 };

@@ -55,7 +55,10 @@ module.exports = (Projmate) ->
           Async.eachSeries files, (file, cb) ->
             Fs.stat file, (err, stat) ->
               return cb(err) if err
-              assets.create filename: file, text: "", stat: stat, cwd: cwd
+              if stat.isDirectory()
+                assets.create dirname: file, text: "", stat: stat, cwd: cwd
+              else
+                assets.create filename: file, text: "", stat: stat, cwd: cwd
               cb()
           , cb
         else

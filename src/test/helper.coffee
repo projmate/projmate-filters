@@ -7,6 +7,10 @@ Projmate = require("projmate-core/dist")
 Assets = require("projmate-core/dist/lib/run/assets")
 {EventEmitter} = require('events')
 
+###
+* A helper function
+*
+###
 module.exports = Helper =
   assert: assert
 
