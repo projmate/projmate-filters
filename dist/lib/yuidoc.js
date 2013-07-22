@@ -23,18 +23,26 @@ module.exports = function(Projmate) {
     }
 
     Yuidoc.schema = {
-      title: 'Creates documentation from source.',
+      title: 'Creates API docs from source.',
       type: 'object',
+      properties: {
+        outdir: {
+          type: 'string',
+          description: 'Output directory'
+        }
+      },
       __: {
         extnames: "*",
         useLoader: 'stat',
         defaults: {
-          quiet: true
+          dev: {
+            quiet: true
+          }
         },
         examples: [
           {
             title: 'Create documentation from dist folder',
-            text: "dev: [\n  f.stat,\n  f.tap(function(asset) {\n    // log properties of asset, asset.text === ''\n    console.dir(asset);\n  })\n]"
+            text: "docs: {\n  files: 'src/docs',\n  dev: [\n    f.yuidoc({outdir: 'dist/docs'})\n  ]\n}"
           }
         ]
       }

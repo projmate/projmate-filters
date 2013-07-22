@@ -21,24 +21,28 @@ module.exports = (Projmate) ->
   class Yuidoc extends TaskProcessor
 
     @schema:
-      title: 'Creates documentation from source.'
+      title: 'Creates API docs from source.'
       type: 'object'
+      properties:
+        outdir:
+          type: 'string'
+          description: 'Output directory'
       __:
         extnames: "*"
         useLoader: 'stat'
         defaults:
-          quiet: true
+          dev:
+            quiet: true
         examples: [
           title: 'Create documentation from dist folder'
           text:
             """
-            dev: [
-              f.stat,
-              f.tap(function(asset) {
-                // log properties of asset, asset.text === ''
-                console.dir(asset);
-              })
-            ]
+            docs: {
+              files: 'src/docs',
+              dev: [
+                f.yuidoc({outdir: 'dist/docs'})
+              ]
+            }
             """
         ]
 
