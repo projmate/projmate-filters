@@ -50,6 +50,7 @@ module.exports = function(Projmate) {
         if (!options.assetsDirname) {
           return cb('options.assetsDirname is required');
         }
+        options.filename = asset.filename;
         options.assetPrefix = Path.basename(asset.basename, asset.extname);
         if (options.layout) {
           options.docLayoutFile = options.layout;

@@ -39,6 +39,7 @@ module.exports = (Projmate) ->
 
       if asset.extname == ".md"
         return cb('options.assetsDirname is required') if !options.assetsDirname
+        options.filename = asset.filename
         options.assetPrefix = Path.basename(asset.basename, asset.extname)
         if options.layout
           options.docLayoutFile = options.layout
