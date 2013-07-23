@@ -60,7 +60,10 @@ module.exports = (Projmate) ->
     @schema: schema
 
     process: (asset, options, cb) ->
-      fn = options.command
+      if _.isFunction(options._args)
+        fn = options._args
+      else
+        fn = options.command
       return cb("Options.command is required and must be a function(asset, options[, cb])") unless typeof fn == "function"
 
       try

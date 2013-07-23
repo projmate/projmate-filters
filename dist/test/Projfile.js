@@ -15,6 +15,18 @@ exports.project = function(pm) {
         }), f.writeFile
       ]
     },
+    testCommonJs2: {
+      dev: [
+        f.loadFiles('res/commonJs/**/*.js'), f.commonJs({
+          name: 'apackage',
+          root: 'res/commonJs',
+          filename: 'tmp/apackage2.js',
+          requireProp: 'brequire',
+          auto: 'index',
+          include: 'res/commonJs/standalone.js'
+        }), f.writeFile
+      ]
+    },
     stylus: {
       files: 'res/style.styl',
       dev: [

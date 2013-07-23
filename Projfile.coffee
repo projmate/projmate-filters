@@ -74,4 +74,9 @@ exports.project = (pm) ->
         url = "#{root}/#{file}"
         $.run "curl -o src/support/js-beautify/#{file} #{url}"
 
+  other: [
+    f.loadFiles include: '/src/**/.js'
+    f.commonJs
+  ]
+
 

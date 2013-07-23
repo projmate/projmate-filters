@@ -1,5 +1,8 @@
-var __hasProp = {}.hasOwnProperty,
+var _,
+  __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+_ = require('lodash');
 
 module.exports = function(Projmate) {
   var Once, schema, _ref;
@@ -34,7 +37,11 @@ module.exports = function(Projmate) {
 
     Once.prototype.process = function(task, options, cb) {
       var ex, fn;
-      fn = options.command;
+      if (_.isFunction(options._args)) {
+        fn = options._args;
+      } else {
+        fn = options.command;
+      }
       if (typeof fn !== "function") {
         return cb("Options.command is required and must be a function(asset, options[, cb])");
       }

@@ -33,11 +33,25 @@ module.exports = function(Projmate) {
     LoadFiles.schema = schema;
 
     LoadFiles.prototype.process = function(task, options, cb) {
-      var assets, cwd, excludePatterns, log, patterns;
+      var assets, cwd, excludePatterns, files, log, patterns;
       log = this.log;
       cwd = process.cwd();
-      patterns = task.config.files.include;
-      excludePatterns = task.config.files.exclude;
+      if (options._args) {
+        options.include = options._args;
+      }
+      if (options.include) {
+        files = {
+          include: options.include,
+          exclude: options.exclude
+        };
+        PmUtils.normalizeFiles({
+          files: files
+        }, 'files');
+      } else {
+        files = task.config.files;
+      }
+      patterns = files.include;
+      excludePatterns = files.exclude;
       assets = task.assets;
       return PmUtils.glob(patterns, excludePatterns, {
         nosort: true

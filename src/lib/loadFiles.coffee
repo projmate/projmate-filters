@@ -33,8 +33,19 @@ module.exports = (Projmate) ->
     process: (task, options, cb) ->
       log = @log
       cwd = process.cwd()
-      patterns = task.config.files.include
-      excludePatterns = task.config.files.exclude
+
+      # _args mean user passed in a single argument
+      if options._args
+        options.include = options._args
+
+      if options.include
+        files = {include: options.include, exclude: options.exclude}
+        PmUtils.normalizeFiles {files}, 'files'
+      else
+        files = task.config.files
+
+      patterns = files.include
+      excludePatterns = files.exclude
       {assets} = task
 
       PmUtils.glob patterns, excludePatterns, {nosort: true}, (err, files) ->
