@@ -12,8 +12,6 @@ _ = require('lodash')
 module.exports = (Projmate) ->
   {FileAsset, TaskProcessor, Utils:PmUtils} = Projmate
 
-  Y = require('yuidocjs')
-
   # Loads files based on a task's `files` property.
   #
   # This is usually invoked as the first filter of a pipeline.
@@ -51,6 +49,8 @@ module.exports = (Projmate) ->
     # Directly manipulates a task such as its assets property.
     #
     process: (task, options, cb) ->
+      Y = require('yuidocjs')
+
       {assets} = task
 
       dirnames = assets.pluck('_dirname')

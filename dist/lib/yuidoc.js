@@ -11,9 +11,8 @@ Util = require("util");
 _ = require('lodash');
 
 module.exports = function(Projmate) {
-  var FileAsset, PmUtils, TaskProcessor, Y, Yuidoc, _ref;
+  var FileAsset, PmUtils, TaskProcessor, Yuidoc, _ref;
   FileAsset = Projmate.FileAsset, TaskProcessor = Projmate.TaskProcessor, PmUtils = Projmate.Utils;
-  Y = require('yuidocjs');
   return Yuidoc = (function(_super) {
     __extends(Yuidoc, _super);
 
@@ -49,7 +48,8 @@ module.exports = function(Projmate) {
     };
 
     Yuidoc.prototype.process = function(task, options, cb) {
-      var assets, builder, dirnames, json;
+      var Y, assets, builder, dirnames, json;
+      Y = require('yuidocjs');
       assets = task.assets;
       dirnames = assets.pluck('_dirname');
       if (!(dirnames != null ? dirnames.length : void 0) > 0) {
