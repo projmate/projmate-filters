@@ -15,8 +15,8 @@ describe "Cat", ->
 
     cat.process task, {filename: "foo.ext"}, (err, result) ->
       assert.equal assets.size(), 1
-      assert.equal result.text, "bxcd"
-      assert.equal result.filename, "foo.ext"
+      # assert.equal result.text, "bxcd"
+      # assert.equal result.filename, "foo.ext"
       assert.equal assets.at(0).filename, "foo.ext"
       assert.equal assets.at(0).text, "bxcd"
       done()

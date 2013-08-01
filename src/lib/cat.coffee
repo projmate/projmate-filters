@@ -8,6 +8,10 @@ module.exports = (Projmate) ->
 
   schema =
     title: 'Concatenates files'
+    properties:
+      join:
+        type: "String"
+        description: "The string to join with"
     __:
       extnames: "*"
 
@@ -39,5 +43,6 @@ module.exports = (Projmate) ->
 
       # File contents were concatenated, change assets to single asset
       task.assets.clear()
-      cb null, task.assets.create(filename: filename, text: script)
+      task.assets.create filename: filename, text: script
+      cb()
 

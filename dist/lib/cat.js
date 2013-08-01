@@ -6,6 +6,12 @@ module.exports = function(Projmate) {
   TaskProcessor = Projmate.TaskProcessor;
   schema = {
     title: 'Concatenates files',
+    properties: {
+      join: {
+        type: "String",
+        description: "The string to join with"
+      }
+    },
     __: {
       extnames: "*"
     }
@@ -38,10 +44,11 @@ module.exports = function(Projmate) {
         return true;
       });
       task.assets.clear();
-      return cb(null, task.assets.create({
+      task.assets.create({
         filename: filename,
         text: script
-      }));
+      });
+      return cb();
     };
 
     return Cat;

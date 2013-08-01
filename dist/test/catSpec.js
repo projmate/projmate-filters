@@ -31,8 +31,6 @@ describe("Cat", function() {
       filename: "foo.ext"
     }, function(err, result) {
       assert.equal(assets.size(), 1);
-      assert.equal(result.text, "bxcd");
-      assert.equal(result.filename, "foo.ext");
       assert.equal(assets.at(0).filename, "foo.ext");
       assert.equal(assets.at(0).text, "bxcd");
       return done();
