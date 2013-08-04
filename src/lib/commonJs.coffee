@@ -137,7 +137,7 @@ module.exports = (Projmate) ->
                   throw err;
                 }
               } else {
-                throw 'module \\'' + name + '\\' not found';
+                throw new ReferenceError('`' + root + '` could not require `' + name + '`. Is path correct?');
               }
             }
 
