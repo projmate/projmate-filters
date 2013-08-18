@@ -175,11 +175,9 @@ module.exports = (Projmate) ->
       patterns = files.include
       excludePatterns = files.exclude
       result = ""
-      console.log "FILES", files
 
       Utils.glob patterns, excludePatterns, {nosort: true}, (err, files) ->
         return cb(err) if err
-        console.log "MATCHED files", files
 
         if files.length > 0
           for file in files
@@ -194,7 +192,6 @@ module.exports = (Projmate) ->
       {defineProp, aliases} = options
       result = ""
       for alias, file of aliases
-        console.log "ALIAS", alias, "FILE", file
         stat = Fs.statSync(file)
         continue unless stat.isFile()
         content = Fs.readFileSync(file, 'utf8')
