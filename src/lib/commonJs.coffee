@@ -60,6 +60,9 @@ module.exports = (Projmate) ->
       defineProp:
         type: 'string'
         description: 'Name for window.`define`'
+      include:
+        type: 'object'
+        description: 'Include other JavaScript files as-is'
     required: ['name', 'root', 'filename']
 
     __:
@@ -172,9 +175,11 @@ module.exports = (Projmate) ->
       patterns = files.include
       excludePatterns = files.exclude
       result = ""
+      console.log "FILES", files
 
       Utils.glob patterns, excludePatterns, {nosort: true}, (err, files) ->
         return cb(err) if err
+        console.log "MATCHED files", files
 
         if files.length > 0
           for file in files
